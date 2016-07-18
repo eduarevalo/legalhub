@@ -1,0 +1,19 @@
+{
+  "name": "legalhub",
+  "version": "1.0.0",
+  "description": "LegalHub",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduarevalo/legalhub.git"
+  },
+  "author": "Eduardo Arevalo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eduarevalo/legalhub/issues"
+  },
+  "homepage": "https://github.com/eduarevalo/legalhub#readme"
+}
