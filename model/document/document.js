@@ -1,37 +1,25 @@
-module.exports = class Document {
-  constructor(id, code, title, properties, schema, parts) {
-    properties = properties || {};
-    parts = parts || {
-      "__root": [{
-        start: new Date(),
-        end: null,
-        content: ""
-      }]
-    };
+var Model = require(__base + 'model/model');
+
+module.exports = class Document extends Model{
+  constructor(id) {
+    super();
     this.id = id;
-    this.code = code;
-    this.title = title;
-    this.properties = properties;
-    this.schema = schema;
-    this.parts = parts;
+    this.code = undefined;
+    this.title = undefined;
+    this.description = undefined;
+    this.documentType = undefined;
+    this.fileName = undefined;
+    this.owner = undefined;
+    this.collections = undefined;
   }
-
-  /*setAuthor(author) {
-    this.properties["author"] = author;
+  setCollection(collectionId){
+    if(this.collections === undefined){
+      this.collections = [];
+    }
+    if(this.collections.indexOf(collectionId)<0){
+      this.collections.push(collectionId);
+    }
   }
-
-  setDescription(description){
-    this.properties["description"] = description;
-  }
-
-  setContent(id, datetime, content){
-    this.parts[id].push({
-      start: datetime,
-      end: null,
-      content: content
-    });
-  }*/
-
   toString() {
     return `${this.id} []${this.code}] ${this.title}`;
   }

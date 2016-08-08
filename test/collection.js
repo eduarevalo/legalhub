@@ -15,10 +15,27 @@ describe('Db', function() {
 
 
 describe('collectionDao', function() {
+  describe('#drop()', function() {
+    it('should drop without error', function(done) {
+      collectionDao.drop(function(){
+        done();
+      });
+    });
+  });
   describe('#save()', function() {
     it('should save without error', function(done) {
-      var collection = new Collection(2, 'A48', 'Collection Testing A', 'My first collection');
+      var collection = new Collection(0, 'A0', 'Collection Testing A0', 'My zero collection');
       collectionDao.save(collection, function(err, result){
+        if(err){
+          throw err;
+        }
+        done();
+      });
+    });
+  });
+  describe('#insert()', function() {
+    it('should insert without error', function(done) {
+      collectionDao.insert(require('./data/collections.json'), function(err, result){
         if(err){
           throw err;
         }
@@ -28,7 +45,7 @@ describe('collectionDao', function() {
   });
   describe('#getCollectionById()', function() {
     it('should get without error', function(done) {
-      collectionDao.getCollectionById(1, function(collection){
+      collectionDao.getCollectionById(0, function(collection){
         if(!collection){
           throw Error(`collection not found.`);
         }
@@ -38,7 +55,7 @@ describe('collectionDao', function() {
   });
   describe('#getcollectionByCode()', function() {
     it('should get without error', function(done) {
-      collectionDao.getCollectionByCode('A25', function(collection){
+      collectionDao.getCollectionByCode('A0', function(collection){
         if(!collection){
           throw Error(`collection not found.`);
         }
@@ -48,10 +65,19 @@ describe('collectionDao', function() {
   });
   describe('#search()', function() {
     it('should search without error', function(done) {
-      collectionDao.search(new Collection(), function(collections){
+      collectionDao.search(new Collection(), {}, function(collections){
         assert.isAtLeast(collections.length, 1, `${collections.length} collections found.`);
         done();
       });
+    });
+  });
+  describe('#count()', function() {
+    it('should count without error', function(done) {
+        collectionDao.count(new Collection(), function(count){
+          console.log(`${count} collections found.`);
+          assert.isAtLeast(count, 1, `${count} collections found.`);
+          done();
+        });
     });
   });
 });

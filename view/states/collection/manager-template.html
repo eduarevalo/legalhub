@@ -1,0 +1,154 @@
+<div class="container">
+  <div class="block-header">
+    <h2>Manage workspaces</h2>
+
+    <ul class="actions">
+      <li>
+        <a href="">
+          <i class="zmdi zmdi-trending-up"></i>
+        </a>
+      </li>
+      <li>
+        <a href="">
+          <i class="zmdi zmdi-check-all"></i>
+        </a>
+      </li>
+      <li class="dropdown" uib-dropdown>
+        <a href="" uib-dropdown-toggle>
+          <i class="zmdi zmdi-more-vert"></i>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li>
+            <a href="">Refresh</a>
+          </li>
+          <li>
+            <a href="">Manage Widgets</a>
+          </li>
+          <li>
+            <a href="">Widgets Settings</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+  </div>
+
+  <!-- TABS -->
+  <div class="card">
+    <!--<div class="card-header">
+      <h2>Tabs <small><a target="_blank" class="c-gray" href="http://angular-ui.github.io/bootstrap/#/tabs">ui.bootstrap.tabs</a></small></h2>
+    </div>-->
+
+    <div class="card-body card-padding" ng-controller="collectionManagerCtrl">
+
+      <div ng-if="mode == 'search' || mode == 'add'">
+        <uib-tabset>
+          <uib-tab heading="Search" active="tab.active">
+            <div>
+              <form role="form" ng-submit="search()">
+                <div class="form-group fg-line">
+                  <label for="input-search1">Code</label>
+                  <input type="text" id="input-search1" class="form-control input-sm" ng-model="searchModel.code" ng-change="resetCollections()" placeholder="Any code">
+                </div>
+                <div class="form-group fg-line">
+                  <label for="input-search2">Title</label>
+                  <input type="text" id="input-search2" class="form-control input-sm" ng-model="searchModel.title" ng-change="resetCollections()" placeholder="Any title">
+                </div>
+                <div class="form-group fg-line">
+                  <label for="input-search3">Description</label>
+                  <input type="text" id="input-search3" class="form-control input-sm" ng-model="searchModel.description" ng-change="resetCollections()" placeholder="Any description">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm m-t-10">Search</button>
+                <button type="button" class="btn btn-warning btn-sm m-t-10" ng-click="resetSearch()">Reset</button>
+              </form>
+
+              <div class="table-responsive" ng-if="collections.length > 0">
+                <div class="card-header">
+                  <h2>Search results<small>{{collections.length}} workspaces found.</small></h2>
+                </div>
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Code</th>
+                      <th>Title</th>
+                      <th>Description</th>
+                      <th>Documents count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="collection in collections" ng-click="edit(collection.id)">
+                      <td>{{$index+1}}</td>
+                      <td>{{collection.code}}</td>
+                      <td>{{collection.title}}</td>
+                      <td>{{collection.description}}</td>
+                      <td>{{collection.count}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </uib-tab>
+          <uib-tab heading="Create" active="">
+            <form role="form" ng-submit="create()">
+              <div class="form-group fg-line">
+                <label for="input-add1">Code</label>
+                <input type="text" id="input-add1" class="form-control input-sm" ng-model="createModel.code" placeholder="If empty, we will provide you a random code">
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm m-t-10">Create</button>
+            </form>
+          </uib-tab>
+        </uib-tabset>
+      </div>
+      <div ng-if="mode == 'edit'">
+        <div class="card-header">
+          <h2>Edit workspace {{createModel.code}} <small>{{createModel.title}}</small></h2>
+        </div>
+        <form role="form" ng-submit="save()">
+          <div class="form-group fg-line">
+            <label for="input-edit1">Code</label>
+            <input type="text" id="input-edit1" class="form-control input-sm" ng-model="createModel.code" ng-change="changeModel()" placeholder="If empty, we will provide you a random code">
+          </div>
+          <div class="form-group fg-line">
+            <label for="input-edit2">Title</label>
+            <input type="text" id="input-edit2" class="form-control input-sm" ng-model="createModel.title" ng-change="changeModel()" placeholder="Any title">
+          </div>
+          <div class="form-group fg-line">
+            <label for="input-edit3">Description</label>
+            <input type="text" id="input-edit3" class="form-control input-sm" ng-model="createModel.description" ng-change="changeModel()" placeholder="Any description">
+          </div>
+          <!--<div class="form-group fg-line">
+            <label for="input-edit4">Colour</label>
+            <input type="text" id="input-edit" class="form-control input-sm" ng-model="createModel.color" ng-change="changeModel()" placeholder="Pick your colour">
+          </div>-->
+          <div class="form-group fg-line">
+            <label for="input-edit5">Classifier</label>
+            <input type="text" id="input-edit5" class="form-control input-sm" ng-model="createModel.classifier" ng-change="changeModel()" placeholder="Choose your classifier">
+          </div>
+          <div class="checkbox m-b-15">
+            <label>
+              <input type="checkbox" ng-model="createModel.public" ng-change="changeModel()" ng-true-value="'true'" ng-false-value="'false'">
+              <i class="input-helper"></i>
+              Public workspace
+            </label>
+          </div>
+          <!--<div class="dropdown" uib-dropdown>
+            <label for="input-edit6">Allowed document types</label>
+            <br/>
+            <button id="input-edit6" class="dropdown-toggle btn btn-default" uib-dropdown-toggle> {{createModel.documentTypes.length}} document types</button>
+            <ul class="dropdown-menu">
+              <li data-ng-repeat="type in createModel.documentTypes"><a href="">{{ type }}</a></li>
+            </ul>
+          </div>-->
+
+          <button type="submit" class="btn btn-primary btn-sm m-t-10" ng-disabled="!isModelModified">Save</button>
+          <button type="button" class="btn btn-warning btn-sm m-t-10" ng-click="validate()">Validate</button>
+          <button type="button" class="btn btn-sm m-t-10" ng-click="goToSearch()">Search again</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

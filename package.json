@@ -4,9 +4,18 @@
   "description": "LegalHub",
   "main": "index.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
+    "busboy": "^0.2.13",
     "chai": "^3.5.0",
+    "chance": "^1.0.4",
+    "connect-busboy": "0.0.2",
     "express": "^4.14.0",
-    "mongo": "^0.1.0"
+    "jdenticon": "^1.3.2",
+    "mongo": "^0.1.0",
+    "promise": "^7.1.1",
+    "qr-image": "^3.1.0",
+    "xmldom": "^0.1.22",
+    "xpath": "0.0.23"
   },
   "devDependencies": {
     "chai": "~3.5.0"

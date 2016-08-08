@@ -1,0 +1,19 @@
+[{
+  "_id": 1,
+  "code": "A1",
+  "title": "Test Collection 1",
+  "color" : "bgm-lightgreen",
+  "categories": ["A", "B", "C", "D"]
+},{
+  "_id": 2,
+  "code": "A2",
+  "title": "Test Collection 2",
+  "color" : "bgm-orange",
+  "categories": ["A", "B", "C", "D"]
+},{
+  "_id": 3,
+  "code": "A3",
+  "title": "Test Collection 3",
+  "color" : "bgm-bluegray",
+  "categories": ["A", "B", "C", "D"]
+}]

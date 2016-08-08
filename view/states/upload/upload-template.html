@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="block-header">
+    <h2>Upload documents</h2>
+
+    <ul class="actions">
+      <li>
+        <a href="">
+          <i class="zmdi zmdi-trending-up"></i>
+        </a>
+      </li>
+      <li>
+        <a href="">
+          <i class="zmdi zmdi-check-all"></i>
+        </a>
+      </li>
+      <li class="dropdown" uib-dropdown>
+        <a href="" uib-dropdown-toggle>
+          <i class="zmdi zmdi-more-vert"></i>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li>
+            <a href="">Refresh</a>
+          </li>
+          <li>
+            <a href="">Manage Widgets</a>
+          </li>
+          <li>
+            <a href="">Widgets Settings</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+  </div>
+
+  <!-- TABS -->
+  <div class="card">
+
+    <div class="card-body card-padding" ng-controller="uploadManagerCtrl">
+      <div class="row">
+        <div class="col-sm-4">
+          <p class="f-500 c-black m-b-20">Basic Example</p>
+
+          <div class="form-group">
+            <div class="fg-line">
+              <div class="select">
+                <select class="form-control" ng-model="formData.collection">
+                  <option ng-repeat="collection in collections" value="{{collection.id}}">{{collection.title}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <button ngf-select="uploadFiles($files, $invalidFiles)" multiple class="btn btn-primary btn-file m-r-10">
+          Select Files</button>
+          <br><br>
+          Files:
+          <ul>
+            <li ng-repeat="f in files" style="font:smaller">{{f.name}} {{f.$errorParam}}
+              <span class="progress" ng-show="f.progress >= 0">
+                <div style="width:{{f.progress}}%"
+                ng-bind="f.progress + '%'"></div>
+              </span>
+            </li>
+            <li ng-repeat="f in errFiles" style="font:smaller">{{f.name}} {{f.$error}} {{f.$errorParam}}
+            </li>
+          </ul>
+          {{errorMsg}}
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

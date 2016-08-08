@@ -1,11 +1,12 @@
 [{
-  "id": "1",
+  "_id": 1,
   "code": "Test1",
   "title": "Test Document 1",
   "properties": {
     "author": "Eduardo Arevalo",
     "colaborators": ""
   },
+  "collections": [1],
   "schema": null,
   "parts": {
     "__root": [{

@@ -15,21 +15,28 @@ describe('Db', function() {
 
 
 describe('DocumentDao', function() {
-  describe('#save()', function() {
-    it('should save without error', function(done) {
-      var document = new Document(1, 'A1', 'Test A1');
-      documentDao.save(document, function(err, result){
-        if(err){
-          throw err;
-        }
+  describe('#drop()', function() {
+    it('should drop without error', function(done) {
+      documentDao.drop(function(){
         done();
       });
     });
   });
-  describe('#insert()', function() {
-    it('should insert without error', function(done) {
+  describe('#save()', function() {
+    describe('#insert()', function() {
+      it('should insert without error', function(done) {
 
-      documentDao.insert(require('./data/documents.json'), function(err, result){
+        documentDao.insert(require('./data/documents.json'), function(err, result){
+          if(err){
+            throw err;
+          }
+          done();
+        });
+      });
+    });
+    it('should save without error', function(done) {
+      var document = new Document(0, 'A0', 'Test A0');
+      documentDao.save(document, function(err, result){
         if(err){
           throw err;
         }
@@ -39,7 +46,7 @@ describe('DocumentDao', function() {
   });
   describe('#getDocumentById()', function() {
     it('should get without error', function(done) {
-      documentDao.getDocumentById(1, function(document){
+      documentDao.getDocumentById(0, function(document){
         if(!document){
           throw Error(`Document not found.`);
         }
@@ -49,7 +56,7 @@ describe('DocumentDao', function() {
   });
   describe('#getDocumentByEmail()', function() {
     it('should get without error', function(done) {
-      documentDao.getDocumentByCode('A1', function(document){
+      documentDao.getDocumentByCode('A0', function(document){
         if(!document){
           throw Error(`Document not found.`);
         }

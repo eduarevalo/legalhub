@@ -1,0 +1,26 @@
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/template/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+
+<section id="main">
+  <aside id="sidebar" data-ng-include="'view/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+
+  <aside id="chat" data-ng-include="'view/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+  <section id="content">
+
+    <div class="container" data-ng-controller="documentCtrl as documentCtrl">
+
+      <div class="card">
+        <div class="card-header">
+          <h2>{{ document.title }} <small>{{ document.collections }}</small></h2>
+          <a class="btn bgm-bluegray" data-ng-click="goToVersions(document)">View version history</a>
+        </div>
+
+        <div class="card-body card-padding" ng-bind-html="getHtml(content)">
+        </div>
+      </div>
+
+    </div>
+  </section>
+</section>
+
+<footer id="footer" data-ng-include="'view/template/footer.html'"></footer>

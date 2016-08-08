@@ -1,0 +1,52 @@
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/template/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+
+<section id="main">
+  <aside id="sidebar" data-ng-include="'view/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+
+  <aside id="chat" data-ng-include="'view/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+  <section id="content">
+
+    <div class="container" data-ng-controller="versionCtrl as vCtrl">
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Versions <small>Click on the version you want to see</small></h2>
+        </div>
+
+        <div class="card-body">
+
+
+          <div class="container" >
+
+            <div class="row">
+              <div class="col-md-12">
+
+                    <div class="animated bgm-bluegray" ng-repeat="version in versions" id="version{{$index}}" style="color:white; visibility: hidden;float:left; margin-left: 25px; vertical-align:middle;width: 180px; height: 270px;">
+                      <h2><center style="vertical-align:middle;"><br/>{{version.startDate | limitTo:10}}</center></h2>
+                      <small><ul>
+                        <!--<li ng-if="version.properties.original">Original version</li>
+                        <li ng-if="version.properties.sections>0">{{version.properties.sections}} sections</li>
+                        <li ng-if="version.properties.amendments>0">{{version.properties.amendments}} amendments from </li>
+                        <li ng-if="version.properties.bills>0">{{version.properties.bills}} bills</li>-->
+                        <li ng-if="$index==(versions.length-1)">Original version</li>
+                        <li >2 sections</li>
+                        <li ng-if="$index==0">2 amendments from </li>
+                        <li ng-if="$index==0">1 bills </li>
+                        </ul>
+                        </small>
+                    </div>
+              </div>
+            </div>
+            <br/><br/>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</section>
+
+<footer id="footer" data-ng-include="'view/template/footer.html'"></footer>
