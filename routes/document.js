@@ -20,17 +20,21 @@ router.get('/search', function (req, res) {
 /* upload */
 router.post('/upload', function (req, res, next) {
   req.pipe(req.busboy);
-  var fileContent = '';
-  var fileName = '';
-  var collectionId = '';
-  var fileExtension = '';
-  req.busboy.on('file', function (fieldname, file, filename) {
-    fileName = filename;
-    fileExtension = filename.split('.');
+  var collectionId = req.query['collection'] ? req.query['collection'] : '';
+  req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+	var fileExtension = filename.split('.');
+	var fileContent = '';
     fileExtension = fileExtension[fileExtension.length-1];
     file.on('data', function(chunk) {
       fileContent += chunk;
     });
+	file.on('end', function(){
+	  documentManager.upload({
+	    fileName: filename,
+	    fileContent: fileContent,
+	    collectionId: collectionId
+	  }, function(){});
+	});
   });
   req.busboy.on('field', function(fieldname, val){
     if(fieldname == 'collection'){
@@ -38,17 +42,7 @@ router.post('/upload', function (req, res, next) {
     }
   });
   req.busboy.on('finish', function(){
-    documentManager.upload({
-      fileName: fileName,
-      fileContent: fileContent,
-      collectionId: collectionId
-    }, function(err, document){
-      if(err){
-        res.json({success: false, error: err});
-      }else{
-        res.json({success: true});
-      }
-    });
+    res.json({success: true});
   });
 });
 

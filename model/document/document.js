@@ -1,3 +1,4 @@
+"use strict"; 
 var Model = require(__base + 'model/model');
 
 module.exports = class Document extends Model{

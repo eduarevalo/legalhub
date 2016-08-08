@@ -1,3 +1,5 @@
+"use strict"; 
+
 var Fragment = require(__base + 'model/document/fragment');
 var db = require(__base + 'core/db/db');
 var ObjectID = require('mongodb').ObjectID;

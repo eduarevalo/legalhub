@@ -1,0 +1,68 @@
+<header id="header" data-current-skin="blue" data-ng-include="'view/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+
+<section id="main">
+    <aside id="sidebar" data-ng-include="'view/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+
+    <aside id="chat" data-ng-include="'view/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+    <section id="content">
+
+        <div class="container">
+
+          <div class="block-header">
+            <h2>Current workspaces!</h2>
+
+            <ul class="actions">
+              <li>
+                <a href="">
+                  <i class="zmdi zmdi-trending-up"></i>
+                </a>
+              </li>
+              <li>
+                <a href="">
+                  <i class="zmdi zmdi-check-all"></i>
+                </a>
+              </li>
+              <li class="dropdown" uib-dropdown="" style="">
+                <a href="" uib-dropdown-toggle="" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                  <i class="zmdi zmdi-more-vert"></i>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li>
+                    <a data-ui-sref="manager.collection" data-ng-click="mactrl.sidebarStat($event)">Manage workspaces</a>
+                  </li>
+                  <li>
+                    <a data-ui-sref="manager.document" data-ng-click="mactrl.sidebarStat($event)">Manage documents</a>
+                  </li>
+                  <li>
+                    <a data-ui-sref="manager.upload" data-ng-click="mactrl.sidebarStat($event)">Upload documents</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+
+          </div>
+
+          <div class="mini-charts" data-ng-controller="homeCollectionCtrl as collCtrl">
+
+            <div class="row">
+              <div class="col-sm-6 col-md-3" ng-repeat="collection in collections">
+                <div class="mini-charts-item bgm-bluegray" data-ng-click="goTo(collection)">
+                  <div class="clearfix">
+                    <div class="chart"><img width="83" height="45" style="display: inline-block; width: 83px; height: 45px; vertical-align: top;" src="view/{{collection.icon}}"/></div>
+                    <div class="count">
+                      <small>{{collection.title}}</small>
+                      <h2>{{collection.count}}</h2>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+    </section>
+</section>
+
+<footer id="footer" data-ng-include="'view/modules/home/footer.html'"></footer>

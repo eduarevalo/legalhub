@@ -9,6 +9,6 @@ exports.createQRCode = function(text, type, path){
 }
 
 exports.createIcon = function(text, size, path){
-  svg = jdenticon.toSvg(crypto.createHash('md5').update(text).digest("hex"), size);
+  var svg = jdenticon.toSvg(crypto.createHash('md5').update(text).digest("hex"), size);
   fs.writeFileSync(path, svg);
 }

@@ -194,3 +194,9 @@
         <input type="text">
     </div>
 </div>
+<div class="skin-switch dropdown hidden-xs" uib-dropdown>
+    <button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-palette"></i></button>
+    <div class="dropdown-menu">
+        <span ng-repeat="w in mactrl.skinList" class="ss-skin bgm-{{ w }}" data-ng-click="mactrl.skinSwitch(w)"></span>
+    </div>
+</div>

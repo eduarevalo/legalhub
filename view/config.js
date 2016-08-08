@@ -36,12 +36,12 @@ legalHub
 
             .state ('home', {
                 url: '/home',
-                templateUrl: 'view/states/home/template.html',
+                templateUrl: 'view/modules/home/template.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
-                          'view/states/collection/collection-service.js',
-                          'view/states/home/home-collection-controller.js'
+                          'view/modules/collection/collection-service.js',
+                          'view/modules/home/home-collection-controller.js'
                           ]);
                     }
                 }
@@ -54,12 +54,12 @@ legalHub
                 title: '',
                 icon: '',
               },
-              templateUrl: 'view/states/collection/collection-template.html',
+              templateUrl: 'view/modules/collection/collection-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/states/document/document-service.js',
-                    'view/states/collection/collection-controller.js']);
+                    'view/modules/document/document-service.js',
+                    'view/modules/collection/collection-controller.js']);
                 }
               }
             })
@@ -71,13 +71,13 @@ legalHub
                 title: '',
                 icon: '',
               },
-              templateUrl: 'view/states/document/document-template.html',
+              templateUrl: 'view/modules/document/document-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/states/document/document-service.js',
-                    'view/states/version/version-service.js',
-                    'view/states/document/document-controller.js']
+                    'view/modules/document/document-service.js',
+                    'view/modules/version/version-service.js',
+                    'view/modules/document/document-controller.js']
                   );
                 }
               }
@@ -88,12 +88,12 @@ legalHub
               params: {
                 id: ''
               },
-              templateUrl: 'view/states/version/versions-template.html',
+              templateUrl: 'view/modules/version/versions-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/states/version/version-service.js',
-                    'view/states/version/version-controller.js']
+                    'view/modules/version/version-service.js',
+                    'view/modules/version/version-controller.js']
                   );
                 }
               }
@@ -207,27 +207,27 @@ legalHub
             //------------------------------
             .state ('manager', {
                 url: '/manager',
-                templateUrl: 'view/states/manager/common.html'
+                templateUrl: 'view/modules/manager/common.html'
             })
 
             .state ('manager.collection', {
               url: '/collection',
-              templateUrl: 'view/states/collection/manager-template.html',
+              templateUrl: 'view/modules/collection/manager-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad){
                   return $ocLazyLoad.load([
-                    'view/states/collection/collection-service.js',
-                    'view/states/collection/manager-controller.js']);
+                    'view/modules/collection/collection-service.js',
+                    'view/modules/collection/manager-controller.js']);
                 }
               }
             })
 
             .state ('manager.document', {
               url: '/document',
-              templateUrl: 'view/states/document/manager-template.html',
+              templateUrl: 'view/modules/document/manager-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad){
-                  return $ocLazyLoad.load('view/states/document/manager-controller.js');
+                  return $ocLazyLoad.load('view/modules/document/manager-controller.js');
                 }
               }
             })
@@ -237,12 +237,12 @@ legalHub
               params: {
                 collectionId: ''
               },
-              templateUrl: 'view/states/upload/upload-template.html',
+              templateUrl: 'view/modules/upload/upload-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/states/collection/collection-service.js',
-                    'view/states/upload/manager-controller.js',
+                    'view/modules/collection/collection-service.js',
+                    'view/modules/upload/manager-controller.js',
                     {
                       name: 'css',
                       insertBefore: '#app-level',
@@ -273,19 +273,15 @@ legalHub
                 }
             })
 
-            .state ('form.basic-form-elements', {
-                url: '/basic-form-elements',
-                templateUrl: 'view/views/form-elements.html',
+            .state ('manager.new-document', {
+                url: '/new-document',
+                templateUrl: 'view/modules/document/new-document-template.html',
+				params: {
+					collectionId: ''
+				},
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
-                        return $ocLazyLoad.load ([
-                            {
-                                name: 'vendors',
-                                files: [
-                                    'vendors/bower_components/autosize/dist/autosize.min.js'
-                                ]
-                            }
-                        ])
+                        return $ocLazyLoad.load('view/modules/document/new-document-controller.js');
                     }
                 }
             })

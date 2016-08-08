@@ -1,0 +1,73 @@
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/template/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+
+<section id="main">
+  <aside id="sidebar" data-ng-include="'view/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+
+  <aside id="chat" data-ng-include="'view/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+  <section id="content">
+
+    <div class="container" data-ng-controller="collectionCtrl as collectionCtrl">
+
+      <div class="card">
+    <div class="card-header">
+      <img class="pull-right" width="83" height="45" style="display: inline; width: 83px; height: 45px; vertical-align: top;" src="view/{{icon}}"/>
+      <h2>{{ title }} <small>{{ description }}</small></h2>
+
+      <br/>
+      <br/>
+      <br/>
+	  
+			<button class="btn btn-warning btn-icon" title="New document" ng-click="goToNewDocument()"><i class="zmdi zmdi-file-plus"></i></button>
+	  
+            <button class="btn btn-primary btn-icon" title="New initiative"><i class="zmdi zmdi-lamp"></i></button>
+            <button class="btn btn-info btn-icon" title="Advanced search"><i class="zmdi zmdi-search"></i></button>
+            <button class="btn btn-success btn-icon" title="New project"><i class="zmdi zmdi-assignment-o"></i></button>
+            
+            <button class="btn btn-danger btn-icon" title="New template"><i class="zmdi zmdi-code"></i></button>
+            <button class="btn bgm-teal btn-icon" title="Share"><i class="zmdi zmdi-share"></i></button>
+            <button class="btn bgm-orange btn-icon" title="Download"><i class="zmdi zmdi-download"></i></button>
+            <button class="btn bgm-cyan btn-icon" title="Follow"><i class="zmdi zmdi-eye"></i></button>
+            <button class="btn bgm-lime btn-icon" title="Properties"><i class="zmdi zmdi-apps"></i></button>
+            <button class="btn bgm-lightgreen btn-icon" title="More options"><i class="zmdi zmdi-menu"></i></button>
+
+            <!--<button class="btn bgm-amber btn-icon"><i class="zmdi zmdi-check-all"></i></button>
+            <button class="btn bgm-gray btn-icon"><i class="zmdi zmdi-trending-up"></i></button>
+            <button class="btn bgm-lightblue btn-icon"><i class="zmdi zmdi-apps"></i></button>
+            <button class="btn bgm-deeporange btn-icon"><i class="zmdi zmdi-phone"></i></button>-->
+
+
+    </div>
+
+    <div class="card-body"ng-if="documents.length > 0">
+      <div class="table-responsive">
+        <table ng-table="cdCtrl.tableSorting" class="table table-striped table-vmiddle">
+          <tr ng-repeat="document in documents" data-ng-click="goToDocument(document)">
+            <td data-title="'ID'" sortable="'id'">
+              {{ document.id }}
+            </td>
+            <td data-title="'Code'" sortable="'name'">
+              {{ document.code }}
+            </td>
+            <td data-title="'Title'" sortable="'email'">
+              {{ document.title }}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="card-body card-padding"ng-if="documents.length == 0">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>This collection is empty.</h2>
+          <a class="btn bgm-bluegray" data-ng-click="goToUpload()">Upload document</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+</section>
+
+<footer id="footer" data-ng-include="'view/template/footer.html'"></footer>

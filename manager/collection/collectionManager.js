@@ -1,3 +1,4 @@
+"use strict"; 
 var chance = require('chance').Chance();
 var Collection = require(__base + 'model/collection/collection');
 var collectionDao = require(__base + 'dao/collection/collectionDao');

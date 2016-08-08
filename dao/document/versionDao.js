@@ -1,3 +1,5 @@
+"use strict"; 
+
 var Version = require(__base + 'model/document/version');
 var db = require(__base + 'core/db/db');
 var ObjectID = require('mongodb').ObjectID;

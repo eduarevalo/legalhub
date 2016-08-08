@@ -1,3 +1,5 @@
+"use strict"; 
+
 var Document = require(__base + 'model/document/document');
 var db = require(__base + 'core/db/db');
 var ObjectID = require('mongodb').ObjectID;
@@ -20,7 +22,8 @@ exports.getDocumentsCountByCollection = (collection, cb) => {
   db.count(collectionName, {collections: ""+collection}, {}, cb);
 }
 
-exports.search = (collectionModel, projection = {}, cb) => {
+exports.search = (collectionModel, projection, cb) => {
+  projection = projection || {};
   db.findAll(collectionName, toQuery(collectionModel), {}, function(err, documents){
     cb(err, fromDocument(documents));
   });

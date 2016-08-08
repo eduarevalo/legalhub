@@ -10,6 +10,9 @@ router.use('/document', documentRouter);
 var versionRouter = require(__base + 'routes/version');
 router.use('/version', versionRouter);
 
+var templateRouter = require(__base + 'routes/template');
+router.use('/template', templateRouter);
+
 /* index */
 router.get('/', function(req, res, next) {
   res.end('Unknown operation.');

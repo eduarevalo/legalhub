@@ -1,3 +1,4 @@
+"use strict"; 
 module.exports = class Model{
   update(obj){
     for (var prop in this) {

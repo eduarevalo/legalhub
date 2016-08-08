@@ -1,3 +1,4 @@
+"use strict"; 
 var Collection = require(__base + 'model/collection/collection');
 var db = require(__base + 'core/db/db');
 var ObjectID = require('mongodb').ObjectID;
@@ -17,7 +18,8 @@ exports.getCollectionByCode = (code, cb) => {
   });
 }
 
-exports.search = (searchKeys, projection = {},  cb) => {
+exports.search = (searchKeys, projection,  cb) => {
+  projection = projection || {};
   var countKeyIndex = projection.indexOf('count');
   if(countKeyIndex>-1){
     projection.splice(countKeyIndex, 1 );
