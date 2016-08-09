@@ -3,14 +3,20 @@ angular.module('legalHub').controller('uploadManagerCtrl', function ($scope, Upl
   self.collectionId = $state.params.collectionId;
   collection.search().then(function(data){
     $scope.collections = data;
-    $scope.formData = { collection: self.collectionId.length > 0 ? self.collectionId : data[0].id };
+    $scope.formData = { collection: self.collectionId.length > 0 ? self.collectionId : data[0].id, parser: ''};
   });
   $scope.uploadFiles = function(files, errFiles) {
     $scope.files = files;
     $scope.errFiles = errFiles;
+	var query = [];
+	for(var key in $scope.formData){
+		if($scope.formData[key].length > 0){
+			query.push(key + "=" + encodeURIComponent($scope.formData[key]));
+		}
+	}
     angular.forEach(files, function(file) {
       file.upload = Upload.upload({
-        url: API + 'document/upload?collection=' + encodeURIComponent($scope.formData.collection),
+        url: API + 'document/upload?' + query.join("&"),
         data: { file: file }
       });
 

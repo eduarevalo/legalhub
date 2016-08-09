@@ -21,6 +21,7 @@ router.get('/search', function (req, res) {
 router.post('/upload', function (req, res, next) {
   req.pipe(req.busboy);
   var collectionId = req.query['collection'] ? req.query['collection'] : '';
+  var parser = req.query['parser'] ? req.query['parser'] : '';
   req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
 	var fileExtension = filename.split('.');
 	var fileContent = '';
@@ -32,7 +33,8 @@ router.post('/upload', function (req, res, next) {
 	  documentManager.upload({
 	    fileName: filename,
 	    fileContent: fileContent,
-	    collectionId: collectionId
+	    collectionId: collectionId,
+		parser: parser
 	  }, function(){});
 	});
   });

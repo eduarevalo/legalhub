@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="billres.xsl"?>
+<bill bill-stage="Referred-in-Senate" bill-type="olc" dms-id="HE68AEC2317D34693BB3F4255CC863EA3" key="H" public-private="public" stage-count="1">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <dublinCore>
+            <dc:title>114 HR 5602 : To amend title 31, United States Code, to authorize the Secretary of the Treasury to include all funds when issuing certain geographic targeting orders, and for other purposes.</dc:title>
+            <dc:publisher>U.S. House of Representatives</dc:publisher>
+            <dc:date>2016-07-12</dc:date>
+            <dc:format>text/xml</dc:format>
+            <dc:language>EN</dc:language>
+            <dc:rights>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</dc:rights>
+        </dublinCore>
+    </metadata>
+    <form>
+        <distribution-code display="yes">IIB</distribution-code>
+        <congress display="yes">114th CONGRESS</congress>
+        <session display="yes">2d Session</session>
+        <legis-num display="yes">H. R. 5602</legis-num>
+        <current-chamber display="yes">IN THE SENATE OF THE UNITED STATES</current-chamber>
+        <action>
+            <action-date date="20160712">July 12, 2016</action-date>
+            <action-desc>Received; read twice and referred to the <committee-name committee-id="SSBK00">Committee on Banking, Housing, and Urban Affairs</committee-name></action-desc>
+        </action>
+        <legis-type>AN ACT</legis-type>
+        <official-title display="yes">To amend title 31, United States Code, to authorize the Secretary of the Treasury to include all funds when issuing certain geographic targeting orders, and for other purposes.</official-title>
+    </form>
+    <legis-body id="HE8008504CF9E4A1C94E2B3CA9A09AE62" style="OLC">
+        <section id="HEF29F51F5A8C4D468F7E3A6E004DD978" section-type="section-one">
+            <enum>1.</enum>
+            <header>Inclusion of all funds</header>
+            <subsection id="HF9B50995ED2240D793768F75E2AB949E">
+                <enum>(a)</enum>
+                <header>In general</header>
+                <text display-inline="yes-display-inline">Section 5326 of title 31, United States Code, is amended—</text>
+                <paragraph id="H63789D96820A4B4FB2A8F4D45DF97ED8">
+                    <enum>(1)</enum>
+                    <text>in the heading of such section, by striking <quote><header-in-text level="section" style="USC">coin and currency</header-in-text></quote>;</text>
+                </paragraph>
+                <paragraph id="H35B83FD425AD46C08041A4C644E7FDF4">
+                    <enum>(2)</enum>
+                    <text>in subsection (a)—</text>
+                    <subparagraph id="HA58D51A5B80C427782914AB53C475785">
+                        <enum>(A)</enum>
+                        <text>by striking <quote>subtitle and</quote> and inserting <quote>subtitle or to</quote>; and</text>
+                    </subparagraph>
+                    <subparagraph id="HAB96F11590364A52AB37C389C9E6603A">
+                        <enum>(B)</enum>
+                        <text display-inline="yes-display-inline">in paragraph (1)(A), by striking <quote>United States coins or currency (or such other monetary instruments as the Secretary may describe in such order)</quote> and inserting <quote>funds (as the Secretary may describe in such order),</quote>; and</text>
+                    </subparagraph>
+                </paragraph>
+                <paragraph id="H3831423D8C324A918F5E798FF2D53ACF">
+                    <enum>(3)</enum>
+                    <text>in subsection (b)—</text>
+                    <subparagraph id="HB3790B0760894052A555FDF3A55A2905">
+                        <enum>(A)</enum>
+                        <text display-inline="yes-display-inline">in paragraph (1)(A), by striking <quote>coins or currency (or monetary instruments)</quote> and inserting <quote>funds</quote>; and</text>
+                    </subparagraph>
+                    <subparagraph id="H8678566BD02E422FB62D3F22D9AE0F4F">
+                        <enum>(B)</enum>
+                        <text>in paragraph (2), by striking <quote>coins or currency (or such other monetary instruments as the Secretary may describe in the regulation or order)</quote> and inserting <quote>funds (as the Secretary may describe in the regulation or order)</quote>.</text>
+                    </subparagraph>
+                </paragraph>
+            </subsection>
+            <subsection id="HC04D39B158484020B13239B406F87E46">
+                <enum>(b)</enum>
+                <header>Clerical amendment</header>
+                <text>The table of contents for <external-xref legal-doc="usc-chapter" parsable-cite="usc-chapter/31/53">chapter 53</external-xref> of title 31, United States Code, is amended in the item relating to section 5326 by striking <quote>coin and currency</quote>.</text>
+            </subsection>
+        </section>
+    </legis-body>
+    <attestation>
+        <attestation-group>
+            <attestation-date chamber="House" date="20160711">Passed the House of Representatives July 11, 2016.</attestation-date>
+            <attestor display="yes">Karen L. Haas,</attestor>
+            <role>Clerk</role>
+        </attestation-group>
+    </attestation>
+</bill>

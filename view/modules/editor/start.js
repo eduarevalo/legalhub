@@ -1,0 +1,3 @@
+var startEditor = function(id){
+	
+}

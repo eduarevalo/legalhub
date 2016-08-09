@@ -2216,7 +2216,7 @@ body.login-content:before {
 #header-2 .skin-switch {
   position: absolute;
   right: 58px;
-  bottom: 23px;
+  bottom: -20px;
   z-index: 1;
 }
 

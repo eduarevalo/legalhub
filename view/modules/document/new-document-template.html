@@ -1,44 +1,504 @@
-<div class="container">
-  <div class="block-header">
-    <h2>New document</h2>
+<div ng-controller="newDocumentCtrl as newDocCtrl">
 
-    <ul class="actions">
-      <li>
-        <a href="">
-          <i class="zmdi zmdi-trending-up"></i>
-        </a>
-      </li>
-      <li>
-        <a href="">
-          <i class="zmdi zmdi-check-all"></i>
-        </a>
-      </li>
-      <li class="dropdown" uib-dropdown>
-        <a href="" uib-dropdown-toggle>
-          <i class="zmdi zmdi-more-vert"></i>
-        </a>
+	<header id="header-2" data-current-skin="{{mactrl.currentSkin}}">
 
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li>
-            <a href="">Refresh</a>
-          </li>
-          <li>
-            <a href="">Manage Widgets</a>
-          </li>
-          <li>
-            <a href="">Widgets Settings</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
+		<ul class="header-inner clearfix">
+			<li id="menu-trigger" data-target="mainmenu" data-toggle-sidebar data-model-left="mactrl.sidebarToggle.left" data-ng-class="{ 'open': mactrl.sidebarToggle.left === true }">
+				<div class="line-wrap">
+					<div class="line top"></div>
+					<div class="line center"></div>
+					<div class="line bottom"></div>  
+				</div>
+			</li>
 
-  </div>
+			<li class="logo hidden-xs">
+				<a data-ui-sref="home">LegalHub</a>
+			</li>
 
-  <div class="card">
+			<li class="pull-right">
+				<ul class="top-menu">
+					<li class="dropdown" uib-dropdown>
+						<a uib-dropdown-toggle href="">
+							<i class="tmn-counts">6</i>
+							<i class="tm-icon zmdi zmdi-email"></i>
+						</a>
+						<div class="dropdown-menu dropdown-menu-lg pull-right">
+							<div class="listview">
+								<div class="lv-header">
+									Messages
+								</div>
+								<div class="lv-body">
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/1.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">David Belle</div>
+												<small class="lv-small">Cum sociis natoque penatibus et magnis dis parturient montes</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/2.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Jonathan Morris</div>
+												<small class="lv-small">Nunc quis diam diamurabitur at dolor elementum, dictum turpis vel</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/3.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Fredric Mitchell Jr.</div>
+												<small class="lv-small">Phasellus a ante et est ornare accumsan at vel magnauis blandit turpis at augue ultricies</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/4.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Glenn Jecobs</div>
+												<small class="lv-small">Ut vitae lacus sem ellentesque maximus, nunc sit amet varius dignissim, dui est consectetur neque</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/4.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Bill Phillips</div>
+												<small class="lv-small">Proin laoreet commodo eros id faucibus. Donec ligula quam, imperdiet vel ante placerat</small>
+											</div>
+										</div>
+									</a>
+								</div>
+								<a class="lv-footer" href="">View All</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown" uib-dropdown>
+						<a uib-dropdown-toggle>
+							<i class="tmn-counts">9</i>
+							<i class="tm-icon zmdi zmdi-notifications"></i>
+						</a>
+						<div class="dropdown-menu dropdown-menu-lg pull-right">
+							<div class="listview" id="notifications">
+								<div class="lv-header">
+									Notification
 
-    <div class="card-body card-padding" ng-controller="newDocumentCtrl">
-      
-    </div>
-  </div>
+									<ul class="actions">
+										<li class="dropdown">
+											<a href="" data-clear="notification">
+												<i class="zmdi zmdi-check-all"></i>
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="lv-body">
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/1.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">David Belle</div>
+												<small class="lv-small">Cum sociis natoque penatibus et magnis dis parturient montes</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/2.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Jonathan Morris</div>
+												<small class="lv-small">Nunc quis diam diamurabitur at dolor elementum, dictum turpis vel</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/3.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Fredric Mitchell Jr.</div>
+												<small class="lv-small">Phasellus a ante et est ornare accumsan at vel magnauis blandit turpis at augue ultricies</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/4.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Glenn Jecobs</div>
+												<small class="lv-small">Ut vitae lacus sem ellentesque maximus, nunc sit amet varius dignissim, dui est consectetur neque</small>
+											</div>
+										</div>
+									</a>
+									<a class="lv-item" href="">
+										<div class="media">
+											<div class="pull-left">
+												<img class="lv-img-sm" src="img/profile-pics/4.jpg" alt="">
+											</div>
+											<div class="media-body">
+												<div class="lv-title">Bill Phillips</div>
+												<small class="lv-small">Proin laoreet commodo eros id faucibus. Donec ligula quam, imperdiet vel ante placerat</small>
+											</div>
+										</div>
+									</a>
+								</div>
 
+								<a class="lv-footer" href="">View Previous</a>
+							</div>
+
+						</div>
+					</li>
+					<li class="dropdown" uib-dropdown>
+						<a uib-dropdown-toggle href="">
+							<i class="tmn-counts">2</i>
+							<i class="tm-icon zmdi zmdi-view-list-alt"></i>
+						</a>
+						<div class="dropdown-menu pull-right dropdown-menu-lg">
+							<div class="listview">
+								<div class="lv-header">
+									Tasks
+								</div>
+								<div class="lv-body">
+									<div class="lv-item">
+										<div class="lv-title m-b-5">HTML5 Validation Report</div>
+
+										<div class="progress">
+											<div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%">
+												<span class="sr-only">95% Complete (success)</span>
+											</div>
+										</div>
+									</div>
+									<div class="lv-item">
+										<div class="lv-title m-b-5">Google Chrome Extension</div>
+
+										<div class="progress">
+											<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+												<span class="sr-only">80% Complete (success)</span>
+											</div>
+										</div>
+									</div>
+									<div class="lv-item">
+										<div class="lv-title m-b-5">Social Intranet Projects</div>
+
+										<div class="progress">
+											<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+												<span class="sr-only">20% Complete</span>
+											</div>
+										</div>
+									</div>
+									<div class="lv-item">
+										<div class="lv-title m-b-5">Bootstrap Admin Template</div>
+
+										<div class="progress">
+											<div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+												<span class="sr-only">60% Complete (warning)</span>
+											</div>
+										</div>
+									</div>
+									<div class="lv-item">
+										<div class="lv-title m-b-5">Youtube Client App</div>
+
+										<div class="progress">
+											<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">
+												<span class="sr-only">80% Complete (danger)</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<a class="lv-footer" href="">View All</a>
+							</div>
+						</div>
+					</li>
+					<li class="dropdown" uib-dropdown>
+						<a uib-dropdown-toggle href=""><i class="tm-icon zmdi zmdi-more-vert"></i></a>
+						<ul class="dropdown-menu dm-icon pull-right">
+							<li class="hidden-xs">
+								<a data-ng-click="hctrl.fullScreen()" href=""><i class="zmdi zmdi-fullscreen"></i> Toggle Fullscreen</a>
+							</li>
+							<li>
+								<a data-ng-click="hctrl.clearLocalStorage()" href=""><i class="zmdi zmdi-delete"></i> Clear Local Storage</a>
+							</li>
+							<li>
+								<a href=""><i class="zmdi zmdi-face"></i> Privacy Settings</a>
+							</li>
+							<li>
+								<a href=""><i class="zmdi zmdi-settings"></i> Other Settings</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+
+		<!--<div class="search">
+			<div class="fg-line">
+				<input type="text" class="form-control" placeholder="Search...">
+			</div>
+		</div>-->
+
+		<nav class="ha-menu" ng-if="mode == 'edit'">
+			<ul>
+				<li class="waves-effect" data-ui-sref-active="active">
+					<a data-ui-sref="home" data-ng-click="mactrl.sidebarStat($event)">Home</a>
+				</li>
+
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>File</div>
+
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active" ><a ng-click="newDocCtrl.goToNew()">New...</a></li>
+						<li data-ui-sref-active="active" ><a data-ui-sref="headers.textual-menu">Save</a></li>
+						<li data-ui-sref-active="active" ><a data-ui-sref="headers.image-logo">Save as...</a></li>
+						<li data-ui-sref-active="active" ><a data-ui-sref="headers.mainmenu-on-top">Save as template...</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>Insert</div>
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Elements...</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Image/File</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widgets">Table</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>Format</div>
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a data-ui-sref="tables.tables">Page size</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="tables.data-table">Data Tables</a></li>
+					</ul>
+				</li>
+
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>References</div>
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a data-ui-sref="form.basic-form-elements">Basic Form Elements</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.form-components">Form Components</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.form-examples">Form Examples</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.form-validations">Form Validation</a></li>
+					</ul>
+				</li>
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>View</div>
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.ui-bootstrap">View as PDF</a></li>
+						<!--<li data-ui-sref-active="active"><a data-ui-sref="user-interface.colors">Colors</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.animations">Animations</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.box-shadow">Box Shadow</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.buttons">Buttons</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.icons">Icons</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.alerts">Alerts</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.preloaders">Preloaders</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.notifications-dialogs">Notifications & Dialogs</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.media">Media</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.other-components">Others</a></li>-->
+					</ul>
+				</li>
+				<li class="dropdown" uib-dropdown>
+					<div class="waves-effect" uib-dropdown-toggle>Themes</div>
+					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a ng-click="changeStyle('default')">Default</a></li>
+						<li data-ui-sref-active="active"><a ng-click="changeStyle('paper')">Paper</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+
+		<div class="skin-switch dropdown hidden-xs" uib-dropdown ngif="mode == 'edit'">
+			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-wrench"></i></button>
+			<div class="dropdown-menu">
+				<span class="ss-skin zmdi zmdi-code"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-wrench"></span>
+			</div>
+		</div>
+
+
+	</header>
+-->
+<!--<header id="header-2" data-current-skin="{{mactrl.currentSkin}}" data-ng-include src="'view/modules/document/new-document-header.html'" data-ng-controller="headerCtrl as hctrl"></header>-->
+
+	<section id="main">
+		<aside id="sidebar" data-ng-include src="'view/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }"></aside>
+
+		<aside id="chat" data-ng-include src="'view/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+		<section id="content" class="page-view">
+		<div class="container" >
+		<div ng-if="mode == 'new'">
+			<div class="block-header">
+				<h2>New Document</h2>
+			</div>
+						
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Bill</h2>
+							<button class="btn bgm-green btn-float waves-effect" ng-click="goToTemplate('bill')"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Bill template is used for describing the structure and content of a bill.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Act</h2>
+							<button class="btn bgm-green btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+							Act template is used for describing the structure and content of an act.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Amendment</h2>
+							<button class="btn bgm-green btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Amendment template specifies the overall content model of the document types that describe amendments.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Debate</h2>
+							<button class="btn bgm-green btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Debate template specifies the overall content model of the document types that describe debates.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Judgement</h2>
+							<button class="btn bgm-green btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Judgement template specifies the overall content model of the document types that describe judgments.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Open Structure</h2>
+							<button class="btn bgm-gray btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Open template specifies the overall content model of all the document types that do not have a specific and peculiar structure.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Collection Structure</h2>
+							<button class="btn bgm-gray btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Collection template specifies the overall content model of the document types that are collections of other documents.
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="card">
+						<div class="card-header bgm-bluegray m-b-20">
+							<h2>Portion Structure</h2>
+							<button class="btn bgm-gray btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+						</div>
+						<div class="card-body card-padding">
+						Portion template specifies the overall content model of the document type that is a portion of another document.
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div ng-if="mode == 'edit'">
+		<div class="block-header">
+				<h2>New document</h2>
+
+				<ul class="actions">
+				  <!--<li>
+					<a href="">
+					  <i class="zmdi zmdi-trending-up"></i>
+					</a>
+				  </li>-->
+				  <li>
+					<a href="">
+					  <i class="zmdi zmdi-check-all"></i>
+					</a>
+				  </li>
+				  <li class="dropdown" uib-dropdown>
+					<a href="" uib-dropdown-toggle>
+					  <i class="zmdi zmdi-more-vert"></i>
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-right">
+					  <li>
+						<a href="">Refresh</a>
+					  </li>
+					  <!--<li>
+						<a href="">Manage Widgets</a>
+					  </li>-->
+					  <li>
+						<a href="">Properties</a>
+					  </li>
+					</ul>
+				  </li>
+				</ul>
+
+			  </div>
+			  <div class="card">
+					<div class="{{style}}">
+						<div id="line-numbers" style="width: 5px;float:left;left:-50px;position:relative;">1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/></div>
+						<div ng-bind-html="getHtml(content)" id="editor" contenteditable="true">
+				  
+						</div>
+					</div>
+			  </div>
+		</div>
+	</div>
+
+		</section>
+
+	</section>
+
+	<footer id="footer" data-ng-include src="'view/modules/home/footer.html'"></footer>
 </div>

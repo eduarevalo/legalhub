@@ -6,8 +6,6 @@ legalHub
 
         var self = this;
 
-        $scope.appTitle = 'LegalHub';
-
         function handleRequest(res) {
         var token = res.data ? res.data.token : null;
         if(token) { console.log('JWT:', token); }

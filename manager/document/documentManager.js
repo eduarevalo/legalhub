@@ -34,7 +34,7 @@ var upload = (data, cb) => {
     if(err) {
         return console.log(err);
     }
-	var parser = parserFactory.getParser(data.fileName, data.fileContent);
+	var parser = data.parser ? parserFactory.getParser(data.parser) : parserFactory.guessParser(data.fileName, data.fileContent);
 	parser.marshall(tmpPath, function(content){
 		  let document = new Document();
 		  document.title = data.fileName.split('.')[0];

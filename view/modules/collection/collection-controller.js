@@ -20,7 +20,7 @@ angular.module('legalHub').controller('collectionCtrl', function($filter, $scope
       })
   });
   $scope.goToNewDocument = function(){
-	$state.go('manager.new-document', {collectionId: self.collectionId});
+	$state.go('new-document', {collectionId: self.collectionId});
   }
   $scope.goToDocument = function(document){
     $state.go('document', {id: document.id, code: document.code});

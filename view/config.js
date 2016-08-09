@@ -273,7 +273,7 @@ legalHub
                 }
             })
 
-            .state ('manager.new-document', {
+            .state ('new-document', {
                 url: '/new-document',
                 templateUrl: 'view/modules/document/new-document-template.html',
 				params: {
@@ -281,7 +281,13 @@ legalHub
 				},
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
-                        return $ocLazyLoad.load('view/modules/document/new-document-controller.js');
+                        return $ocLazyLoad.load([
+						'view/modules/version/version-service.js',
+						'view/modules/document/new-document-controller.js',
+						'view/modules/editor/editor.js',
+						'view/modules/editor/start.js',
+						'view/modules/editor/css/default.css',
+						'view/modules/editor/css/paper.css']);
                     }
                 }
             })
