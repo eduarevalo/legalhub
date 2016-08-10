@@ -7,7 +7,7 @@
 				<div class="line-wrap">
 					<div class="line top"></div>
 					<div class="line center"></div>
-					<div class="line bottom"></div>  
+					<div class="line bottom"></div>
 				</div>
 			</li>
 
@@ -304,6 +304,7 @@
 				<li class="dropdown" uib-dropdown>
 					<div class="waves-effect" uib-dropdown-toggle>View</div>
 					<ul class="dropdown-menu">
+						<li data-ui-sref-active="active"><a onClick="toggleLineNumbers()"><i class="zmdi zmdi-format-list-numbered"></i> Line Numbers</a></li>
 						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.ui-bootstrap">View as PDF</a></li>
 						<!--<li data-ui-sref-active="active"><a data-ui-sref="user-interface.colors">Colors</a></li>
 						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.animations">Animations</a></li>
@@ -320,8 +321,8 @@
 				<li class="dropdown" uib-dropdown>
 					<div class="waves-effect" uib-dropdown-toggle>Themes</div>
 					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a ng-click="changeStyle('default')">Default</a></li>
-						<li data-ui-sref-active="active"><a ng-click="changeStyle('paper')">Paper</a></li>
+						<li data-ui-sref-active="active"><a onClick="setPageStyle('default')">Default</a></li>
+						<li data-ui-sref-active="active"><a onClick="setPageStyle('paper')">Paper</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -357,7 +358,7 @@
 			<div class="block-header">
 				<h2>New Document</h2>
 			</div>
-						
+
 			<div class="row">
 				<div class="col-sm-3">
 					<div class="card">
@@ -486,10 +487,10 @@
 
 			  </div>
 			  <div class="card">
-					<div class="{{style}}">
-						<div id="line-numbers" style="width: 5px;float:left;left:-50px;position:relative;">1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/>1<br/>2<br/></div>
-						<div ng-bind-html="getHtml(content)" id="editor" contenteditable="true">
-				  
+					<div style="display:flex;" id="page-container">
+						<div id="line-numbers" style="flex: 0 0 25px; border-right: 1px solid; margin-right:10px;"></div>
+						<div ng-bind-html="getHtml(content)" style="flex:1;" id="editor" contenteditable="true" onkeyup="setLineNumbers()">
+
 						</div>
 					</div>
 			  </div>
