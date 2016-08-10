@@ -1,3 +1,6 @@
-.default {
+.document {
 	padding: 1in;
+}
+.line-number{
+	left: 50px;
 }

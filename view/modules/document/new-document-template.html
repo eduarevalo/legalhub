@@ -269,9 +269,20 @@
 
 					<ul class="dropdown-menu">
 						<li data-ui-sref-active="active" ><a ng-click="newDocCtrl.goToNew()">New...</a></li>
+						<li data-ui-sref-active="active" ><a ng-click="newDocCtrl.goToOpen()">Open...</a></li>
 						<li data-ui-sref-active="active" ><a data-ui-sref="headers.textual-menu">Save</a></li>
 						<li data-ui-sref-active="active" ><a data-ui-sref="headers.image-logo">Save as...</a></li>
 						<li data-ui-sref-active="active" ><a data-ui-sref="headers.mainmenu-on-top">Save as template...</a></li>
+						<li class="sub-menu">
+						  <a href="" class="stop-propagate" toggle-submenu>Export as</a>
+						  <ul>
+							<li><a href="">Xml USLM</a></li>
+							<li><a href="">Xml AKN</a></li>
+							<li><a href="">Html</a></li>
+							<li><a href="/api/rendition/get?id={{documentId}}&type=pdf" target="_blank" download="{{documentId}}.pdf">Pdf</a></li>
+							<li><a href="">Epub</a></li>
+						  </ul>
+						</li>
 					</ul>
 				</li>
 
@@ -279,8 +290,8 @@
 					<div class="waves-effect" uib-dropdown-toggle>Insert</div>
 					<ul class="dropdown-menu">
 						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Elements...</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Image/File</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widgets">Table</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Image/File...</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widgets">Table...</a></li>
 					</ul>
 				</li>
 
@@ -295,9 +306,9 @@
 				<li class="dropdown" uib-dropdown>
 					<div class="waves-effect" uib-dropdown-toggle>References</div>
 					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a data-ui-sref="form.basic-form-elements">Basic Form Elements</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="form.form-components">Form Components</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="form.form-examples">Form Examples</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.basic-form-elements">Insert/Update Table of contents</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.form-components">Keywords</a></li>
+						<li data-ui-sref-active="active"><a data-ui-sref="form.form-examples">Validate references</a></li>
 						<li data-ui-sref-active="active"><a data-ui-sref="form.form-validations">Form Validation</a></li>
 					</ul>
 				</li>
@@ -486,10 +497,10 @@
 				</ul>
 
 			  </div>
-			  <div class="card">
-					<div style="display:flex;" id="page-container">
-						<div id="line-numbers" style="flex: 0 0 25px; border-right: 1px solid; margin-right:10px;"></div>
-						<div ng-bind-html="getHtml(content)" style="flex:1;" id="editor" contenteditable="true" onkeyup="setLineNumbers()">
+			  <div class="card" id="document-card">
+					<div style="display:flex;">
+						<div id="line-numbers"></div>
+						<div ng-bind-html="getHtml(content)" style="flex:1;" id="editor" contenteditable="true" onkeyup="setLineNumbers()" class="document">
 
 						</div>
 					</div>

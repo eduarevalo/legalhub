@@ -1,4 +1,53 @@
-.paper {
-	padding: 2in;
+#document-card{
+	padding: 1in;
+	width: 8.5in;
+	height: 11in;
 	background-image: url(../img/background.gif);
+}
+@page {
+	margin: 1in;
+	size: 8.5in 11in;
+	background-image: url(../img/background.gif);
+}
+.document {
+	padding-left: 0.15in;
+}
+div[itemtype=usbill]{
+	font-family: Times, "Times New Roman", serif;
+	font-size: 12pt;
+}
+p[itemtype=section]{
+	font-weight: bold;
+	text-transform: uppercase;
+}
+p[itemtype=subsection]{
+	text-indent: 2em;
+}
+p[itemtype=paragraph]{
+	text-indent: 2em;
+    margin-left: 2em;
+}
+p[itemtype=subparagraph]{
+	text-indent: 2em;
+    margin-left: 4em;
+    text-align: left;
+}
+span[itemtype=header-in-text]{
+	font-weight: bold;
+}
+span[itemtype=header]{
+	/*word-spacing: 2;
+    letter-spacing: 1;*/
+    font-variant: small-caps;
+    text-transform: capitalize;
+}
+span[itemtype=header]::after{
+	content: '.—'
+}
+.line-number{
+	left: 90px;
+}
+div{
+	-ah-line-number: show;
+	-ah-line-number-text-align:  end;
 }

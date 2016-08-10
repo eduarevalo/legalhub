@@ -1,0 +1,19 @@
+.line-number{
+  position: absolute;
+  margin: 0;
+  padding: 0;
+}
+/*#line-numbers{
+	flex: 0 0 0px; 
+	border-right: 1px solid; 
+	margin-right:-1px;    
+	width: 25px;
+	left: 150px;
+    position: relative;
+}*/
+span[itemtype=quote]::before{
+	content: '“'
+}
+span[itemtype=quote]::after{
+	content: '”'
+}

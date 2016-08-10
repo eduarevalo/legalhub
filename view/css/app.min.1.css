@@ -10869,7 +10869,7 @@ h6 small,
 .sub-menu > a:before,
 .sub-menu > a:after {
   position: absolute;
-  top: 12px;
+  top: 6px;
   color: #575757;
   font-family: 'Material-Design-Iconic-Font';
   font-size: 17px;

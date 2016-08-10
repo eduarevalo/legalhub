@@ -13,25 +13,12 @@ router.use('/version', versionRouter);
 var templateRouter = require(__base + 'routes/template');
 router.use('/template', templateRouter);
 
+var renditionRouter = require(__base + 'routes/rendition');
+router.use('/rendition', renditionRouter);
+
 /* index */
 router.get('/', function(req, res, next) {
   res.end('Unknown operation.');
 });
-
-/*router.post('/upload', function (req, res, next) {
-  var fstream;
-  req.pipe(req.busboy);
-  req.busboy.on('file', function (fieldname, file, filename) {
-    console.log("Uploading: " + filename);
-
-    //Path where image will be uploaded
-    fstream = fs.createWriteStream(__base + 'data/upload/' + filename);
-    file.pipe(fstream);
-    fstream.on('close', function () {
-      console.log("Upload Finished of " + filename);
-      res.redirect('back');           //where to go next
-    });
-  });
-});*/
 
 module.exports = router;
