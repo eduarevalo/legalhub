@@ -161,3 +161,12 @@ var legalHubEditor = function(el, schema, events, config){
     lhe.setFirstNode();
 	})();
 };
+var legalHub = { tools: {
+  nextNumber: function(element){
+    var value = element.innerHTML;
+    var patt = /[0-9]+/;
+    var tmpString = value.split('').reverse().join('');
+    var newValue = parseInt(patt.exec(tmpString))+1;
+    element.innerHTML = tmpString.replace(patt, newValue).split('').reverse().join('');
+  }
+}}

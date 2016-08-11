@@ -5,6 +5,7 @@ var split = function(position, source, target){
 	source.innerHTML = source.innerHTML.substring(0, position.start);
 	var p = source.closest('p');
 	var newNode = p.cloneNode(true);
+	legalHub.tools.nextNumber(newNode.querySelector('[itemtype=enum]'));
 	var newSource = newNode.querySelector('[flag-split]');
 	newSource.removeAttribute('flag-split', '');
 	newSource.innerHTML = textToTransfer;
