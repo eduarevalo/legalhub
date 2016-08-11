@@ -1,6 +1,6 @@
 angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, version, rendition, $sce) {
   $scope.mode ='new';
-  $scope.documentId = '57a9f8d1dec2d81eecfd4436'/*'57aa8b1830ecae0f0c247357'*/;
+  $scope.documentId = '57abdd6bc46e79118c8b6143';
   $scope.goToNew = function(){
 	$scope.mode = 'new';
 	$timeout(function() {

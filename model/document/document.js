@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 var Model = require(__base + 'model/model');
 
 module.exports = class Document extends Model{
@@ -12,6 +12,7 @@ module.exports = class Document extends Model{
     this.fileName = undefined;
     this.owner = undefined;
     this.collections = undefined;
+    this.qrCode = undefined;
   }
   setCollection(collectionId){
     if(this.collections === undefined){

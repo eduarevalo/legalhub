@@ -1,5 +1,18 @@
-var split = function(params, source, target){
+var split = function(position, source, target){
 	console.log('split');
+	source.setAttribute('flag-split', '');
+	var textToTransfer = source.innerHTML.substring(position.start);
+	source.innerHTML = source.innerHTML.substring(0, position.start);
+	var p = source.closest('p');
+	var newNode = p.cloneNode(true);
+	var newSource = newNode.querySelector('[flag-split]');
+	newSource.removeAttribute('flag-split', '');
+	newSource.innerHTML = textToTransfer;
+	if(p.nextSibling){
+		p.parentNode.insertBefore(newNode, p.nextSibling);
+	}else{
+		p.parentNode.appendChild(newNode);
+	}
 }
 var join = function(params, source, target){
 	console.log('join');
@@ -15,13 +28,13 @@ var schema = {
 		tag: 'p',
 		template: '',
 		attrs: [],
-		children: ['number', 'heading']
+		children: ['enum', 'header']
 	},
-	'number': {
+	'enum': {
 		type: 'span',
 		tag: 'span',
 	},
-	'heading': {
+	'header': {
 		type: 'span',
 		tag: 'span'
 	}

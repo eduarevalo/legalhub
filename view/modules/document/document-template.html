@@ -13,11 +13,12 @@
         <div class="card-header">
           <h2>{{ document.title }} <small>{{ document.collections }}</small></h2>
           <a class="btn bgm-bluegray" data-ng-click="goToVersions(document)">View version history</a>
+          <img src="view/{{document.qrCode}}" class="pull-right" style="height: 80px;margin-top:-40px;position:relative;"/>
         </div>
 
         <div class="card-body card-padding" ng-bind-html="getHtml(content)">
         </div>
-		
+
       </div>
 
     </div>

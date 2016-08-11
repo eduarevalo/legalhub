@@ -15,6 +15,10 @@
 div[itemtype=usbill]{
 	font-family: Times, "Times New Roman", serif;
 	font-size: 12pt;
+	background-image: url(../img/EnrolledTitle_114.jpg);
+	padding-top: 180px;
+	background-repeat: no-repeat;
+	background-position: center top;
 }
 p[itemtype=section]{
 	font-weight: bold;

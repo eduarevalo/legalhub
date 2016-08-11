@@ -61,6 +61,7 @@ var legalHubEditor = function(el, schema, events, config){
 		content: ['section', 'table', 'blockquote']
 	};
 	this.events = {};
+  this.firstNode;
 	this.initEvents = function(){
 		var keyEvents = [];
 		for(var elementName in this.eventsConfig){
@@ -75,22 +76,50 @@ var legalHubEditor = function(el, schema, events, config){
 				}
 				var node = lhe.getSelectionStart();
 				var tag = node.getAttribute('itemtype');
+        if(node == lhe.firstNode){
+          console.log('firstNode');
+        }
+        var position = lhe.getCaretPosition();
+        console.log(position);
 				if(lhe.eventsConfig[tag] && lhe.eventsConfig[tag][eventName] && lhe.eventsConfig[tag][eventName][event.keyCode]){
-					var position = lhe.getCaretPosition();
-					console.log(position);
 					switch(position.position){
 						case 'start':
-							return lhe.eventsConfig[tag][eventName][event.keyCode].start({}, node, node);
+              if(lhe.eventsConfig[tag][eventName][event.keyCode].start){
+							     return lhe.eventsConfig[tag][eventName][event.keyCode].start(position, node, node);
+              }
 						case 'end':
-							return lhe.eventsConfig[tag][eventName][event.keyCode].end({}, node, node);
+              if(lhe.eventsConfig[tag][eventName][event.keyCode].end){
+			             return lhe.eventsConfig[tag][eventName][event.keyCode].end(position, node, node);
+              }
 						default:
-							return lhe.eventsConfig[tag][eventName][event.keyCode].middle({}, node, node);
+              if(lhe.eventsConfig[tag][eventName][event.keyCode].middle){
+							     return lhe.eventsConfig[tag][eventName][event.keyCode].middle(position, node, node);
+              }
 					}
 				}
 				return true;
 			});
 		})
 	};
+  this.setFirstNode = function(node){
+    if(node === undefined){
+      lhe.firstNode = null;
+      node = lhe.element;
+    }
+    if(node.nodeType == 3){
+      if(node.data.trim().length>0){
+        lhe.firstNode = node.parentNode;
+        return;
+      }
+    }else if(node.nodeType == 1){
+      for(var it=0; it<node.childNodes.length; it++){
+        lhe.setFirstNode(node.childNodes[it]);
+        if(lhe.firstNode){
+          return;
+        }
+      }
+    }
+  };
 	this.getSelectionStart = function() {
 		var node = document.getSelection().anchorNode;
 		return (node.nodeType == 3 ? node.parentNode : node);
@@ -105,7 +134,7 @@ var legalHubEditor = function(el, schema, events, config){
 		  if (range.endContainer === range.startContainer) {
 			if(range.endOffset === range.startOffset){
 				var position = 'middle';
-				if(range.startContainer.data.trim().length == 0){
+				if(range.startContainer.data.trim().length == 0 || range.endOffset == 0){
 					position = 'start';
 				}else if(range.endOffset == range.endContainer.length){
 					position = 'end';
@@ -129,5 +158,6 @@ var legalHubEditor = function(el, schema, events, config){
 	};
 	(this.init = function(){
 		lhe.initEvents();
+    lhe.setFirstNode();
 	})();
 };
