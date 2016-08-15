@@ -8,4 +8,20 @@ angular.module('legalHub').service('rendition', function($http, API) {
       }
     });
   }
+  this.generate = function(type, documentId){
+    return $http({ method: 'POST', url: API + 'rendition/generate', responseType: 'arraybuffer', data: {type: type, content: document.getElementById('editor').innerHTML}}).then(function(response){
+      if(response.data){
+        var blob = new Blob([response.data], {
+			type: 'application/xml'
+		});
+		
+		var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = documentId + '.' + type;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+		
+      }
+    });
+  }
 })

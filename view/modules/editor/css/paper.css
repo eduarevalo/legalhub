@@ -48,9 +48,6 @@ span[itemtype=header]{
 span[itemtype=header]::after{
 	content: '.—'
 }
-.line-number{
-	left: 90px;
-}
 div{
 	-ah-line-number: show;
 	-ah-line-number-text-align:  end;

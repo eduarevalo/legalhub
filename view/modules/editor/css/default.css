@@ -1,6 +1,19 @@
 .document {
 	padding: 1in;
 }
-.line-number{
-	left: 50px;
+/*p::before{
+	content: '<' attr(itemtype) '>';
+	color: red;
 }
+p::after{
+	content: '</' attr(itemtype) '>';
+	color: red;
+}
+span::before{
+	content: '<' attr(itemtype) '>';
+	color: blue;
+}
+span::after{
+	content: '</' attr(itemtype) '>';
+	color: blue;
+}*/

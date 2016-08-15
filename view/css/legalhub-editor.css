@@ -1,0 +1,16 @@
+.toolbar-menu{
+	height: 45px;
+}
+.toolbar-submenu{
+	padding: 20px;
+}
+.menu-spacer{
+	padding-left: 25px;
+}
+#header-2 {
+    position: fixed;
+	width: 100%;
+}
+#main{
+	margin-top: 70px;
+}

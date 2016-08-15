@@ -17,3 +17,21 @@ span[itemtype=quote]::before{
 span[itemtype=quote]::after{
 	content: '”'
 }
+#line-numbers{
+	position: absolute;
+	left: 450px;
+	z-index: 4;
+}
+p[itemtype=subsection]{
+	text-indent: 2em;
+}
+p[itemtype=paragraph]{
+	text-indent: 2em;
+    margin-left: 2em;
+}
+span[itemtype=header][empty]::after {
+    content: 'Type your Header';
+	color: #dbdbdb;
+	font-style: italic;
+    display: inline-block;
+}

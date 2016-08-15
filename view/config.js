@@ -285,7 +285,7 @@ legalHub
 						'view/modules/version/version-service.js',
 						'view/modules/rendition/rendition-service.js',
 						'view/modules/document/new-document-controller.js',
-						'view/modules/editor/schema.js',
+						'view/modules/editor/schema-new.js',
 						'view/modules/editor/editor.js',
 						'view/modules/editor/start.js',
 						'view/modules/editor/css/common.css',

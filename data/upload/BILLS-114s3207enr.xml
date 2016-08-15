@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="billres.xsl"?>
+<!DOCTYPE bill PUBLIC "-//US Congress//DTDs/bill.dtd//EN" "bill.dtd">
+<bill bill-stage="Enrolled-Bill" bill-type="olc" dms-id="A1" public-print="no" public-private="public" stage-count="1" star-print="no-star-print"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dublinCore>
+        <dc:title> S3207 ENR: To authorize the National Library Service for the Blind and Physically Handicapped to provide playback equipment in all formats. </dc:title>
+        <dc:publisher>U.S. Senate</dc:publisher>
+        <dc:date></dc:date>
+        <dc:format>text/xml</dc:format>
+        <dc:language>EN</dc:language>
+        <dc:rights>Pursuant to Title 17 Section 105 of the United States Code, this file is not subject to copyright protection and is in the public domain.</dc:rights>
+    </dublinCore>
+</metadata>
+    <form display="yes">
+        <congress>One Hundred Fourteenth Congress of the United States of America</congress><session display="yes">2d Session</session><enrolled-dateline display="yes">Begun and held at the City of Washington on Monday, the fourth day of January, two thousand and
+            sixteen</enrolled-dateline><legis-num display="yes">S. 3207</legis-num><current-chamber display="no">IN THE SENATE OF THE UNITED STATES</current-chamber><legis-type display="yes">AN ACT</legis-type><official-title display="yes">To authorize the National Library Service for the Blind and Physically
+                Handicapped to provide playback equipment in all formats. </official-title></form><legis-body display-enacting-clause="yes-display-enacting-clause" id="H19E1CF4F4B0A450FB3F40B6F379B66C5" style="OLC"><section commented="no" display-inline="no-display-inline" id="H9D1FBB4BFEDF43D5B8E8EF67C2D63673" section-type="section-one"><enum>1.</enum><header display-inline="yes-display-inline">Authorizing the National Library Service for the Blind and Physically Handicapped to provide
+                    playback
+                    equipment in all formats</header><text display-inline="no-display-inline">The first sentence of the Act entitled <quote>An Act to provide books for the adult blind</quote>, approved March 3, 1931 (<external-xref legal-doc="usc" parsable-cite="usc/2/135a">2 U.S.C. 135a</external-xref>), is amended by striking <quote>and for purchase, maintenance, and replacement of reproducers for such sound-reproduction recordings</quote> and inserting <quote>and for purchase, maintenance, and replacement of reproducers for any such forms</quote>.</text></section></legis-body><attestation><attestation-group><attestor display="no"></attestor><role>Speaker of the House of Representatives</role></attestation-group><attestation-group><attestor display="no"></attestor><role>Vice President of the United States and President of the Senate</role></attestation-group></attestation></bill>
+
+
