@@ -1,8 +1,8 @@
-"use strict"; 
+"use strict";
 
 var fs = require('fs'),
   saxon = require('saxon-stream2');
-  
+
 const os = require('os'),
   execSync = require('child_process').execSync;
 
@@ -35,7 +35,7 @@ var getRenditionFromContent = (type, content, cb) => {
 			var code = execSync(cmd);
 			console.log(code);
 			cb(null, outFile);
-		}); 
+		});
 	}else if(type == 'xml'){
 		fs.writeFile(tempFile, content, function(err) {
 			var jarPath = __base + 'bin/Saxon/saxon9pe.jar';
@@ -65,7 +65,8 @@ var style = '';
 for(var i=0; i<styles.length; i++){
 	style += `<link rel="stylesheet" type="text/css" href="${styles[i]}">`;
 }
-return `<!DOCTYPE HTML>
+return `<!DOCTYPE HTML
+[<!ENTITY nbsp "&#160;">]>
 <html lang="en">
    <head>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

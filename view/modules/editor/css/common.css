@@ -4,9 +4,9 @@
   padding: 0;
 }
 /*#line-numbers{
-	flex: 0 0 0px; 
-	border-right: 1px solid; 
-	margin-right:-1px;    
+	flex: 0 0 0px;
+	border-right: 1px solid;
+	margin-right:-1px;
 	width: 25px;
 	left: 150px;
     position: relative;
@@ -34,4 +34,11 @@ span[itemtype=header][empty]::after {
 	color: #dbdbdb;
 	font-style: italic;
     display: inline-block;
+}
+span[itemtype=del]{
+  color:red;
+  text-decoration: line-through;
+}
+span[itemtype=add]{
+  color:green;
 }

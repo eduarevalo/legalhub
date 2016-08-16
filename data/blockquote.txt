@@ -1,0 +1,47 @@
+<p itemtype="section" id="aaaa1" itemref="aaaa2">
+	<span itemtype="enum">§ 5326.</span>
+	<span itemtype="heading"> Records of certain domestic coin and currency transactions</span>
+</p>
+<p itemtype="subsection" id="aaaa2" itemref="aaaa3">
+	<span itemtype="enum">(a)</span>
+	<span itemtype="heading"> <inline class="small-caps">In General</inline>.—</span>
+</p itemtype="text" id="aaaa3" level="subsection">
+	If the Secretary of the Treasury finds, upon the Secretary’s own initiative or at the request of an appropriate Federal or State law enforcement official, that reasonable grounds exist for concluding that additional recordkeeping and reporting requirements are necessary to carry out the purposes of this subtitle and prevent evasions thereof, the Secretary may issue an order requiring any domestic financial institution or nonfinancial trade or business or group of domestic financial institutions or nonfinancial trades or businesses in a geographic area—
+</p>
+	<paragraph style="-uslm-lc:I12" class="indent1" id="id102aa984-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/a/1"><num value="1">(1)</num><chapeau> to obtain such information as the Secretary may describe in such order concerning—</chapeau><subparagraph style="-uslm-lc:I13" class="indent2" id="id102aa985-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/a/1/A"><num value="A">(A)</num><content> any transaction in which such financial institution or nonfinancial trade or business is involved for the payment, receipt, or transfer of United States coins or currency (or such other monetary instruments as the Secretary may describe in such order) the total amounts or denominations of which are equal to or greater than an amount which the Secretary may prescribe; and</content>
+</subparagraph>
+<subparagraph style="-uslm-lc:I13" class="indent2" id="id102aa986-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/a/1/B"><num value="B">(B)</num><content> any other person participating in such transaction;</content>
+</subparagraph>
+</paragraph>
+<paragraph style="-uslm-lc:I12" class="indent1" id="id102aa987-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/a/2"><num value="2">(2)</num><content> to maintain a record of such information for such period of time as the Secretary may require; and</content>
+</paragraph>
+<paragraph style="-uslm-lc:I12" class="indent1" id="id102aa988-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/a/3"><num value="3">(3)</num><content> to file a report with respect to any transaction described in paragraph (1)(A) in the manner and to the extent specified in the order.</content>
+</paragraph>
+</subsection>
+<subsection style="-uslm-lc:I11" class="indent0" id="id102aa989-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/b"><num value="b">(b)</num><heading> Authority To Order Depository Institutions To Obtain Reports From Customers.—</heading><paragraph style="-uslm-lc:I12" class="indent1" id="id102aa98a-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/b/1"><num value="1">(1)</num><heading> <inline class="small-caps">In general</inline>.—</heading><chapeau>The Secretary of the Treasury may, by regulation or order, require any depository institution (as defined in section 3(c) of the Federal Deposit Insurance Act)—</chapeau><subparagraph style="-uslm-lc:I13" class="indent2" id="id102aa98b-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/b/1/A"><num value="A">(A)</num><content> to request any financial institution or nonfinancial trade or business (other than a depository institution) which engages in any reportable transaction with the depository institution to provide the depository institution with a copy of any report filed by the financial institution or nonfinancial trade or business under this subtitle with respect to any prior transaction (between such financial institution or nonfinancial trade or business and any other person) which involved any portion of the coins or currency (or monetary instruments) which are involved in the reportable transaction with the depository institution; and</content>
+</subparagraph>
+<subparagraph style="-uslm-lc:I13" class="indent2" id="id102aa98c-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/b/1/B"><num value="B">(B)</num><content> if no copy of any report described in subparagraph (A) is received by the depository institution in connection with any reportable transaction to which such subparagraph applies, to submit (in addition to any report required under this subtitle with respect to the reportable transaction) a written notice to the Secretary that the financial institution or nonfinancial trade or business failed to provide any copy of such report.</content>
+</subparagraph>
+</paragraph>
+<paragraph style="-uslm-lc:I12" class="indent1" id="id102aa98d-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/b/2"><num value="2">(2)</num><heading> <inline class="small-caps">Reportable transaction defined</inline>.—</heading><content>For purposes of this subsection, the term “reportable transaction” means any transaction involving coins or currency (or such other monetary instruments as the Secretary may describe in the regulation or order) the total amounts or denominations of which are equal to or greater than an amount which the Secretary may prescribe.</content>
+</paragraph>
+</subsection>
+<subsection style="-uslm-lc:I11" class="indent0" id="id102aa98e-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/c"><num value="c">(c)</num><heading> <inline class="small-caps">Nondisclosure of Orders</inline>.—</heading><content>No financial institution or nonfinancial trade or business or officer, director, employee or agent of a financial institution or nonfinancial trade or business subject to an order under this section may disclose the existence of, or terms of, the order to any person except as prescribed by the Secretary.</content>
+</subsection>
+<subsection style="-uslm-lc:I11" class="indent0" id="id102aa98f-4db1-11e6-8af2-b19ed7ef7a5f" identifier="/us/usc/t31/s5326/d"><num value="d">(d)</num><heading> <inline class="small-caps">Maximum Effective Period for Order</inline>.—</heading><content>No order issued under subsection (a) shall be effective for more than 180 days unless renewed pursuant to the requirements of subsection (a).</content>
+</subsection>
+<sourceCredit id="id102aa990-4db1-11e6-8af2-b19ed7ef7a5f">(Added <ref href="/us/pl/100/690/tVI">Pub. L. 100–690, title VI</ref>, § 6185(c), <date date="1988-11-18">Nov. 18, 1988</date>, <ref href="/us/stat/102/4355">102 Stat. 4355</ref>; amended <ref href="/us/pl/102/550/tXV">Pub. L. 102–550, title XV</ref>, §§ 1514, 1562, <date date="1992-10-28">Oct. 28, 1992</date>, <ref href="/us/stat/106/4058">106 Stat. 4058</ref>, 4072; <ref href="/us/pl/107/56/tIII">Pub. L. 107–56, title III</ref>, §§ 353(d), 365(c)(2)(B), <date date="2001-10-26">Oct. 26, 2001</date>, <ref href="/us/stat/115/323">115 Stat. 323</ref>, 335.)</sourceCredit>
+<notes type="uscNote" id="id102aa991-4db1-11e6-8af2-b19ed7ef7a5f">
+<note style="-uslm-lc:I75" topic="referencesInText" id="id102aa992-4db1-11e6-8af2-b19ed7ef7a5f">
+<heading class="centered smallCaps">References in Text</heading><p style="-uslm-lc:I21" class="indent0">Section 3(c) of the Federal Deposit Insurance Act, referred to in subsec. (b)(1), is classified to <ref href="/us/usc/t12/s1813/c">section 1813(c) of Title 12</ref>, Banks and Banking.</p>
+</note>
+<note style="-uslm-lc:I74" topic="amendments" id="id102aa993-4db1-11e6-8af2-b19ed7ef7a5f"><heading class="centered smallCaps">Amendments</heading><p style="-uslm-lc:I21" class="indent0">2001—Subsec.(a). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 365(c)(2)(B), inserted “or nonfinancial trade or business” after “financial institution” and “or nonfinancial trades or businesses” for “financial institutions” in introductory provisions.</p>
+<p style="-uslm-lc:I21" class="indent0">Subsec. (a)(1)(A). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 365(c)(2)(B)(i), inserted “or nonfinancial trade or business” after “financial institution”.</p>
+<p style="-uslm-lc:I21" class="indent0">Subsec. (b)(1)(A). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 365(c)(2)(B)(i), inserted “or nonfinancial trade or business” after “financial institution” wherever appearing.</p>
+<p style="-uslm-lc:I21" class="indent0">Subsec. (b)(1)(B). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 365(c)(2)(B)(i), inserted “or nonfinancial trade or business” after “financial institution”.</p>
+<p style="-uslm-lc:I21" class="indent0">Subsec. (c). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 365(c)(2)(B)(i), inserted “or nonfinancial trade or business” after “financial institution” in two places.</p>
+<p style="-uslm-lc:I21" class="indent0">Subsec. (d). <ref href="/us/pl/107/56">Pub. L. 107–56</ref>, § 353(d), substituted “more than 180 days” for “more than 60 days”.</p>
+<p style="-uslm-lc:I21" class="indent0">1992—Subsecs. (b) to (d). <ref href="/us/pl/102/550">Pub. L. 102–550</ref> added subsecs. (b) and (c) and redesignated former subsec. (b) as (d).</p>
+</note>
+</notes>
+</section>

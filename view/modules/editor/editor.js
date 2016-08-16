@@ -29,7 +29,7 @@ function setLineNumbers(){
   if(editorConfig.lineNumbers){
     lastPosition = 0;
     lastNumber = 1;
-    var elements = document.querySelectorAll("#editor span");
+    var elements = document.querySelectorAll("#editor span, p");
     for (var i = 0; i != elements.length; i++) {
       if(elements[i].innerHTML.trim() != '<br>'){
         addClientRectsOverlay(elements[i]);
@@ -42,7 +42,7 @@ function addClientRectsOverlay(element) {
   var divs = "";
 	for (var i = 0; i != rects.length; i++) {
       var rect = rects[i];
-      var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop; 
+      var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
       var top = rect.top + scrollTop;
 	  if(top > lastPosition){
         lastPosition = top;
@@ -72,7 +72,7 @@ var legalHubEditor = function(el, schema, events, config){
 			return self.indexOf(item) == pos;
 		}).forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
-				if(event.keyCode === 13){
+				if(event.keyCode === 13 || event.keyCode === 8){
 					event.preventDefault();
 				}
 				lhe.currentTag = lhe.getSelectionStart();
@@ -90,27 +90,30 @@ var legalHubEditor = function(el, schema, events, config){
 				position.tag = tag;
 				position.event = eventName;
 				position.keyCode = event.keyCode;
+        if(event.keyCode >= 65 && event.keyCode <= 90) {
+          position.keyCode = 'az';
+        }
 				console.log(position);
-				if(lhe.eventsConfig[tag] && lhe.eventsConfig[tag][eventName] && lhe.eventsConfig[tag][eventName][event.keyCode]){
+				if(lhe.eventsConfig[tag] && lhe.eventsConfig[tag][eventName] && lhe.eventsConfig[tag][eventName][position.keyCode]){
 					switch(position.position){
 						case 'select':
-							if(lhe.eventsConfig[tag][eventName][event.keyCode].select){
-							     return lhe.eventsConfig[tag][eventName][event.keyCode].select(position, lhe.currentTag, lhe);
+							if(lhe.eventsConfig[tag][eventName][position.keyCode].select){
+							  return lhe.eventsConfig[tag][eventName][position.keyCode].select(position, lhe.currentTag, lhe);
 							}
 							break;
 						case 'start':
-							if(lhe.eventsConfig[tag][eventName][event.keyCode].start){
-							     return lhe.eventsConfig[tag][eventName][event.keyCode].start(position, lhe.currentTag, lhe);
+							if(lhe.eventsConfig[tag][eventName][position.keyCode].start){
+							  return lhe.eventsConfig[tag][eventName][position.keyCode].start(position, lhe.currentTag, lhe);
 							}
 							break;
 						case 'end':
-							if(lhe.eventsConfig[tag][eventName][event.keyCode].end){
-								return lhe.eventsConfig[tag][eventName][event.keyCode].end(position, lhe.currentTag, lhe);
+							if(lhe.eventsConfig[tag][eventName][position.keyCode].end){
+								return lhe.eventsConfig[tag][eventName][position.keyCode].end(position, lhe.currentTag, lhe);
 							}
 							break;
-						default:
-							if(lhe.eventsConfig[tag][eventName][event.keyCode].middle){
-							     return lhe.eventsConfig[tag][eventName][event.keyCode].middle(position, lhe.currentTag, lhe);
+						case 'middle':
+							if(lhe.eventsConfig[tag][eventName][position.keyCode].middle){
+							  return lhe.eventsConfig[tag][eventName][position.keyCode].middle(position, lhe.currentTag, lhe);
 							}
 							break;
 					}
@@ -206,10 +209,32 @@ var legalHubEditor = function(el, schema, events, config){
 		if(node){
 			return (node.nodeType == 3 ? node.parentNode : node);
 		}
-		return null;	
+		return null;
 	};
-	this.getInline = function(){
-		return (this.currentTag.nodeType == 3 ? this.currentTag.parentNode : this.currentTag);
+  this.getHeadingBlock = function(element){
+    var mainBlock = this.getBlock(element);
+    var nodeType = this.getType(mainBlock);
+    if(lhe.schema[nodeType].type == 'heading'){
+      return mainBlock;
+    }
+    for(var it=0; it<lhe.config.block.length; it++){
+      while(mainBlock = mainBlock.previousSibling){
+        if(mainBlock && mainBlock.tagName.toLowerCase() == lhe.config.block[it]){
+          nodeType = lhe.getType(mainBlock);
+          if(lhe.schema[nodeType].type == 'heading'){
+            return mainBlock;
+          }
+        }
+      }
+    }
+  };
+	this.getBlock = function(element){
+    for(var it=0; it<lhe.config.block.length; it++){
+        var node = element.closest(lhe.config.block[it]);
+        if(node){
+          return node;
+        }
+    }
 	};
 	this.getCaretPosition = function() {
 	  var caretPos = 0,
@@ -219,17 +244,17 @@ var legalHubEditor = function(el, schema, events, config){
 		if (sel.rangeCount) {
 		  range = sel.getRangeAt(0);
 		  if (range.endContainer === range.startContainer) {
-			if(range.endOffset === range.startOffset){
-				var position = 'middle';
-				if(range.startContainer.data.trim().length == 0 || range.endOffset == 0){
-					position = 'start';
-				}else if(range.endOffset == range.endContainer.length){
-					position = 'end';
-				}
-				return { start: range.startOffset, end: range.endOffset, position: position};
-			}else{
-				return { start: range.startOffset, end: range.endOffset, position: 'select'};
-			}
+  			if(range.endOffset === range.startOffset){
+  				var position = 'middle';
+  				if(range.startContainer.data.trim().length == 0 || range.endOffset == 0){
+  					position = 'start';
+  				}else if(/*range.endOffset == range.endContainer.length &&*/ range.startOffset == range.endOffset && range.startOffset > 0){
+  					position = 'end';
+  				}
+  				return { start: range.startOffset, end: range.endOffset, position: position};
+  			}else{
+  				return { start: range.startOffset, end: range.endOffset, position: 'select'};
+  			}
 		  }
 		}
 	  } /*else if (document.selection && document.selection.createRange) {
@@ -275,7 +300,6 @@ var legalHubEditor = function(el, schema, events, config){
 	};
 	this.transform = function(element, type){
 		var newChildren = [];
-		element.innerHTML = '';
 		for(var it=0; it<lhe.schema[type].children.length; it++){
 			var newElementTag = lhe.schema[type].children[it];
 			var newElement = lhe.newElement(newElementTag, element);
@@ -287,14 +311,28 @@ var legalHubEditor = function(el, schema, events, config){
 			lhe.currentTag = newChildren[it];
 		}
 	};
-	this.newElement = function(tag, baseElement){
+	this.newElement = function(tag, baseElement, link){
+    console.log('newElement() '+ tag);
 		var newElement = document.createElement(lhe.schema[tag].tag);
-		newElement.setAttribute('empty', 'true');
+    newElement.id = legalHub.tools.guid();
+    if(!!link){
+      var block = lhe.getHeadingBlock(baseElement);
+      newElement.setAttribute('level', lhe.getType(block));
+      var itemref = '';
+      if(block.hasAttribute('itemref')){
+        itemref = block.getAttribute('itemref');
+      }
+      itemref += ' ' + newElement.id;
+      block.setAttribute('itemref', itemref);
+    }
+    baseElement.hasAttribute('itemref')
 		lhe.setType(newElement, tag);
 		if(lhe.schema[tag].template){
 			lhe.schema[tag].template(newElement, baseElement, lhe);
-		}else{
+		}
+    if(newElement.innerHTML.length == 0){
 			newElement.innerHTML = '&nbsp;';
+      newElement.setAttribute('empty', 'true');
 		}
 		return newElement;
 	};
@@ -329,7 +367,7 @@ var legalHub = { tools: {
 	if(firstMatch){
 		var match = /[A-Za-z]+/.exec('' + firstMatch);
 		if(match){
-			//letters 
+			//letters
 			if(currentValue){
 				match = currentValue;
 			}
@@ -352,8 +390,8 @@ var legalHub = { tools: {
 	return null;
   },
   isNodeSelected: function(element){
-	var sel = window.getSelection();
-	return sel.containsNode(element, false);
+  	var sel = window.getSelection();
+  	return sel.containsNode(element, false);
   },
   setCaretPosition: function(element, caretPos) {
     if(element != null) {
@@ -384,18 +422,21 @@ var legalHub = { tools: {
     }
   },
   getTextNode: function(element, acceptEmpty){
-	if(element.nodeType == 3){
-		if(!!acceptEmpty){
-			return element;
-		}else if(element.data.trim().length>0){
-			return element;
-		}
-	}
-	for(var it=0; it<element.childNodes.length; it++){
-		var node = this.getTextNode(element.childNodes[it], acceptEmpty);
-		if(node){
-			return node;
-		}
-	}
+  	if(element.nodeType == 3){
+  		if(!!acceptEmpty){
+  			return element;
+  		}else if(element.data.trim().length>0){
+  			return element;
+  		}
+  	}
+  	for(var it=0; it<element.childNodes.length; it++){
+  		var node = this.getTextNode(element.childNodes[it], acceptEmpty);
+  		if(node){
+  			return node;
+  		}
+  	}
+  },
+  guid: function() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
 }}

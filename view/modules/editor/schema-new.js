@@ -1,3 +1,21 @@
+var insertBlockQuote = function(){
+	console.log('insertBlockQuote()');
+	var newNode = document.createElement('blockquote');
+	newNode.setAttribute('itemtype', 'quote');
+	var quoted = ['<p itemtype="section" id="aaaa1" itemref="aaaa2">',
+	'<span itemtype="enum">§ 5326.</span>',
+	'<span itemtype="heading"> Records of certain domestic coin and currency transactions</span>',
+	'</p>',
+	'<p itemtype="subsection" id="aaaa2" itemref="aaaa3">',
+	'<span itemtype="enum">(a)</span>',
+	'<span itemtype="heading"> <inline class="small-caps">In General</inline>.—</span>',
+	'</p>',
+	'<p itemtype="text" id="aaaa3" level="subsection">',
+	'If the Secretary of the Treasury finds, upon the Secretary’s own initiative or at the request of an appropriate Federal or State law enforcement official, that reasonable grounds exist for concluding that additional recordkeeping and reporting requirements are necessary to carry out the purposes of this subtitle and prevent evasions thereof, the Secretary may issue an order requiring any domestic financial institution or nonfinancial trade or business or group of domestic financial institutions or nonfinancial trades or businesses in a geographic area—',
+	'</p>'];
+	newNode.innerHTML = quoted.join('');
+	editor.insertBlockAfter(newNode);
+}
 var split = function(params, source, editor){
 	console.log('split');
 	source.setAttribute('flag-split', '');
@@ -57,6 +75,7 @@ var transformLevel = function(params, source, editor){
 }
 var dummy = function(params, source, editor){
 	console.log('dummy');
+	return false;
 }
 var newEnum = function(element){
 	element.innerHTML = '1. ';
@@ -65,12 +84,13 @@ var suggestBlockSibling = function(params, source, editor){
 console.log("suggestBlockSibling");
 	var currentTag = editor.getType(editor.currentBlock);
 	var siblings = editor.schema[currentTag].siblings;
-	if(siblings.length>0){
+	if(siblings && siblings.length>0){
 		var newNodeTag = siblings[0];
-		var newNode = editor.newElement(newNodeTag, source);
-		var newElement = editor.insertBlockAfter(newNode);
-		editor.currentTag = newElement;
-		legalHub.tools.setCaretPosition(newElement, 1);
+		var newNode = editor.newElement(newNodeTag, source, true);
+		editor.insertBlockAfter(newNode);
+		editor.currentTag = newNode;
+		legalHub.tools.setCaretPosition(newNode, 0);
+		return newNode;
 	}
 }
 var recoverHeaderText =  function(newElement, baseElement, editor){
@@ -79,10 +99,23 @@ var recoverHeaderText =  function(newElement, baseElement, editor){
 		newElement.innerHTML = headerTextNode.innerHTML;
 	}else if(baseElement.innerHTML.length>0){
 		newElement.innerHTML = baseElement.innerHTML;
-	}else{
-		newElement.innerHTML = "&nbsp;";
 	}
 }
+var deleteSelection = function(params, source, editor){
+	var newSpan = document.createElement('span');
+	var textToCopy = source.innerHTML.substring(params.start, params.end);
+	newSpan.innerHTML = textToCopy;
+	newSpan.setAttribute('itemtype', 'del');
+	var added = '';
+	if(params.keyCode == 'az'){
+		var newAddSpan = document.createElement('span');
+		newAddSpan.setAttribute('itemtype', 'add');
+		newAddSpan.innerHTML = String.fromCharCode(event.keyCode);
+		added = newAddSpan.outerHTML;
+	}
+	source.innerHTML = source.innerHTML.substring(0, params.start) + newSpan.outerHTML + added + source.innerHTML.substring(params.end);
+	return false;
+};
 var enterKey = 13;
 var backspace = 8;
 /*var schema = {
@@ -179,6 +212,7 @@ var schema = {
 	},
 	'text':{
 		tag: 'p',
+		siblings: ['text']
 	},
 	'section': {
 		tag: 'p',
@@ -190,17 +224,23 @@ var schema = {
 	'subsection': {
 		tag: 'p',
 		type: 'heading',
-		level: 1
+		level: 1,
+		children: ['enum', 'header'/*, 'text'*/],
+		siblings: ['text', 'subsection', 'paragraph']
 	},
 	'paragraph': {
 		tag: 'p',
 		type: 'header',
-		level: 2
+		level: 2,
+		children: ['enum', 'header'/*, 'text'*/],
+		siblings: ['text', 'subsection', 'paragraph']
 	},
 	'subparagraph': {
 		tag: 'p',
 		type: 'heading',
-		level: 3
+		level: 3,
+		children: ['enum', 'header'/*, 'text'*/],
+		siblings: ['text', 'subsection', 'paragraph']
 	},
 	'clause': {
 		tag: 'p',
@@ -288,13 +328,35 @@ var schemaEventsConfig = {
 			}
 		}
 	},*/
+	'text': {
+		'keydown': {
+			// ENTER
+			13: {
+				//start: suggest,
+				end: suggestBlockSibling,
+				middle: split
+			},
+			// BACKSPACE
+			8: {
+				select: deleteSelection
+			},
+			'az': {
+				select: deleteSelection
+			}
+		},
+		'keyup': {
+			'az': {
+				select: dummy
+			}
+		}
+	},
 	'header': {
 		'keydown': {
 			// ENTER
 			13: {
 				//start: suggest,
 				end: suggestBlockSibling,
-				//middle: split
+				middle: split
 			},
 			// BACKSPACE
 			8: {

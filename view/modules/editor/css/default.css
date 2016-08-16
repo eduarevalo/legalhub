@@ -1,19 +1,19 @@
 .document {
 	padding: 1in;
 }
-/*p::before{
-	content: '<' attr(itemtype) '>';
-	color: red;
+p[itemtype=section]{
+	font-weight: bold;
+	text-transform: uppercase;
 }
-p::after{
-	content: '</' attr(itemtype) '>';
-	color: red;
+p[itemtype=text][level=subsection], p[itemtype=subsection]{
+	text-indent: 2em;
 }
-span::before{
-	content: '<' attr(itemtype) '>';
-	color: blue;
+p[itemtype=text][level=paragraph], p[itemtype=paragraph]{
+	text-indent: 2em;
+	margin-left: 2em;
 }
-span::after{
-	content: '</' attr(itemtype) '>';
-	color: blue;
-}*/
+p[itemtype=text][level=subparagraph], p[itemtype=subparagraph]{
+	text-indent: 2em;
+	margin-left: 4em;
+	text-align: left;
+}
