@@ -29,7 +29,7 @@ function setLineNumbers(){
   if(editorConfig.lineNumbers){
     lastPosition = 0;
     lastNumber = 1;
-    var elements = document.querySelectorAll("#editor span, p");
+    var elements = editor.element.querySelectorAll("span, p");
     for (var i = 0; i != elements.length; i++) {
       if(elements[i].innerHTML.trim() != '<br>'){
         addClientRectsOverlay(elements[i]);
@@ -38,18 +38,30 @@ function setLineNumbers(){
   }
 }
 function addClientRectsOverlay(element) {
-  var rects = element.getClientRects();
-  var divs = "";
-	for (var i = 0; i != rects.length; i++) {
-      var rect = rects[i];
-      var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
-      var top = rect.top + scrollTop;
-	  if(top > lastPosition){
-        lastPosition = top;
-        divs += '<div class="line-number" style="top:' + top + 'px">' + lastNumber++ + '</div>';
-      }
-  }
-  document.getElementById('line-numbers').innerHTML += divs;
+	var divs = "";
+	var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
+	var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
+	if(element.tagName.toLowerCase() == 'span' || lines == 1){
+	  var rects = element.getClientRects();
+		for (var i = 0; i != rects.length; i++) {
+		  var rect = rects[i];
+		  var top = rect.top + scrollTop;
+		  if(top > lastPosition){
+			lastPosition = top;
+			divs += '<div class="line-number" style="top:' + top + 'px">' + lastNumber++ + '</div>';
+		  }
+	  }
+	}else{
+		var blockOffset = element.getClientRects()[0].top;
+		for(var it=0; it<lines; it++){
+		  var top = blockOffset + scrollTop + (lineHeight*it);
+		  if(top > lastPosition){
+			lastPosition = top;
+			divs += '<div class="line-number" style="top:' + top + 'px">' + lastNumber++ + '</div>';
+		  }
+ 	   }
+	}
+	document.getElementById('line-numbers').innerHTML += divs;
 }
 
 var legalHubEditor = function(el, schema, events, config){
@@ -72,7 +84,10 @@ var legalHubEditor = function(el, schema, events, config){
 			return self.indexOf(item) == pos;
 		}).forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
-				if(event.keyCode === 13 || event.keyCode === 8){
+				if(event.keyCode === 13){
+					event.preventDefault();
+				}
+				if(event.keyCode === 8 && lhe.insideTrackChangesBlock()){
 					event.preventDefault();
 				}
 				lhe.currentTag = lhe.getSelectionStart();
@@ -90,9 +105,9 @@ var legalHubEditor = function(el, schema, events, config){
 				position.tag = tag;
 				position.event = eventName;
 				position.keyCode = event.keyCode;
-        if(event.keyCode >= 65 && event.keyCode <= 90) {
-          position.keyCode = 'az';
-        }
+				if(event.keyCode >= 65 && event.keyCode <= 90) {
+				  position.keyCode = 'az';
+				}
 				console.log(position);
 				if(lhe.eventsConfig[tag] && lhe.eventsConfig[tag][eventName] && lhe.eventsConfig[tag][eventName][position.keyCode]){
 					switch(position.position){
@@ -204,13 +219,16 @@ var legalHubEditor = function(el, schema, events, config){
       }
     }
   };
-	this.getSelectionStart = function() {
-		var node = document.getSelection().anchorNode;
-		if(node){
-			return (node.nodeType == 3 ? node.parentNode : node);
-		}
-		return null;
-	};
+  this.getSelectionStart = function() {
+	var node = document.getSelection().anchorNode;
+	if(node){
+		return (node.nodeType == 3 ? node.parentNode : node);
+	}
+	return null;
+  };
+  this.insideTrackChangesBlock = function(){
+	return this.currentBlock.closest('blockquote');
+  };
   this.getHeadingBlock = function(element){
     var mainBlock = this.getBlock(element);
     var nodeType = this.getType(mainBlock);
@@ -340,6 +358,7 @@ var legalHubEditor = function(el, schema, events, config){
 		console.log("setHeading()");
 		lhe.setType(lhe.currentBlock, type);
 		lhe.transform(lhe.currentBlock, type);
+		//renumber('[itemtype='+type+']', '[itemtype=enum]');
 		lhe.updateBreadcrumb();
 	};
 	this.initHeadings = function(){

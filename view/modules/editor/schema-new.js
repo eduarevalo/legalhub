@@ -57,16 +57,18 @@ var renumber = function(levelSelector, elementSelector){
 	};
 }
 var transform = function(params, source, editor){
-	var p = source.closest('p');
-	if(editor.schema[p.getAttribute('itemtype')].next){
-		p.setAttribute('itemtype', editor.schema[p.getAttribute('itemtype')].next[0]);
+	var block = editor.getBlock(source);
+	var blockType = editor.getType(block);
+	if(editor.schema[blockType].next){
+		editor.setType(blockType, editor.schema[blockType].next[0]);
 	}
 }
 var transformLevel = function(params, source, editor){
-	var p = source.closest('p');
-	if(p.getAttribute('itemtype') == 'section'){
-		if(!p.querySelector('[itemtype=enum]')){
-			var node = p.querySelector('[itemtype=header]');
+	var block = editor.getBlock(source);
+	var blockType = editor.getType(block);
+	if(blockType == 'section'){
+		if(!block.querySelector('[itemtype=enum]')){
+			var node = block.querySelector('[itemtype=header]');
 			if(node){
 				node.setAttribute('itemtype', 'text');
 			}
@@ -102,19 +104,22 @@ var recoverHeaderText =  function(newElement, baseElement, editor){
 	}
 }
 var deleteSelection = function(params, source, editor){
-	var newSpan = document.createElement('span');
-	var textToCopy = source.innerHTML.substring(params.start, params.end);
-	newSpan.innerHTML = textToCopy;
-	newSpan.setAttribute('itemtype', 'del');
-	var added = '';
-	if(params.keyCode == 'az'){
-		var newAddSpan = document.createElement('span');
-		newAddSpan.setAttribute('itemtype', 'add');
-		newAddSpan.innerHTML = String.fromCharCode(event.keyCode);
-		added = newAddSpan.outerHTML;
+	if(editor.insideTrackChangesBlock()){
+		var newSpan = document.createElement('span');
+		var textToCopy = source.innerHTML.substring(params.start, params.end);
+		newSpan.innerHTML = textToCopy;
+		newSpan.setAttribute('itemtype', 'del');
+		var added = '';
+		if(params.keyCode == 'az'){
+			var newAddSpan = document.createElement('span');
+			newAddSpan.setAttribute('itemtype', 'add');
+			newAddSpan.innerHTML = String.fromCharCode(event.keyCode);
+			added = newAddSpan.outerHTML;
+		}
+		source.innerHTML = source.innerHTML.substring(0, params.start) + newSpan.outerHTML + added + source.innerHTML.substring(params.end);
+		return false;
 	}
-	source.innerHTML = source.innerHTML.substring(0, params.start) + newSpan.outerHTML + added + source.innerHTML.substring(params.end);
-	return false;
+	return true;
 };
 var enterKey = 13;
 var backspace = 8;
@@ -343,12 +348,12 @@ var schemaEventsConfig = {
 			'az': {
 				select: deleteSelection
 			}
-		},
+		}/*,
 		'keyup': {
 			'az': {
 				select: dummy
 			}
-		}
+		}*/
 	},
 	'header': {
 		'keydown': {

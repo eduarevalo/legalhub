@@ -19,7 +19,7 @@ span[itemtype=quote]::after{
 }
 #line-numbers{
 	position: absolute;
-	left: 450px;
+	left: 100px;
 	z-index: 4;
 }
 p[itemtype=subsection]{
