@@ -1,3 +1,15 @@
+var quoted = ['<p>Sec. 1c.</p>',
+'<p>The state transportation department shall bear the cost of opening, widening, and improving, including construction and reconstruction, in accordance with standards and specifications of the department, all state trunk line highways, subject to all of the following provisions:</p>',
+'<p>(a) Incorporated cities and villages shall participate with the department in the cost of opening, widening, and improving, including construction and reconstruction of state trunk line highways within cities and villages to which may be added, subject to the approval of the state transportation commission, streets that are connecting links of trunk line highways or streets that are made connecting links of trunk line highways, according to the following schedule subject to the definition of population as provided in section 13:</p>',
+'<p>(i) In cities and villages having a population of 50,000 or more, 12.5% of the cost shall be borne by the city or village, and 87.5% by the state transportation department.</p>',
+'<p>(ii) In cities and villages having a population of 40,000 or more and less than 50,000, 11.25% of the cost shall be borne by the city or village, and 88.75% by the state transportation department.</p>',
+'<p>(iii) In cities and villages having a population of 25,000 or more and less than 40,000, 8.75% of the cost shall be borne by the city or village, and 91.25% by the state transportation department except in the case of projects related to international border crossing, in which case the department shall bear the entire project cost.</p>',
+'<p>(iv) In cities and villages having a population of less than 25,000, the state transportation department shall bear the entire cost.</p>',
+'<p>(b) As used in this act, "opening, widening, and improving, including construction and reconstruction, of state trunk line highways" includes, but is not limited to, the cost of right of way; the cost of removal and replacement of sidewalks, street lighting, curbing, where removal and replacement is made necessary by construction or reconstruction of a trunk line highway; and the cost of bridges and structures, including that part of the cost of grade separation structures not paid by the railroad companies.</p>',
+'<p>(c) In a city or village, the width of a state trunk line highway shall be the width required to serve anticipated future traffic needs for a 20-year period as determined by a department transportation survey, which width, except as prescribed by this subdivision, shall not be less than the currently accepted standards prescribed for a 4-lane highway; the width as may be built on the same trunk line route immediately beyond and adjacent to either legal boundary of the city or village; or on trunk lines eligible for federal highway funds, a width as may be prescribed by the federal government, whichever width is greater. However, the department and the governing body of a city or village by mutual agreement may determine that the width of a state trunk line highway shall be less than the width otherwise prescribed by this subdivision.</p>',
+'<p>(d) If a city or village shall desire to widen a state trunk line highway for local purposes beyond the width prescribed in subdivision (c), the entire cost of the extra width, less the federal highway funds which may be allocated to the portion of the project by the department, shall be borne by the city or village.</p>',
+'<p>(e) The state transportation commission and the boards of county road commissioners may enter into agreements with townships or private persons for the improvement or widening of state trunk line highways or county roads. The state transportation commission and the boards of county road commissioners may require full or partial participation in the cost of the improvement or widening by the requesting party as considered appropriate.</p>'];
+var originalSource = quoted.join('');
 var insertBlockQuote = function(){
 	console.log('insertBlockQuote()');
 	var newNode = document.createElement('blockquote');
@@ -15,6 +27,13 @@ var insertBlockQuote = function(){
 	'</p>'];
 	newNode.innerHTML = quoted.join('');
 	editor.insertBlockAfter(newNode);
+}
+var insertBlockQuoteMichigan = function(){
+	console.log('insertBlockQuote()');
+	var newNode = document.createElement('blockquote');
+	newNode.setAttribute('itemtype', 'quote');
+	newNode.innerHTML = originalSource;
+  editor.insertBlockAfter(newNode);
 }
 var split = function(params, source, editor){
 	console.log('split');

@@ -11,6 +11,6 @@
     position: fixed;
 	width: 100%;
 }
-#main{
+#header-2 + #main{
 	margin-top: 70px;
 }

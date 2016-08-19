@@ -1,6 +1,6 @@
 <div class="container">
   <div class="block-header">
-    <h2>Upload documents</h2>
+    <h2>Upload / Link documents</h2>
 
     <ul class="actions">
       <li>
@@ -51,18 +51,26 @@
               </div>
             </div>
           </div>
-		  
-		  <div class="form-group">
+
+		      <div class="form-group">
             <div class="fg-line">
               <div class="select">
                 <select class="form-control" ng-model="formData.parser">
-				  <option value="">Choose your parser</option>
+				          <option value="">Choose your parser</option>
                   <option value="uslm1.0.15">USLM</option>
-				  <option value="usbill">US Congress Bill</option>
+				          <option value="usbill">US Congress Bill</option>
                 </select>
               </div>
             </div>
           </div>
+
+          <div class="input-group">
+            <span class="input-group-addon"><i class="zmdi zmdi-globe"></i></span>
+            <div class="fg-line">
+              <input type="text" class="form-control" ng-model="formData.url" placeholder="http://Type your url">
+            </div>
+          </div>
+          <br/>
 
           <button ngf-select="uploadFiles($files, $invalidFiles)" multiple class="btn btn-primary btn-file m-r-10">
           Select Files</button>

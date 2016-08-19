@@ -49,4 +49,15 @@ router.post('/generate', function (req, res) {
 	  });
 	}
 });
+
+router.post('/diff', function (req, res) {
+  renditionManager.getDiff(req.body.source, req.body.target, function(err, filePath){
+    if(err){
+      // Error 404
+      res.json({success: false, error: err});
+    }else{
+      res.sendFile(filePath);
+    }
+  });
+});
 module.exports = router;

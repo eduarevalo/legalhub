@@ -39,6 +39,7 @@ function setLineNumbers(){
 }
 function addClientRectsOverlay(element) {
 	var divs = "";
+  var numbersLeftPosition = $('#editor').offset().left + (editorConfig.style == 'paper' ? 0 : 40);
 	var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
 	var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
 	if(element.tagName.toLowerCase() == 'span' || lines == 1){
@@ -48,7 +49,7 @@ function addClientRectsOverlay(element) {
 		  var top = rect.top + scrollTop;
 		  if(top > lastPosition){
 			lastPosition = top;
-			divs += '<div class="line-number" style="top:' + top + 'px">' + lastNumber++ + '</div>';
+			divs += '<div class="line-number" style="top:' + top + 'px;left:' + numbersLeftPosition +'px;">' + lastNumber++ + '</div>';
 		  }
 	  }
 	}else{

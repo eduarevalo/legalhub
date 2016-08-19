@@ -19,7 +19,6 @@ span[itemtype=quote]::after{
 }
 #line-numbers{
 	position: absolute;
-	left: 100px;
 	z-index: 4;
 }
 p[itemtype=subsection]{
@@ -41,4 +40,11 @@ span[itemtype=del]{
 }
 span[itemtype=add]{
   color:green;
+}
+.diff-html-added {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+.diff-html-removed{
+  text-decoration: line-through;
 }

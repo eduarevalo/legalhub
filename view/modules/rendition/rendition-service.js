@@ -25,4 +25,10 @@ angular.module('legalHub').service('rendition', function($http, API) {
       }
     });
   }
+  this.diff = function(){
+    var source = document.getElementById('editor').querySelector('blockquote').innerHTML.replace(/&nbsp;/g, " ");
+    return $http({ method: 'POST', url: API + 'rendition/diff', data: {source: source, target: originalSource}}).then(function(response){
+      return response.data;
+    });
+  }
 })

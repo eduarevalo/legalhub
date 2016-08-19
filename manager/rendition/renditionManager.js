@@ -8,6 +8,39 @@ const os = require('os'),
 
 var documentManager = require(__base + 'manager/document/documentManager');
 
+var getDiff = (source, target, cb) => {
+  var aFile = os.tmpdir() + '/a.html', bFile = os.tmpdir() + '/b.html', outFile = os.tmpdir() + '/out.html', out2File = os.tmpdir() + '/out2.html';
+  fs.writeFile(aFile, source, function(err) {
+    fs.writeFile(bFile, target, function(err) {
+      var jarPath = __base + 'bin/Daisydiff/daisydiff.jar';
+      var cmd = [
+      `java -jar "${jarPath}"`,
+      `"${bFile}"`,
+      `"${aFile}"`,
+      `--file="${outFile}"`,
+      `--type=html`,
+      `--output=xml`
+      ].join(" ");
+      console.log(cmd);
+      var code = execSync(cmd);
+      console.log(code);
+      jarPath = __base + 'bin/Saxon/saxon9pe.jar';
+      var xslPath = __base + 'manager/rendition/xsl/diffResult.xsl';
+      cmd = [
+      `java -jar "${jarPath}"`,
+      `-s:"${outFile}"`,
+      `-o:"${out2File}"`,
+      `-xsl:"${xslPath}"`,
+      `-warnings:silent`,
+      ].join(" ");
+      console.log(cmd);
+      var code = execSync(cmd);
+      console.log(code);
+      cb(null, out2File);
+    });
+  });
+}
+
 var getRendition = (params, cb) => {
   documentManager.getLastVersion(params.id, function(err, version){
   if(err){
@@ -39,9 +72,8 @@ var getRenditionFromContent = (type, content, cb) => {
 	}else if(type == 'xml'){
 		fs.writeFile(tempFile, content, function(err) {
 			var jarPath = __base + 'bin/Saxon/saxon9pe.jar';
-			var xmlPath = tempFile;
 			var xslPath = __base + 'manager/parser/uslm/xsl/microData2Uslm.xsl';
-			var xslt = saxon(jarPath,xslPath,{timeout:5000});
+			/*var xslt = saxon(jarPath,xslPath,{timeout:5000});
 			xslt.on('error',function(err){
 			  console.log(err);
 			});
@@ -54,7 +86,18 @@ var getRenditionFromContent = (type, content, cb) => {
 				fs.writeFile(outFile,content, function(err) {
 					cb(null, outFile);
 				});
-			});
+			});*/
+      var cmd = [
+      `java -jar "${jarPath}"`,
+      `-s:"${tempFile}"`,
+      `-o:"${outFile}"`,
+      `-xsl:"${xslPath}"`,
+      `-warnings:silent`,
+      ].join(" ");
+      console.log(cmd);
+      var code = execSync(cmd);
+      console.log(code);
+      cb(null, outFile);
 		});
 	}
 }
@@ -74,5 +117,9 @@ return `<!DOCTYPE HTML
    </head>
    <body class="document">${content}</body></html>`;
 }
+
+
+
+exports.getDiff = getDiff;
 exports.getRendition = getRendition;
 exports.getRenditionFromContent = getRenditionFromContent;
