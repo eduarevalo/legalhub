@@ -17,19 +17,57 @@ span[itemtype=quote]::before{
 span[itemtype=quote]::after{
 	content: '”'
 }
+[type='track'].del{
+	color: red;
+	text-decoration: line-through;
+}
+[type='track'].del::after{
+	content: ']';
+	color: black;
+	padding-right: 0.05in;
+}
+[type='track'].del::before{
+	content: '[';
+	color: black;
+	padding-left: 0.05in;
+}
 #line-numbers{
 	position: absolute;
 	z-index: 4;
 }
 #editor p {
 	white-space: pre-wrap;
-  margin-bottom: 0px;
+	margin-bottom: 0px;
 }
 #editor p[level='1'] {
   padding-left:0.15in;
 }
 #editor p[level='2'] {
   padding-left:0.3in;
+}
+#editor p[level='3'] {
+  padding-left:0.45in;
+}
+#editor p[level='4'] {
+  padding-left:0.6in;
+}
+#editor p[level='5'] {
+  padding-left:0.75in;
+}
+#editor p[level='6'] {
+  padding-left:0.9in;
+}
+#editor p[level='7'] {
+  padding-left:1.05in;
+}
+#editor p[level='8'] {
+  padding-left:1.2in;
+}
+#editor p[level='9'] {
+  padding-left:1.35in;
+}
+#editor p[level='10'] {
+  padding-left:1.5in;
 }
 p[itemtype=subsection]{
 	text-indent: 2em;
