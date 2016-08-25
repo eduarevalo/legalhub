@@ -8,11 +8,11 @@ var legalHubEditor = function(el, schema){
 	/*
 		Transformation Methods
 	*/
-	
+
 	this.split = function(context, editor){
-		console.log(context);
+		//console.log(context);
 	};
-	
+
 	this.suggest = function(context, direction){
 		if(context.tag == '' || lhe.currentNode == undefined){
 			return false;
@@ -20,27 +20,29 @@ var legalHubEditor = function(el, schema){
 		var newElement = lhe.newElement(context.tag);
 		if(direction == 'before'){
 			lhe.currentNode.parentNode.insertBefore(newElement, lhe.currentNode);
-		}else if(lhe.currentNode.nextSibling){
-			lhe.currentNode.parentNode.insertBefore(newElement, lhe.currentNode.nextSibling);
 		}else{
-			lhe.currentNode.parentNode.appendChild(newElement);
+			if(lhe.currentNode.nextSibling){
+				lhe.currentNode.parentNode.insertBefore(newElement, lhe.currentNode.nextSibling);
+			}else{
+				lhe.currentNode.parentNode.appendChild(newElement);
+			}
+			lhe.setCaretPosition(newElement, 1);
 		}
-		lhe.setCaretPosition(newElement, 1);
 		return newElement;
 	};
-	
+
 	this.suggestBefore = function(context){
 		lhe.suggest(context, 'before');
 	};
-	
+
 	this.suggestAfter = function(context){
 		lhe.suggest(context, 'after');
 	};
-	
+
 	this.copy = function(context, editor){
-		console.log(context);
+		//console.log(context);
 	};
-	
+
 	this.insertChar = function(context){
 		if(lhe.currentNode.childNodes.length == 1){
 			var newData = String.fromCharCode(context.event.keyCode);
@@ -49,7 +51,27 @@ var legalHubEditor = function(el, schema){
 			lhe.currentNode.replaceChild(document.createTextNode(prefix + newData + suffix), lhe.currentNode.childNodes[0]);
 		}
 	};
-	
+
+	this.deleteEmptyNode = function(context){
+		if(lhe.currentNode.hasAttribute('empty')){
+			switch(context.keyCode){
+				case 8:
+					if(lhe.getFirstBlock() == lhe.currentNode){
+						return false;
+					}
+					break;
+				case 46:
+					if(lhe.getLastBlock() == lhe.currentNode){
+						return false;
+					}
+					break;
+			}
+			lhe.currentNode.parentNode.removeChild(lhe.currentNode);
+			return false;
+		}
+		return true;
+	};
+
 	this.newElement = function(tag, baseElement, link){
 		console.log('newElement() '+ tag);
 		var newElement = document.createElement(tag);
@@ -69,17 +91,36 @@ var legalHubEditor = function(el, schema){
 		/*if(lhe.schema[tag].template){
 			lhe.schema[tag].template(newElement, baseElement, lhe);
 		}*/
-		if(newElement.innerHTML.length == 0){
-			newElement.innerHTML = '&nbsp;';
-			newElement.setAttribute('empty', 'true');
-		}
+		lhe.setEmptyNodeAttributes(newElement);
 		return newElement;
 	};
-	
+
+	this.linkNodes = function(context){
+		var direction = context.event.shiftKey ? -1 : 1;
+		var previousBlock = lhe.getPreviousBlock(lhe.currentNode);
+		lhe.setItemRef(previousBlock, lhe.currentNode, direction);
+	};
+
+	this.setItemRef = function(element, childElement, direction){
+		if(!element.hasAttribute('level')){
+			element.setAttribute('level', 0);
+		}
+		var newLevel = parseInt(element.getAttribute('level')) + direction;
+		if(newLevel >= 0){
+			childElement.setAttribute('level', newLevel);
+			var itemref = '';
+			if(element.hasAttribute('itemref')){
+				itemref = element.getAttribute('itemref');
+			}
+			itemref += ' ' + childElement.id;
+			element.setAttribute('itemref', itemref);
+		}
+	};
+
 	this.setCaretPosition = function(element, startPos, endPos) {
 		if(element != null) {
 			if(document.createRange){
-			
+
 				var range = document.createRange();
 				/*if(startPos == undefined){
 					range.selectNode(element);
@@ -93,13 +134,13 @@ var legalHubEditor = function(el, schema){
 				var sel = window.getSelection();
 				sel.removeAllRanges();
 				sel.addRange(range);
-				
+
 			}else if(element.createTextRange) {
-			
+
 				var range = element.createTextRange();
 				range.move('character', startPos);
 				range.select();
-				
+
 			}else{
 				if(element.selectionStart){
 					element.focus();
@@ -110,7 +151,7 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
-	
+
 	/*
 		Core config / Schema-less editing
 	*/
@@ -123,12 +164,18 @@ var legalHubEditor = function(el, schema){
 			events: {
 				'on': {
 					'keydown':{
-						9: lhe.insertChar,
+						9: {
+							'start': lhe.linkNodes,
+							'middle': lhe.insertChar,
+							'end': lhe.insertChar
+						},
 						13:{
 							'start': lhe.suggestBefore,
 							'middle': lhe.split,
 							'end': lhe.suggestAfter
-						}
+						},
+						8: lhe.deleteEmptyNode,
+						46: lhe.deleteEmptyNode
 					}
 				}
 			}
@@ -150,8 +197,9 @@ var legalHubEditor = function(el, schema){
 	};
 	/* Private members */
 	this.events = {};
-    this.firstNode;
+  this.firstNode;
 	this.currentNode;
+	this.newNode;
 	this.currentBlock;
 	this.currentContainer;
 	/*
@@ -162,10 +210,10 @@ var legalHubEditor = function(el, schema){
 		var type = context.type;
 		if(lhe.schema.events
 			&& lhe.schema.events[type]
-				&& lhe.schema.events[type].before 
+				&& lhe.schema.events[type].before
 					&& lhe.schema.events[type].before[context.eventName]
 						&& lhe.schema.events[type].before[context.eventName][context.keyCode]){
-						
+
 			if(typeof lhe.schema.events[type].before[context.eventName][context.keyCode] === 'function'){
 				continues = lhe.schema.events[type].before[context.eventName][context.keyCode](context, lhe);
 			}else if(lhe.schema.events[type].before[context.eventName][context.keyCode][context.position]){
@@ -174,7 +222,7 @@ var legalHubEditor = function(el, schema){
 		}
 		if(continues){
 			if(lhe.schema.events
-				&& lhe.schema.events[type] 
+				&& lhe.schema.events[type]
 					&& lhe.schema.events[type].on
 						&& lhe.schema.events[type].on[context.eventName]
 							&& lhe.schema.events[type].on[context.eventName][context.keyCode]
@@ -185,13 +233,13 @@ var legalHubEditor = function(el, schema){
 			}
 			if(continues
 				&& lhe.schema.events
-					&& lhe.schema.events[type] 
+					&& lhe.schema.events[type]
 						&& lhe.schema.events[type].after
 							&& lhe.schema.events[type].after[context.eventName]
 								&& lhe.schema.events[type].after[context.eventName][context.keyCode]
 									&& lhe.schema.events[type].after[context.eventName][context.keyCode][context.position]){
 				continues = lhe.schema.events[type].after[context.eventName][context.keyCode][context.position](context, lhe);
-			
+
 			}
 		}
 		if(continues){
@@ -210,10 +258,10 @@ var legalHubEditor = function(el, schema){
 					&& lhe.config[container].events[state]
 						&& lhe.config[container].events[state][context.eventName]
 							&& lhe.config[container].events[state][context.eventName][context.keyCode]){
-							
+
 				if(typeof lhe.config[container].events[state][context.eventName][context.keyCode] == 'function'){
 					return lhe.config[container].events[state][context.eventName][context.keyCode](context, lhe);
-					
+
 				}else if(lhe.config[container].events[state][context.eventName][context.keyCode][context.position]){
 					return lhe.config[container].events[state][context.eventName][context.keyCode][context.position](context, lhe);
 				}
@@ -241,22 +289,24 @@ var legalHubEditor = function(el, schema){
 		context.type = lhe.currentNode ? lhe.getType(lhe.currentNode) : '';
 		context.event = event;
 		context.keyCode = event.which || event.keyCode;
-		// 32: Space 
-		if((event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode == 32) {
-		  context.keyCode = 'az';
+
+		if(event.keyCode == 32 // Space
+			|| (event.keyCode >= 48 && event.keyCode <= 90) // a-Z
+				|| (event.keyCode >= 96 && event.keyCode <= 111) // Numbers
+					|| (event.keyCode >= 186 && event.keyCode <= 222)) { // Symbols
+		  context.keyCode = 'a#';
 		}
-		console.log(context);
 		return context;
 	}
 	/*
-		Initialize editor element events. 
-		Instead of setting many events listeners for each action. 
+		Initialize editor element events.
+		Instead of setting many events listeners for each action.
 		We have one dynamic and hierarchical triggering method.
 	*/
 	this.initEvents = function(){
-		
+
 		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*, 'click'*/];
-		
+
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
 				var context = lhe.getEventContext(event, eventName);
@@ -265,7 +315,7 @@ var legalHubEditor = function(el, schema){
 				// 33..36: PageUp, PageDown, End, Home
 				// 37..40: Left, Up, Right, Down Arrows
 				// 46 Delete
-				var dontPrevent = [8, 33, 34, 35, 36, 37, 38, 39, 40, 46].indexOf(context.keyCode)>=0 || context.keyCode == 'az';
+				var dontPrevent = [8, 33, 34, 35, 36, 37, 38, 39, 40, 46].indexOf(context.keyCode)>=0 || context.keyCode == 'a#';
 				if(!dontPrevent){
 					event.preventDefault();
 				}
@@ -274,7 +324,31 @@ var legalHubEditor = function(el, schema){
 				}
 			});
 		});
+		// This evens is triggered inmediatly after keyup for empty nodes corrections.
+		lhe.events['core.keyup'] = lhe.element.addEventListener('keyup', function(event){
+			var context = lhe.getEventContext(event);
+			if(context.keyCode == 'a#' || context.keyCode == 8 || context.keyCode == 46){
+				lhe.setEmptyNodeAttributes(lhe.currentNode);
+			}
+		});
+
 	};
+	/*
+	Sets attributes for empty blocks
+	*/
+	this.setEmptyNodeAttributes = function(element){
+		console.log('setEmptyNodeAttributes');
+		var nodeContent = element.innerHTML.replace(/<br>/, '').replace(/\u200C/, '');
+		console.log(nodeContent + ' -> ' + nodeContent.length);
+		if(nodeContent.length == 0 || element.data == ""){
+			element.innerHTML = '&zwnj;';
+			element.setAttribute('empty', 'true');
+		}else if(element.hasAttribute('empty')){
+			element.removeAttribute('empty');
+			element.innerHTML = element.innerHTML.replace(/&zwnj;/, '');
+			lhe.setCaretPosition(element, 1);
+		}
+	}
 	/*
 		GetSelectionNode
 	*/
@@ -286,6 +360,28 @@ var legalHubEditor = function(el, schema){
 		return null;
 	};
 	/*
+		Get first block node
+	*/
+	this.getFirstBlock = function(){
+		for(var it=0; it<lhe.config.block.elements.length; it++){
+			var node = lhe.element.querySelector(lhe.config.block.elements[it]);
+			if(node){
+				return node;
+			}
+		}
+	};
+	/*
+	  Get last block node
+	*/
+	this.getLastBlock = function(){
+		for(var it=0; it<lhe.config.block.elements.length; it++){
+			var nodes = lhe.element.querySelectorAll(lhe.config.block.elements[it]);
+			if(nodes.length>0){
+				return nodes[nodes.length-1];
+			}
+		}
+	}
+	/*
 		Get closest block
 	*/
 	this.getBlock = function(element){
@@ -296,6 +392,22 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
+	/*
+		Get Previous block
+	*/
+	this.getPreviousBlock = function(element){
+		for(var it=0; it<lhe.config.block.elements.length; it++){
+			var node = element.closest(lhe.config.block.elements[it]);
+			if(node){
+				var sibling = node;
+				while(sibling = sibling.previousSibling){
+					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it]){
+						return sibling;
+					}
+				}
+			}
+		}
+	}
 
 	this.setTagPosition = function(event){
 		console.log("setTagPosition()");
@@ -365,7 +477,7 @@ var legalHubEditor = function(el, schema){
       }
     }
   };
-  
+
   this.insideTrackChangesBlock = function(){
 	return this.currentBlock.closest('blockquote');
   };
@@ -519,7 +631,7 @@ var legalHub = { tools: {
   	var sel = window.getSelection();
   	return sel.containsNode(element, false);
   },
-  
+
   getTextNode: function(element, acceptEmpty){
   	if(element.nodeType == 3){
   		if(!!acceptEmpty){

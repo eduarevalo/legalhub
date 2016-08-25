@@ -23,6 +23,13 @@ span[itemtype=quote]::after{
 }
 #editor p {
 	white-space: pre-wrap;
+  margin-bottom: 0px;
+}
+#editor p[level='1'] {
+  padding-left:0.15in;
+}
+#editor p[level='2'] {
+  padding-left:0.3in;
 }
 p[itemtype=subsection]{
 	text-indent: 2em;

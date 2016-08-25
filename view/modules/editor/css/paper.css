@@ -1,7 +1,7 @@
 #document-card{
 	padding: 1in;
 	width: 8.5in;
-	height: 11in;
+	min-height: 11in;
 	background-image: url(../img/background.gif);
 }
 @page {
