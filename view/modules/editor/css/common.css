@@ -21,6 +21,9 @@ span[itemtype=quote]::after{
 	position: absolute;
 	z-index: 4;
 }
+#editor p {
+	white-space: pre-wrap;
+}
 p[itemtype=subsection]{
 	text-indent: 2em;
 }

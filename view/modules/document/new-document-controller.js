@@ -1,6 +1,6 @@
 angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, version, rendition, $sce) {
   $scope.mode ='new';
-  $scope.documentId = /*'57acca5446d29b1c7cdd7266'/*/'57abdd6bc46e79118c8b6143'/**/;
+  $scope.documentId =  '57acca5446d29b1c7cdd7266'/*/'57abdd6bc46e79118c8b6143'/**/;
   $scope.goToNew = function(){
 	$scope.mode = 'new';
 	$timeout(function() {
@@ -17,12 +17,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 	  $scope.mode = 'edit';
   	  $timeout(function() {
           init();
-		  editor = new legalHubEditor(
-				document.getElementById('editor'),
-				schema,
-				schemaEventsConfig,
-				schemaConfig
-			);
+		  editor = new legalHubEditor( document.getElementById('editor'), schema );
           $scope.$apply();
   		});
     });
@@ -30,10 +25,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
   $scope.getRendition = function(type){
 	rendition.get(type, $scope.documentId);
   }
-  $scope.generateRendition = function(type){
-	rendition.generate(type, $scope.documentId);
-  }
-  $scope.diff = function(){
+$scope.diff = function(){
     rendition.diff().then(function(data){
       $('#editor blockquote').html(data);
     });

@@ -39,7 +39,7 @@ function setLineNumbers(){
 }
 function addClientRectsOverlay(element) {
 	var divs = "";
-  var numbersLeftPosition = (editorConfig.style == 'paper' ? 140 : 150);
+  var numbersLeftPosition = (editorConfig.style == 'paper' ? 50 : 60);
 	var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
 	var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
 	if(element.tagName.toLowerCase() == 'span' || lines == 1){
@@ -65,21 +65,41 @@ function addClientRectsOverlay(element) {
 	document.getElementById('line-numbers').innerHTML += divs;
 }
 
-var legalHubEditor = function(el, schema, events, config){
+var legalHubEditor = function(el, schema){
 	var lhe = this;
 	this.element = el;
 	this.schema = schema;
-	this.eventsConfig = events || {};
-	this.config = config || {};
+	this.config = {
+		container: ['section', 'table', 'blockquote'],
+		block : ['p'],
+		inline : ['span']
+	};
 	this.events = {};
     this.firstNode;
 	this.currentTag;
 	this.currentBlock;
 	this.currentContainer;
+	this.triggerEvent = function(event){
+		
+	};
+	this.getEventContext = function(event){
+		lhe.currentTag = lhe.getSelectionStart();
+		var context = lhe.getCaretPosition();
+		context.tag = lhe.currentTag.tagName.toLowerCase();
+		context.type = lhe.getType(lhe.currentTag);
+		context.event = event;
+		context.keyCode = event.keyCode;
+		if(event.keyCode >= 65 && event.keyCode <= 90) {
+		  context.keyCode = 'az';
+		}
+		return context
+	}
 	this.initEvents = function(){
 		var keyEvents = [];
-		for(var elementName in this.eventsConfig){
-			keyEvents = keyEvents.concat(Object.keys(this.eventsConfig[elementName]));
+		if(this.schema.events != undefined){
+			for(var elementName in this.schema.events){
+				keyEvents = keyEvents.concat(Object.keys(this.schema.events[elementName]));
+			}
 		}
 		keyEvents.filter(function(item, pos, self) {
 			return self.indexOf(item) == pos;

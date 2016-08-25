@@ -54,7 +54,7 @@ var split = function(params, source, editor){
 	}else{
 		p.parentNode.appendChild(newNode);
 	}
-	//legalHub.tools.nextNumber(newNode.querySelector('[itemtype=enum]'));
+	legalHub.tools.nextNumber(newNode.querySelector('[itemtype=enum]'));
 	renumber('[itemtype='+p.getAttribute('itemtype')+']', '[itemtype=enum]');
 	legalHub.tools.setCaretPosition(newNode);
 }
@@ -213,11 +213,6 @@ var backspace = 8;
 		}
 	}
 };*/
-var schemaConfig = {
-	container: ['section', 'table', 'blockquote'],
-	block : ['p'],
-	inline : ['span']
-};
 
 var schema = {
 	'toc': {
