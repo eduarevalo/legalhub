@@ -52,3 +52,6 @@ div{
 	-ah-line-number: show;
 	-ah-line-number-text-align:  end;
 }
+[itemtype='section'] > [itemtype='number']::before{
+	content: 'Sec	';
+}

@@ -17,3 +17,6 @@ p[itemtype=text][level=subparagraph], p[itemtype=subparagraph]{
 	margin-left: 4em;
 	text-align: left;
 }
+[itemtype='section'] > [itemtype='number']::before{
+	content: 'Section ';
+}

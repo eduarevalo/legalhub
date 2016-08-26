@@ -147,3 +147,7 @@ span[itemtype=add]{
 .diff-html-removed{
   text-decoration: line-through;
 }
+.toolbar-option-selected{
+	font-weight: bold;
+	color:white !important;
+}

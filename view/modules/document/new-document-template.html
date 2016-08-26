@@ -12,7 +12,7 @@
 			</li>
 
 			<li class="logo hidden-xs">
-				<a data-ui-sref="home">LegalHub : New Document</a>
+				<a data-ui-sref="home">LegisHub : New Document</a>
 			</li>
 
 			<li class="pull-right">
@@ -254,77 +254,48 @@
 
 		<nav class="ha-menu" ng-if="mode == 'edit'">
 			<ul>
-				<li class="waves-effect" data-ui-sref-active="active">
-					<a data-ui-sref="home" data-ng-click="mactrl.sidebarStat($event)"><i class="zmdi zmdi-home"></i> Home</a>
+				<li class="waves-effect">
+					<a data-ui-sref="home" ><i class="zmdi zmdi-home"></i> Home</a>
 				</li>
-
-				<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>File</div>
-
-					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active" ><a ng-click="newDocCtrl.goToNew()">New...</a></li>
-						<li data-ui-sref-active="active" ><a ng-click="newDocCtrl.goToOpen()">Open...</a></li>
-						<li data-ui-sref-active="active" ><a data-ui-sref="headers.textual-menu">Save</a></li>
-						<li data-ui-sref-active="active" ><a data-ui-sref="headers.image-logo">Save as...</a></li>
-						<li data-ui-sref-active="active" ><a data-ui-sref="headers.mainmenu-on-top">Save as template...</a></li>
-						<li class="sub-menu">
-						  <a href="" class="stop-propagate" toggle-submenu>Export as</a>
-						  <ul>
-							<li><a ng-click="generateRendition('xml')">Xml USLM</a></li>
-							<li><a href="">Xml AKN</a></li>
-							<li><a href="">Html</a></li>
-							<li><a ng-click="generateRendition('pdf')">Pdf</a></li>
-							<!--<li><a href="/api/rendition/get?id={{documentId}}&type=pdf" target="_blank" download="{{documentId}}.pdf">Pdf</a></li>-->
-							<li><a href="">Epub</a></li>
-						  </ul>
-						</li>
-					</ul>
+				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('file')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'file' }">File</div>
 				</li>
-
-				<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>Insert</div>
-					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Elements...</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widget-templates">Image/File...</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="widgets.widgets">Table...</a></li>
-					</ul>
+				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('format')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'format' }">Format</div>
 				</li>
-
-				<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>Format</div>
-					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a data-ui-sref="tables.tables">Page size</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="tables.data-table">Data Tables</a></li>
-					</ul>
+				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('schema')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'schema' }">Schema</div>
 				</li>
-
-				<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>References</div>
-					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a data-ui-sref="form.basic-form-elements">Insert/Update Table of contents</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="form.form-components">Keywords</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="form.form-examples">Validate references</a></li>
-						<li data-ui-sref-active="active"><a data-ui-sref="form.form-validations">Form Validation</a></li>
-					</ul>
+				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('references')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'references' }">References</div>
 				</li>
-				<!--<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>View</div>
-					<ul class="dropdown-menu">
-
-						<li data-ui-sref-active="active"><a data-ui-sref="user-interface.ui-bootstrap">View as PDF</a></li>
-					</ul>
-				</li>-->
-				<li class="dropdown" uib-dropdown>
-					<div class="waves-effect" uib-dropdown-toggle>Themes</div>
-					<ul class="dropdown-menu">
-						<li data-ui-sref-active="active"><a onClick="setPageStyle('default')">Default</a></li>
-						<li data-ui-sref-active="active"><a onClick="setPageStyle('paper')">Paper</a></li>
-					</ul>
+				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('themes')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'themes' }">Themes</div>
 				</li>
 			</ul>
 		</nav>
-
-		<nav class="toolbar-menu" ng-if="mode == 'edit'">
+		
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'file'">
+			<button class="btn" >New</button>
+			<button class="btn" >Open...</button>
+			<button class="btn" >Save</button>
+			<button class="btn" >Save as...</button>
+			<button class="btn" >Save as template...</button>
+			
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-collection-case-play"></i> Export as...</div>
+				<ul class="dropdown-menu">
+					<li><a ng-click="generateRendition('xml')">Xml USLM</a></li>
+					<li><a href="">Xml AKN</a></li>
+					<li><a href="">Html</a></li>
+					<li><a ng-click="generateRendition('pdf')">Pdf</a></li>
+					<!--<li><a href="/api/rendition/get?id={{documentId}}&type=pdf" target="_blank" download="{{documentId}}.pdf">Pdf</a></li>-->
+					<li><a href="">Epub</a></li>
+				</ul>
+			</div>
+		</nav>
+		
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'format'">
 
 			<button class="btn btn-info" onclick="editor.setFormat('bold');"><i class="zmdi zmdi-format-bold"></i></button>
 			<button class="btn btn-info" onclick="editor.setFormat('italic');"><i class="zmdi zmdi-format-italic"></i></button>
@@ -355,15 +326,15 @@
 			<button class="btn bgm-teal" onclick="editor.setBlockFormat('left');"><i class="zmdi zmdi-format-align-left"></i></button>
 			<button class="btn bgm-teal" onclick="editor.setBlockFormat('right');"><i class="zmdi zmdi-format-align-right"></i></button>
 
-			<!--<button class="btn btn-primary"><i class="zmdi zmdi-undo"></i></button>
-			<button class="btn btn-primary"><i class="zmdi zmdi-redo"></i></button>-->
 			<span class="menu-spacer"> </span>
 			<button class="btn btn-warning" onclick="toggleLineNumbers()"><i class="zmdi zmdi-format-list-numbered"></i></button>
 			<span class="menu-spacer"> </span>
 			<button class="btn btn-default"><i class="zmdi zmdi-border-all"></i></button>
 
+		</nav>
 
-			<span class="menu-spacer"> </span>
+
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'references'">
 			<button class="btn bgm-teal" onclick="insertBlockQuote()"><i class="zmdi zmdi-link"></i></button>
 			<button class="btn btn-warning" onclick="insertBlockQuoteMichigan()"><i class="zmdi zmdi-link"></i></button>
 			<button class="btn btn-warning" ng-click="diff()"><i class="zmdi zmdi-eye"></i></button>
@@ -377,19 +348,21 @@
 						</div>
 				</div>
 			</div>
-
-                <!--<button class="btn bgm-cyan"><i class="zmdi zmdi-close"></i></button>
-                <button class="btn bgm-lightgreen"><i class="zmdi zmdi-menu"></i></button>
-                <button class="btn bgm-lime"><i class="zmdi zmdi-apps"></i></button>
-                <button class="btn bgm-amber"><i class="zmdi zmdi-check-all"></i></button>
-                <button class="btn bgm-gray"><i class="zmdi zmdi-trending-up"></i></button>
-                <button class="btn bgm-lightblue"><i class="zmdi zmdi-apps"></i></button>
-                <button class="btn bgm-deeporange"><i class="zmdi zmdi-phone"></i></button>-->
+		</nav>
+		
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'schema'">
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="contextual-menu">
+				<div class="waves-effect btn bgm-teal" uib-dropdown-toggle><i class="zmdi zmdi-labels"></i> <span id="selected-schema">Schemaless</span></div>
+				<ul class="dropdown-menu">
+					<li><a ng-click="setSchema()">Schemaless</a></li>
+					<li><a ng-click="setSchema('legis')">Legislative</a></li>
+					<li><a ng-click="setSchema('general')">General-Purpose</a></li>
+				</ul>
+			</div>
 			<span class="menu-spacer"> </span>
-
-			<div class="dropdown" uib-dropdown style="display: inline-block" id="heading-menu">
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="current-level-menu">
 				<div class="waves-effect btn btn-default" uib-dropdown-toggle><i class="zmdi zmdi-label-alt"></i> <span class="selected-option"></span></div>
-				<ul class="dropdown-menu" id="heading-options">
+				<ul class="dropdown-menu" id="current-level-options">
 				</ul>
 			</div>
 			<button class="btn btn-default"><i class="zmdi zmdi-format-indent-increase"></i></button>
@@ -400,11 +373,17 @@
 				<div class="dropdown-menu toolbar-submenu">
 				</div>
 			</div>
-
+			<span class="menu-spacer"> </span>
+			<button class="btn btn-warning" ng-click="diff()"><i class="zmdi zmdi-check-all"></i></button>
 		</nav>
 
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'themes'">
+			<button class="btn" onClick="setPageStyle('default')">Default</button>
+			<button class="btn" onClick="setPageStyle('paper')">Paper</button>
+		</nav>
+		
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">
-			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-wrench"></i></button>
+			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-palette"></i></button>
 			<div class="dropdown-menu">
 				<span class="ss-skin zmdi zmdi-code"></span>
 				<span class="ss-skin zmdi zmdi-wrench"></span>

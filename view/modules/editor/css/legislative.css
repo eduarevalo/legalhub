@@ -1,0 +1,6 @@
+[itemtype='section']{
+
+}
+[itemtype='number'][empty]::before{
+	content: 'Type your number';
+}

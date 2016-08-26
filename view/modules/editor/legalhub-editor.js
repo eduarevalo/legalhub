@@ -2,13 +2,19 @@
 	LEGALHUB Editor
 */
 
-var legalHubEditor = function(el, schema){
+var legalHubEditor = function(el){
 	var lhe = this;
 	this.ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.element = el;
-	this.schema = schema;
+	this.schema = {};
 	this.tracking = false;
+	this.setSchema = function(schema){
+		this.schema = schema || {};
+	}
+	this.isSchemaLess = function(){
+		return Object.keys(this.schema).length === 0;
+	}
 	/*
 		Transformation Methods
 	*/
@@ -143,9 +149,11 @@ var legalHubEditor = function(el, schema){
 		}
 		node.parentElement.removeChild(node);
 	};
-
+	this.isEmpty = function(node){
+		return node.hasAttribute('empty');
+	};
 	this.deleteEmptyNode = function(context){
-		if(lhe.currentNode.hasAttribute('empty')){
+		if(lhe.isEmpty(lhe.currentNode)){
 			switch(context.keyCode){
 				case 8:
 					if(lhe.getFirstBlock() == lhe.currentNode){
@@ -532,6 +540,12 @@ var legalHubEditor = function(el, schema){
 					|| (event.keyCode >= 186 && event.keyCode <= 222)) { // Symbols
 		  context.keyCode = 'a#';
 		}
+		
+		// Schema Update Actions
+		if(!lhe.isSchemaLess()){
+			lhe.setCurrentLevelTypes();
+		}
+		
 		return context;
 	}
 	/*
@@ -541,12 +555,12 @@ var legalHubEditor = function(el, schema){
 	*/
 	this.initEvents = function(){
 
-		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*, 'click'*/];
+		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
 
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
 				var context = lhe.getEventContext(event, eventName);
-				console.log(context);
+				//console.log(context);
 				// Allow some browser behaviors
 				// 8 Backspace
 				// 33..36: PageUp, PageDown, End, Home
@@ -745,6 +759,62 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
+	
+	
+	/*
+		SchemaBased Methods
+
+	*/
+	this.setCurrentLevelTypes = function(){
+		var currentLevel = lhe.getBlockLevel(lhe.currentNode);
+		var options = [];
+		for(var key in lhe.schema.types){
+			if(lhe.schema.types[key].level == undefined || lhe.schema.types[key].level == currentLevel){
+				options.push('<li><a onclick="editor.setType(\''+key+'\');">' + key.toUpperCase() +'</a></li>');
+			}
+		}
+		document.getElementById('current-level-options').innerHTML = options.join('');
+	};
+	/*
+		Set a new schema type
+	*/
+	this.setType = function(type){
+		lhe.setElementType(lhe.getBlock(lhe.currentNode), type);
+		if(lhe.schema.types[type].transform){
+			return lhe.schema.types[type].transform(lhe);
+		}
+		return true;
+	};
+	/*
+		Set type attribute
+	*/
+	this.setElementType = function(element, type){
+		if(element){
+			element.setAttribute('itemtype', type);
+		}
+	};
+	/* 
+		Get Type attribute
+	*/
+	this.getType = function(element){
+		return element && element.hasAttribute('itemtype') ? element.getAttribute('itemtype') : null;
+	};
+	
+	this.applyTemplate = function(node, template){
+		var options = '';
+		for(var i=0; i<template.length;i++){
+			options += '<span itemtype="' + template[i]+ '" empty="true">'+String.fromCodePoint(0x200C)+'</span>';
+		}
+		node.innerHTML = options;
+	}
+	this.insertBlockAfter = function(newNode){
+		if(lhe.currentBlock.nextSibling){
+			lhe.currentBlock.parentNode.insertBefore(newNode, lhe.currentBlock.nextSibling);
+		}else{
+			lhe.currentBlock.parentNode.appendChild(newNode);
+		}
+	};
+	
 	this.updateBreadcrumb = function(){
 		console.log("updateBreadcrumb()");
 		var breadcrumb = document.getElementById('contextual-menu');
@@ -789,35 +859,8 @@ var legalHubEditor = function(el, schema){
       }
     }
   };
-	this.initNodes = function(element){
-		/*if(element == undefined){
-			element = lhe.element;
-		}
-		if(element.nodeType == 3){
-			if(element.data.trim().length == 0){
-				element.parentNode.removeChild(element);
-			}
-		}
-		element.childNodes.forEach(function(childNode){
-			lhe.initNodes(childNode);
-		});*/
-	};
-	this.setType = function(element, type){
-		if(element){
-			element.setAttribute('itemtype', type);
-		}
-	};
-	this.getType = function(element){
-		return element && element.hasAttribute('itemtype') ? element.getAttribute('itemtype') : null;
-	};
-	this.insertBlockAfter = function(newNode){
-		if(lhe.currentBlock.nextSibling){
-			lhe.currentBlock.parentNode.insertBefore(newNode, lhe.currentBlock.nextSibling);
-		}else{
-			lhe.currentBlock.parentNode.appendChild(newNode);
-		}
-	};
-	this.transform = function(element, type){
+  
+	/*this.transform = function(element, type){
 		var newChildren = [];
 		for(var it=0; it<lhe.schema[type].children.length; it++){
 			var newElementTag = lhe.schema[type].children[it];
@@ -829,28 +872,14 @@ var legalHubEditor = function(el, schema){
 			element.appendChild(newChildren[it]);
 			lhe.currentNode = newChildren[it];
 		}
-	};
-	this.setHeading = function(type){
-		console.log("setHeading()");
-		lhe.setType(lhe.currentBlock, type);
-		lhe.transform(lhe.currentBlock, type);
-		//renumber('[itemtype='+type+']', '[itemtype=enum]');
-		lhe.updateBreadcrumb();
-	};
-	this.initHeadings = function(){
-		var options = [];
-		for(var key in this.schema){
-			if(schema[key].type=='heading'){
-				options.push('<li><a onclick="editor.setHeading(\''+key+'\');">' + key.toUpperCase() +'</a></li>');
-			}
-		}
-		document.getElementById('heading-options').innerHTML = options.join('');
-	};
+	};*/
+	
+	
+	/*
+		Initialize actions
+	*/
 	(this.init = function(){
-		lhe.initHeadings();
 		lhe.initEvents();
-		lhe.initNodes();
-		//lhe.setFirstNode();
 	})();
 };
 var legalHub = { tools: {
@@ -931,6 +960,7 @@ function setPageStyle(style){
   }
   $('link[href*="editor/css"]').attr('disabled', 'disabled');
   $('link[href*="editor/css/common"]').removeAttr('disabled');
+  $('link[href*="editor/css/legislative"]').removeAttr('disabled');
   $('link[href*="editor/css/'+ editorConfig.style+'"]').removeAttr('disabled');
   setLineNumbers();
 }
