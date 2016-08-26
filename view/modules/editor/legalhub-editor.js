@@ -8,6 +8,7 @@ var legalHubEditor = function(el, schema){
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.element = el;
 	this.schema = schema;
+	this.tracking = false;
 	/*
 		Transformation Methods
 	*/
@@ -57,6 +58,17 @@ var legalHubEditor = function(el, schema){
 		}
 	};
 
+	this.setBlockFormat = function(style){
+		lhe.getBlock(lhe.currentNode).className = style;
+	};
+
+	this.setFormat = function(style){
+		var span = document.createElement("span");
+		span.className = style;
+		span.setAttribute('type', 'format');
+		return lhe.surroundSelection(span);
+	};
+
 	this.surroundSelection = function(surroundingElement){
 		if (window.getSelection) {
 			var sel = window.getSelection();
@@ -70,14 +82,14 @@ var legalHubEditor = function(el, schema){
 		}
 		return true;
 	}
-	
+
 	this.getDeletedElement = function(){
 		var span = document.createElement("span");
 		span.className = 'del';
 		span.setAttribute('type', 'track');
 		return span;
 	};
-	
+
 	this.deleteOrJoin = function(context){
 		// false for preventing progpagete actions
 		var continues = lhe.deleteEmptyNode(context);
@@ -92,12 +104,12 @@ var legalHubEditor = function(el, schema){
 				}else if(event.keyCode == 46 && context.position == 'end'){
 					return lhe.joinBlocks(lhe.getBlock(lhe.currentNode), lhe.getNextBlock(lhe.currentNode));
 				}
-				
+
 			}
 		}
 		return continues;
 	};
-	
+
 	this.joinBlocks = function(nodeToKeep, nodeToAppend){
 		// Transfer all children nodes
 		for(var i=0; i<nodeToAppend.childNodes.length; i++){
@@ -122,16 +134,16 @@ var legalHubEditor = function(el, schema){
 		}
 		return false;
 	};
-	
+
 	this.removeNode = function(node){
 		// Deletes all current references
 		var master = lhe.element.querySelector("[itemref*='" + node.id + "']");
 		if(master){
-			lhe.unsetItemRef(master, node);
+			lhe.unsetItemRef(master, node.id);
 		}
 		node.parentElement.removeChild(node);
 	};
-	
+
 	this.deleteEmptyNode = function(context){
 		if(lhe.currentNode.hasAttribute('empty')){
 			switch(context.keyCode){
@@ -158,7 +170,7 @@ var legalHubEditor = function(el, schema){
 		lhe.setEmptyNodeAttributes(newElement);
 		return newElement;
 	};
-	
+
 	/*
 		Get element id, if it is not defined, creates a new one.
 		If collaboration mode is active, validate against the server is required.
@@ -169,73 +181,76 @@ var legalHubEditor = function(el, schema){
 		}
 		return element.id;
 	};
-	
+
 	/*
 		Nest block using metadata formats
 	*/
 	this.nestBlock = function(context){
 
 		var direction = event.shiftKey ? -1 : 1;
-		
+
 		var currentLevel = lhe.getBlockLevel(lhe.currentNode);
 		var newLevel =  currentLevel + direction;
-		
+
 		switch(direction){
-		
+
 			// nesting
 			case 1:
-			
+
 				var previousBlock = lhe.getPreviousBlock(lhe.currentNode);
-				
+
 				if(previousBlock){
 					var previousBlockLevel = lhe.getBlockLevel(previousBlock);
-			
+
 					// Here we force to keep inmediatly nested elements
 					if(previousBlockLevel + direction != currentLevel){
 						if(currentLevel != previousBlockLevel){
 							previousBlock = lhe.getPreviousBlock(lhe.currentNode, currentLevel);
 						}
-						
+
+						var currentId = lhe.getId(lhe.currentNode);
 						// Here we take off the old references
-						var oldParent = lhe.element.querySelector("[itemref*='" + lhe.getId(lhe.currentNode) + "']");
+						var oldParent = lhe.element.querySelector("[itemref*='" + currentId + "']");
 						if(oldParent){
-							lhe.unsetItemRef(oldParent, lhe.currentNode);
+							lhe.unsetItemRef(oldParent, currentId);
 						}
 						// Here we tie up the new structure
-						lhe.setItemRef(previousBlock, lhe.currentNode);
+						lhe.setItemRef(previousBlock, currentId);
 						lhe.setBlockLevel(lhe.currentNode, newLevel);
 						// We keep the hierarchy linked to the currentElement
 						lhe.updateChildrenLevels(lhe.currentNode, direction);
 					}
-				}					
+				}
 				break;
-				
+
 			// un-nesting
 			case -1:
-				
+
 				var currentParent = lhe.element.querySelector("[itemref*='" + lhe.getId(lhe.currentNode) + "']");
-				
+
 				if(currentParent){
-				
+
+					var currentId = lhe.getId(lhe.currentNode);
 					// Here we take off the old references
-					lhe.unsetItemRef(currentParent, lhe.currentNode);
-					
+					lhe.unsetItemRef(currentParent, currentId);
+
 					var newParent = lhe.element.querySelector("[itemref*='" + lhe.getId(currentParent) + "']");
 					if(newParent){
-						lhe.setItemRef(newParent, lhe.currentNode);
+						lhe.setItemRef(newParent, currentId);
 					}
-					
+
 					lhe.setBlockLevel(lhe.currentNode, newLevel);
 					lhe.updateChildrenLevels(lhe.currentNode, direction);
-					
+
 					// Updates following siblings reference
 					var nodes = lhe.getFollowingBlocks(lhe.currentNode, currentLevel);
-					
+
 					if(nodes.length>0 && currentParent.hasAttribute('itemref')){
 						var refs = currentParent.getAttribute('itemref');
-						nodes.forEach(function(node){ 
-							refs = refs.replace(node.id, '');
-							lhe.setItemRef(lhe.currentNode, node);
+						nodes.forEach(function(node){
+							var id = lhe.getId(node);
+							refs = refs.replace(id, '');
+							lhe.setItemRef(lhe.currentNode, id);
 						});
 						currentParent.setAttribute('itemref', refs.trim());
 					}
@@ -243,7 +258,7 @@ var legalHubEditor = function(el, schema){
 				break;
 		}
 	};
-	
+
 	this.updateChildrenLevels = function(element, direction){
 		if(element.hasAttribute('itemref')){
 			var refs = element.getAttribute('itemref').split(' ');
@@ -258,13 +273,13 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
-	
+
 	this.getFollowingBlocks = function(element, level){
 		var nodes = [];
 		var refNode = element;
 		while(refNode = refNode.nextSibling){
 			if(level == undefined){
-				nodes.push(refNode);	
+				nodes.push(refNode);
 			}else{
 				var refNodeLevel = lhe.getBlockLevel(refNode);
 				if(refNodeLevel < level){
@@ -273,35 +288,36 @@ var legalHubEditor = function(el, schema){
 					nodes.push(refNode);
 				}
 			}
-			
+
 		}
 		return nodes;
 	};
 
-	this.setItemRef = function(element, childElement, unset){
+	this.setItemRef = function(element, id, unset){
+
 		var itemref = '';
 		if(element.hasAttribute('itemref')){
 			itemref = element.getAttribute('itemref').trim();
 		}
 		if(unset){
-			itemref = itemref.replace(lhe.getId(childElement), '');
+			itemref = itemref.replace(id, '');
 		}else{
-			itemref = lhe.getId(childElement) + ' ' + itemref;
+			itemref = id + ' ' + itemref;
 		}
 		element.setAttribute('itemref', itemref);
 	};
-	
-	this.unsetItemRef = function(element, childElement){		
-		return lhe.setItemRef(element, childElement, true);
+
+	this.unsetItemRef = function(element, id){
+		return lhe.setItemRef(element, id, true);
 	};
-	
+
 	this.getBlockLevel = function(element){
 		if(element.hasAttribute('level')){
 			return parseInt(element.getAttribute('level'));
 		}
 		return 0;
 	};
-	
+
 	this.setBlockLevel = function(element, level){
 		element.setAttribute('level', level);
 	};
@@ -340,13 +356,13 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
-	
+
 	this.splitNode = function (node, offset, limit){
 		// idea from http://jsbin.com/efegiz/2/edit?html,css,js,output
 		var parent = limit.parentNode;
 		var parentOffset = lhe.getNodeIndex(parent, limit);
-	  
-		var doc = node.ownerDocument;  
+
+		var doc = node.ownerDocument;
 		var leftRange = doc.createRange();
 		leftRange.setStart(parent, parentOffset);
 		leftRange.setEnd(node, offset);
@@ -416,13 +432,13 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	};
-	
+
 	/* Private members */
 	this.events = {};
 	this.currentNode;
 	this.currentBlock;
 	this.currentContainer;
-	
+
 	/*
 		Trigger events based on schemas
 	*/
@@ -568,7 +584,7 @@ var legalHubEditor = function(el, schema){
 			lhe.setCaretPosition(element, 1);
 		}
 	}
-	
+
 	this.getSelectedText = function() {
         var text = "";
         if (typeof window.getSelection != "undefined") {
@@ -591,16 +607,16 @@ var legalHubEditor = function(el, schema){
 			caretOffsetEnd = preCaretRange.toString().length;
 			preCaretRange.setEnd(range.endContainer, range.endOffset);
 			caretOffsetStart = preCaretRange.toString().length;
-			
+
 		} else if (this.ie) {
-		
+
 			var textRange = document.selection.createRange();
 			var preCaretTextRange = document.body.createTextRange();
 			preCaretTextRange.moveToElementText(lhe.getSelectionAnchor());
 			caretOffsetEnd = preCaretTextRange.text.length;
 			preCaretTextRange.setEndPoint("EndToEnd", textRange);
 			caretOffsetStart = preCaretTextRange.text.length;
-			
+
 		}
 		if(lhe.getSelectedText().length>0){
 			position = 'selection';
@@ -612,7 +628,7 @@ var legalHubEditor = function(el, schema){
 				case caretOffsetEnd:
 					position = 'end';
 					break;
-				default: 
+				default:
 					position = 'middle';
 			}
 		}
@@ -676,7 +692,7 @@ var legalHubEditor = function(el, schema){
 			if(node){
 				var sibling = node;
 				while(sibling = sibling.nextSibling){
-					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it] 
+					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it]
 						&& (level == undefined || level == lhe.getBlockLevel(sibling))){
 						return sibling;
 					}
@@ -684,7 +700,7 @@ var legalHubEditor = function(el, schema){
 			}
 		}
 	}
-	
+
 	/*
 		Get Previous block
 	*/
@@ -694,7 +710,7 @@ var legalHubEditor = function(el, schema){
 			if(node){
 				var sibling = node;
 				while(sibling = sibling.previousSibling){
-					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it] 
+					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it]
 						&& (level == undefined || level == lhe.getBlockLevel(sibling))){
 						return sibling;
 					}

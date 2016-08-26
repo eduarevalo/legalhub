@@ -17,6 +17,57 @@ span[itemtype=quote]::before{
 span[itemtype=quote]::after{
 	content: '”'
 }
+[type='format'].bold{
+  font-weight: bold;
+}
+[type='format'].italic{
+  font-style: italic;
+}
+[type='format'].strikethrough{
+  text-decoration: line-through;
+}
+[type='format'].underlined{
+  text-decoration: underline;
+}
+.justify{
+  text-align:justify;
+}
+.center{
+  text-align:center;
+}
+.left{
+  text-align:left;
+}
+.right{
+  text-align:right;
+}
+#fonts-options{
+  min-width: 200px;
+}
+.font-option{
+  padding-left: 10px;
+}
+.font-arial-helvetica{
+  font-family: Arial, Helvetica;
+}
+.font-times-new{
+  font-family: Times New Roman, Times;
+}
+.font-courier{
+  font-family: Courier New, Courier;
+}
+.font-palatino{
+  font-family: Palatino;
+}
+.font-garamond{
+  font-family: Garamond;
+}
+.font-bookman{
+  font-family: Bookman;
+}
+.font-avant-garde{
+  font-family: Avant Garde;
+}
 [type='track'].del{
 	color: red;
 	text-decoration: line-through;

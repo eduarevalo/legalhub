@@ -326,13 +326,43 @@
 
 		<nav class="toolbar-menu" ng-if="mode == 'edit'">
 
-			<button class="btn btn-info"><i class="zmdi zmdi-format-bold"></i></button>
-			<button class="btn btn-info"><i class="zmdi zmdi-format-italic"></i></button>
-			<button class="btn btn-info"><i class="zmdi zmdi-format-strikethrough"></i></button>
-			<button class="btn btn-primary"><i class="zmdi zmdi-undo"></i></button>
-			<button class="btn btn-primary"><i class="zmdi zmdi-redo"></i></button>
+			<button class="btn btn-info" onclick="editor.setFormat('bold');"><i class="zmdi zmdi-format-bold"></i></button>
+			<button class="btn btn-info" onclick="editor.setFormat('italic');"><i class="zmdi zmdi-format-italic"></i></button>
+			<button class="btn btn-info" onclick="editor.setFormat('strikethrough');"><i class="zmdi zmdi-format-strikethrough"></i></button>
+			<button class="btn btn-info" onclick="editor.setFormat('underlined');"><i class="zmdi zmdi-format-underlined"></i></button>
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-font"></i> <span class="selected-option"></span></div>
+				<ul class="dropdown-menu" id="fonts-options">
+					<li><span class="font-option font-arial-helvetica" onmousedown="editor.setFormat('font-arial-helvetica');"> Arial, Helvetica</span></li>
+					<li><span class="font-option font-times-new" onmousedown="editor.setFormat('font-times-new');"> Times New Roman, Times</span></li>
+					<li><span class="font-option font-courier" onmousedown="editor.setFormat('font-courier');"> Courier New, Courier</span></li>
+					<li><span class="font-option font-palatino" onmousedown="editor.setFormat('font-palatino');"> Palatino</span></li>
+					<li><span class="font-option font-garamond" onmousedown="editor.setFormat('font-garamond');"> Garamond</span></li>
+					<li><span class="font-option font-bookman" onmousedown="editor.setFormat('font-bookman');"> Bookman</span></li>
+					<li><span class="font-option font-avant-garde" onmousedown="editor.setFormat('font-avant-garde');"> Avant Garde</span></li>
+				</ul>
+			</div>
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="font-color-menu">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-format-color-text"></i> <span class="selected-option"></span></div>
+				<div class="dropdown-menu">
+					<ng-farbtastic ng-model="fctrl.color"></ng-farbtastic>
+				</div>
+			</div>
+
+			<span class="menu-spacer"> </span>
+			<button class="btn bgm-teal" onclick="editor.setBlockFormat('center');"><i class="zmdi zmdi-format-align-center"></i></button>
+			<button class="btn bgm-teal" onclick="editor.setBlockFormat('justify');"><i class="zmdi zmdi-format-align-justify"></i></button>
+			<button class="btn bgm-teal" onclick="editor.setBlockFormat('left');"><i class="zmdi zmdi-format-align-left"></i></button>
+			<button class="btn bgm-teal" onclick="editor.setBlockFormat('right');"><i class="zmdi zmdi-format-align-right"></i></button>
+
+			<!--<button class="btn btn-primary"><i class="zmdi zmdi-undo"></i></button>
+			<button class="btn btn-primary"><i class="zmdi zmdi-redo"></i></button>-->
 			<span class="menu-spacer"> </span>
 			<button class="btn btn-warning" onclick="toggleLineNumbers()"><i class="zmdi zmdi-format-list-numbered"></i></button>
+			<span class="menu-spacer"> </span>
+			<button class="btn btn-default"><i class="zmdi zmdi-border-all"></i></button>
+
+
 			<span class="menu-spacer"> </span>
 			<button class="btn bgm-teal" onclick="insertBlockQuote()"><i class="zmdi zmdi-link"></i></button>
 			<button class="btn btn-warning" onclick="insertBlockQuoteMichigan()"><i class="zmdi zmdi-link"></i></button>

@@ -290,7 +290,32 @@ legalHub
 						'view/modules/editor/start.js',
 						'view/modules/editor/css/common.css',
 						'view/modules/editor/css/default.css',
-						'view/modules/editor/css/paper.css']);
+						'view/modules/editor/css/paper.css',
+            {
+              name: 'css',
+              insertBefore: '#app-level',
+              files: [
+              'view/vendors/bower_components/nouislider/jquery.nouislider.css',
+              'view/vendors/farbtastic/farbtastic.css',
+              'view/vendors/bower_components/summernote/dist/summernote.css',
+              'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+              'view/vendors/bower_components/chosen/chosen.min.css'
+              ]
+            },
+            {
+              name: 'vendors',
+              files: [
+              'view/vendors/input-mask/input-mask.min.js',
+              'view/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+              'view/vendors/bower_components/moment/min/moment.min.js',
+              'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+              'view/vendors/bower_components/summernote/dist/summernote.min.js',
+              'view/vendors/fileinput/fileinput.min.js',
+              'view/vendors/bower_components/chosen/chosen.jquery.js',
+              'view/vendors/bower_components/angular-chosen-localytics/chosen.js',
+              'view/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+              ]
+            }]);
                     }
                 }
             })
