@@ -292,6 +292,7 @@ legalHub
 						'view/modules/editor/css/common.css',
 						'view/modules/editor/css/default.css',
 						'view/modules/editor/css/paper.css',
+            'view/modules/editor/css/connecticut.css',
             {
               name: 'css',
               insertBefore: '#app-level',

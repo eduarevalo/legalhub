@@ -274,14 +274,14 @@
 				</li>
 			</ul>
 		</nav>
-		
+
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'file'">
 			<button class="btn" >New</button>
 			<button class="btn" >Open...</button>
 			<button class="btn" >Save</button>
 			<button class="btn" >Save as...</button>
 			<button class="btn" >Save as template...</button>
-			
+
 			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
 				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-collection-case-play"></i> Export as...</div>
 				<ul class="dropdown-menu">
@@ -294,7 +294,7 @@
 				</ul>
 			</div>
 		</nav>
-		
+
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'format'">
 
 			<button class="btn btn-info" onclick="editor.setFormat('bold');"><i class="zmdi zmdi-format-bold"></i></button>
@@ -349,7 +349,7 @@
 				</div>
 			</div>
 		</nav>
-		
+
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'schema'">
 			<div class="dropdown" uib-dropdown style="display: inline-block" id="contextual-menu">
 				<div class="waves-effect btn bgm-teal" uib-dropdown-toggle><i class="zmdi zmdi-labels"></i> <span id="selected-schema">Schemaless</span></div>
@@ -380,8 +380,9 @@
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'themes'">
 			<button class="btn" onClick="setPageStyle('default')">Default</button>
 			<button class="btn" onClick="setPageStyle('paper')">Paper</button>
+			<button class="btn" onClick="setPageStyle('connecticut')">Connecticut</button>
 		</nav>
-		
+
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">
 			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-palette"></i></button>
 			<div class="dropdown-menu">

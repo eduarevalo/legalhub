@@ -1,0 +1,28 @@
+#document-card{
+  padding: 1in;
+  width: 8.5in;
+  min-height: 11in;
+  text-align: justify;
+}
+@page {
+  margin: 1in;
+  size: 8.5in 11in;
+  text-align: justify;
+}
+section[itemtype=body]{
+  background-image: url(../img/billseal.gif);
+  padding-top: 180px;
+  background-repeat: no-repeat;
+  background-position: center top;
+}
+[itemtype='longTitle']{
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-bottom: 0.2in;
+}
+[itemtype='preamble']{
+  padding-bottom: 0.2in;
+}
+span[itemtype='text']::before{
+  content: '  ';
+}

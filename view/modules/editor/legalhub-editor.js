@@ -8,6 +8,7 @@ var legalHubEditor = function(el){
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.element = el;
 	this.schema = {};
+	this.minNLPScore = 0.8;
 	this.tracking = false;
 	this.setSchema = function(schema){
 		this.schema = schema || {};
@@ -29,7 +30,7 @@ var legalHubEditor = function(el){
 		if(context.tag == '' || lhe.currentNode == undefined){
 			return false;
 		}
-		var newElement = lhe.newElement(context.tag);
+		var newElement = lhe.newElement(context.tag, true);
 		if(direction == 'before'){
 			lhe.currentNode.parentNode.insertBefore(newElement, lhe.currentNode);
 		}else{
@@ -58,8 +59,9 @@ var legalHubEditor = function(el){
 	this.insertChar = function(context){
 		if(lhe.currentNode.childNodes.length == 1){
 			var newData = String.fromCharCode(event.keyCode);
-			var prefix = lhe.currentNode.childNodes[0].textContent.substring(0, context.start);
-			var suffix = lhe.currentNode.childNodes[0].textContent.substring(context.start);
+			var textContent = lhe.getTextContent(lhe.currentNode.childNodes[0]);
+			var prefix = textContent.substring(0, context.start);
+			var suffix = textContent.substring(context.start);
 			lhe.currentNode.replaceChild(document.createTextNode(prefix + newData + suffix), lhe.currentNode.childNodes[0]);
 		}
 	};
@@ -101,7 +103,9 @@ var legalHubEditor = function(el){
 		var continues = lhe.deleteEmptyNode(context);
 		if(continues){
 			if(context.position == 'selection'){
-				return lhe.surroundSelection(lhe.getDeletedElement());
+				if(lhe.tracking){
+					return lhe.surroundSelection(lhe.getDeletedElement());
+				}
 			}else{
 				// Deletes backward
 				if(event.keyCode == 8 && context.position == 'start'){
@@ -172,11 +176,19 @@ var legalHubEditor = function(el){
 		return true;
 	};
 
-	this.newElement = function(tag, baseElement, link){
+	this.newElement = function(tag, empty){
 		var newElement = document.createElement(tag);
 		lhe.getId(newElement);
-		lhe.setEmptyNodeAttributes(newElement);
+		if(empty){
+			lhe.setEmptyNodeAttributes(newElement);
+		}
 		return newElement;
+	};
+
+	this.newElementByType = function(type){
+		var element = lhe.newElement(lhe.schema.types[type].tag ? lhe.schema.types[type].tag : lhe.config.block.elements[0]);
+		lhe.setType(type, element);
+		return element;
 	};
 
 	/*
@@ -531,7 +543,7 @@ var legalHubEditor = function(el){
 				context.container = 'inline';
 			}
 		}
-		context.type = lhe.currentNode ? lhe.getType(lhe.currentNode) : '';
+		context.type = lhe.currentNode ? lhe.getType(lhe.currentNode) : null;
 		context.keyCode = event.which || event.keyCode;
 
 		if(event.keyCode == 32 // Space
@@ -540,13 +552,17 @@ var legalHubEditor = function(el){
 					|| (event.keyCode >= 186 && event.keyCode <= 222)) { // Symbols
 		  context.keyCode = 'a#';
 		}
-		
+
 		// Schema Update Actions
 		if(!lhe.isSchemaLess()){
 			lhe.setCurrentLevelTypes();
 		}
-		
+
 		return context;
+	}
+
+	this.getTextContent = function(node){
+		return node.textContent;
 	}
 	/*
 		Initialize editor element events.
@@ -555,7 +571,7 @@ var legalHubEditor = function(el){
 	*/
 	this.initEvents = function(){
 
-		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
+		var supportedCoreEvents = [/*'keyup',*/ 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
 
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
@@ -575,11 +591,48 @@ var legalHubEditor = function(el){
 				}
 			});
 		});
-		// This evens is triggered inmediatly after keyup for empty nodes corrections.
+		/*
+		 This evens is triggered inmediatly after keyup:
+		 Purposes:
+			- Empty nodes corrections.
+			- Nlp methods
+		*/
 		lhe.events['core.keyup'] = lhe.element.addEventListener('keyup', function(event){
 			var context = lhe.getEventContext(event);
+			// Empty nodes
 			if(context.keyCode == 'a#' || context.keyCode == 8 || context.keyCode == 46){
 				lhe.setEmptyNodeAttributes(lhe.currentNode);
+			}
+			// Suggest Markup. Only on space keyCode event.
+			if(event.keyCode == 32){
+				if(context.type == null){
+					var scores = {};
+					var textNode;
+					for(var key in lhe.schema.types){
+						if(lhe.schema.types[key].nlp && lhe.schema.types[key].nlp.tagging){
+							if(textNode == undefined){
+								textNode = lhe.getTextContent(lhe.currentNode);
+							}
+							if(lhe.validateNLPTriggers(lhe.schema.types[key].nlp.tagging.triggers, textNode)){
+								scores[key] = lhe.schema.types[key].nlp.tagging.score ? lhe.schema.types[key].nlp.tagging.score(context, textNode) : lhe.minNLPScore;
+							}
+						}
+					}
+					if(Object.keys(scores).length > 0){
+						lhe.suggestMarkup(scores);
+					}
+				}else if(lhe.schema.types[context.type].nlp && lhe.schema.types[context.type].nlp.processors){
+					var textNode;
+					for(var it=0; it<lhe.schema.types[context.type].nlp.processors.length; it++){
+						var processor = lhe.schema.types[context.type].nlp.processors[it];
+						if(textNode == undefined){
+							textNode = lhe.getTextContent(lhe.currentNode);
+						}
+						if(lhe.validateNLPTriggers(processor.triggers, textNode)){
+							processor.fn(context, textNode, lhe);
+						}
+					}
+				}
 			}
 		});
 
@@ -598,6 +651,42 @@ var legalHubEditor = function(el){
 			lhe.setCaretPosition(element, 1);
 		}
 	}
+
+	this.validateNLPTriggers = function(triggers, text){
+		for(var key in triggers){
+			switch(key){
+				case 'wordsCountMax':
+					if(text.trim().split(' ').length > triggers[key]){
+						return false;
+					}
+					break;
+				case 'wordsCountMin':
+					if(text.trim().split(' ').length < triggers[key]){
+						return false;
+					}
+					break;
+				case 'expression':
+					if(!triggers[key].test(text)){
+						return false;
+					}
+					break;
+				default:
+					return false;
+			}
+		}
+		return true;
+	};
+
+	this.suggestMarkup = function(scores){
+		if(Object.keys(scores).length == 1){
+			var type = Object.keys(scores)[0];
+			if(scores[type] >= lhe.minNLPScore){
+				lhe.setType(type);
+			}
+		}else{
+				// Multiple options
+		}
+	};
 
 	this.getSelectedText = function() {
         var text = "";
@@ -661,6 +750,17 @@ var legalHubEditor = function(el){
 		}
 		return null;
 	};
+
+
+	this.isInline = function(node){
+		return lhe.config.inline.elements.indexOf(node.tagName.toLowerCase())>=0;
+	}
+	this.isBlock = function(node){
+		return lhe.config.block.elements.indexOf(node.tagName.toLowerCase())>=0;
+	}
+	this.isContainer = function(node){
+		return lhe.config.container.elements.indexOf(node.tagName.toLowerCase())>=0;
+	}
 	/*
 		Get first block node
 	*/
@@ -733,6 +833,18 @@ var legalHubEditor = function(el){
 		}
 	}
 
+	this.getContainer = function(element){
+		for(var it=0; it<lhe.config.container.elements.length; it++){
+			if(element.tagName.toLowerCase() == lhe.config.block.elements[it]){
+				return element;
+			}
+			var node = element.closest(lhe.config.container.elements[it]);
+			if(node){
+				return node;
+			}
+		}
+	};
+
 	this.setTagPosition = function(event){
 		console.log("setTagPosition()");
 		if(event && lhe.element != event.srcElement && lhe.element.contains(event.srcElement)){
@@ -759,27 +871,39 @@ var legalHubEditor = function(el){
 			}
 		}
 	};
-	
-	
+
+
 	/*
 		SchemaBased Methods
 
 	*/
 	this.setCurrentLevelTypes = function(){
-		var currentLevel = lhe.getBlockLevel(lhe.currentNode);
-		var options = [];
-		for(var key in lhe.schema.types){
-			if(lhe.schema.types[key].level == undefined || lhe.schema.types[key].level == currentLevel){
-				options.push('<li><a onclick="editor.setType(\''+key+'\');">' + key.toUpperCase() +'</a></li>');
+		var optionsDropDown = document.getElementById('current-level-options');
+		if(optionsDropDown){
+			var currentLevel = lhe.getBlockLevel(lhe.currentNode);
+			var options = [];
+			for(var key in lhe.schema.types){
+				if(lhe.schema.types[key].level == undefined || lhe.schema.types[key].level == currentLevel){
+					options.push('<li><a onclick="editor.setBlockType(\''+key+'\');">' + key.toUpperCase() +'</a></li>');
+				}
 			}
+			optionsDropDown.innerHTML = options.join('');
 		}
-		document.getElementById('current-level-options').innerHTML = options.join('');
 	};
+	this.setBlockType = function(type, node){
+		if(node == undefined){
+			node = lhe.currentNode;
+		}
+		return lhe.setType(type, lhe.getBlock(node));
+	}
 	/*
 		Set a new schema type
 	*/
-	this.setType = function(type){
-		lhe.setElementType(lhe.getBlock(lhe.currentNode), type);
+	this.setType = function(type, node){
+		if(node == undefined){
+			node = lhe.currentNode;
+		}
+		lhe.setElementType(node, type);
 		if(lhe.schema.types[type].transform){
 			return lhe.schema.types[type].transform(lhe);
 		}
@@ -793,19 +917,24 @@ var legalHubEditor = function(el){
 			element.setAttribute('itemtype', type);
 		}
 	};
-	/* 
+	/*
 		Get Type attribute
 	*/
 	this.getType = function(element){
 		return element && element.hasAttribute('itemtype') ? element.getAttribute('itemtype') : null;
 	};
-	
+
+	this.getChildByType = function(node, type){
+		return node.querySelector("[itemtype='"+type+"']");
+	}
+
 	this.applyTemplate = function(node, template){
 		var options = '';
 		for(var i=0; i<template.length;i++){
 			options += '<span itemtype="' + template[i]+ '" empty="true">'+String.fromCodePoint(0x200C)+'</span>';
 		}
 		node.innerHTML = options;
+		return true;
 	}
 	this.insertBlockAfter = function(newNode){
 		if(lhe.currentBlock.nextSibling){
@@ -814,7 +943,20 @@ var legalHubEditor = function(el){
 			lhe.currentBlock.parentNode.appendChild(newNode);
 		}
 	};
-	
+	this.insertElementAfter = function(newNode, containerType){
+		var anchorElement = lhe.currentNode;
+		if(containerType == 'block' || lhe.isBlock(newNode)){
+			anchorElement = lhe.getBlock(lhe.currentNode);
+		}else if(containerType == 'container' || lhe.isContainer(newNode)){
+			anchorElement = lhe.getContainer(lhe.currentNode);
+		}
+		if(anchorElement.nextSibling){
+			anchorElement.parentNode.insertBefore(newNode, anchorElement.nextSibling);
+		}else{
+			anchorElement.parentNode.appendChild(newNode);
+		}
+	};
+
 	this.updateBreadcrumb = function(){
 		console.log("updateBreadcrumb()");
 		var breadcrumb = document.getElementById('contextual-menu');
@@ -859,7 +1001,7 @@ var legalHubEditor = function(el){
       }
     }
   };
-  
+
 	/*this.transform = function(element, type){
 		var newChildren = [];
 		for(var it=0; it<lhe.schema[type].children.length; it++){
@@ -873,8 +1015,8 @@ var legalHubEditor = function(el){
 			lhe.currentNode = newChildren[it];
 		}
 	};*/
-	
-	
+
+
 	/*
 		Initialize actions
 	*/
