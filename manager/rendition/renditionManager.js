@@ -64,6 +64,10 @@ var getRenditionFromContent = (type, content, cb) => {
 			  '-o', `"${outFile}"`,
 			  '-x', '4'
 			].join(" ");
+			
+			cmd = [`"C:/Program Files (x86)/Prince/engine/bin/prince.exe"`,
+			`"${tempFile}"`,
+			'-o', `"${outFile}"`].join(" ");
 			console.log(cmd);
 			var code = execSync(cmd);
 			console.log(code);

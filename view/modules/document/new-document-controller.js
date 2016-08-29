@@ -1,7 +1,7 @@
 angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, version, rendition, $sce) {
 	$scope.mode ='new';
 	$scope.selectedToolbar = '';
-	$scope.documentId = /*'57acca5446d29b1c7cdd7266'/*/'57abdd6bc46e79118c8b6143'/**/;
+	$scope.documentId = '57acca5446d29b1c7cdd7266'/*/'57abdd6bc46e79118c8b6143'/**/;
 	$scope.schema = '';
 	$scope.goToNew = function(){
 		$scope.mode = 'new';

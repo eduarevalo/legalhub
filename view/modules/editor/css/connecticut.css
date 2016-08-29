@@ -26,3 +26,6 @@ section[itemtype=body]{
 span[itemtype='text']::before{
   content: '  ';
 }
+[type='track'].add{
+	color: blue;
+}

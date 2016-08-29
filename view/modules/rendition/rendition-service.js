@@ -13,7 +13,7 @@ angular.module('legalHub').service('rendition', function($http, API) {
     return $http({ method: 'POST', url: API + 'rendition/generate', responseType: 'arraybuffer', data: {type: type, content: content}}).then(function(response){
       if(response.data){
         var blob = new Blob([response.data], {
-			type: 'application/xml'
+			type: 'application/' + type
 		});
 
 		var link = document.createElement('a');

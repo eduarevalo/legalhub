@@ -68,6 +68,8 @@ span[itemtype=quote]::after{
 .font-avant-garde{
   font-family: Avant Garde;
 }
+
+/* Track changes */
 [type='track'].del{
 	color: red;
 	text-decoration: line-through;
@@ -82,6 +84,10 @@ span[itemtype=quote]::after{
 	color: black;
 	padding-left: 0.05in;
 }
+[type='track'].add{
+	text-decoration: underline;
+}
+
 #line-numbers{
 	position: absolute;
 	z-index: 4;
@@ -119,6 +125,9 @@ span[itemtype=quote]::after{
 }
 #editor p[level='10'] {
   padding-left:1.5in;
+}
+[itemtype='quote']{
+	margin-top: 2em;
 }
 p[itemtype=subsection]{
 	text-indent: 2em;
