@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 var Fragment = require(__base + 'model/document/fragment');
 var db = require(__base + 'core/db/db');
@@ -38,7 +38,9 @@ var toFragment = (obj) => {
 }
 var toObject = (fragment) => {
   var obj = fragment.toObject();
-  fragment._id = new ObjectID(obj.id);
+  obj._id = new ObjectID(obj.id);
+  obj.documentId = new ObjectID(obj.documentId);
   delete obj.id;
+  console.log(obj);
   return obj;
 }

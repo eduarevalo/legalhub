@@ -15,26 +15,37 @@
       <h2>{{ title }} <small>{{ description }}</small></h2>
 
       <br/>
-      <br/>
-      <br/>
-	  
-			<button class="btn btn-warning btn-icon" title="New document" ng-click="goToNewDocument()"><i class="zmdi zmdi-file-plus"></i></button>
-	  
-            <button class="btn btn-primary btn-icon" title="New initiative"><i class="zmdi zmdi-lamp"></i></button>
-            <button class="btn btn-info btn-icon" title="Advanced search"><i class="zmdi zmdi-search"></i></button>
-            <button class="btn btn-success btn-icon" title="New project"><i class="zmdi zmdi-assignment-o"></i></button>
-            
-            <button class="btn btn-danger btn-icon" title="New template"><i class="zmdi zmdi-code"></i></button>
-            <button class="btn bgm-teal btn-icon" title="Share"><i class="zmdi zmdi-share"></i></button>
-            <button class="btn bgm-orange btn-icon" title="Download"><i class="zmdi zmdi-download"></i></button>
-            <button class="btn bgm-cyan btn-icon" title="Follow"><i class="zmdi zmdi-eye"></i></button>
-            <button class="btn bgm-lime btn-icon" title="Properties"><i class="zmdi zmdi-apps"></i></button>
-            <button class="btn bgm-lightgreen btn-icon" title="More options"><i class="zmdi zmdi-menu"></i></button>
 
-            <!--<button class="btn bgm-amber btn-icon"><i class="zmdi zmdi-check-all"></i></button>
-            <button class="btn bgm-gray btn-icon"><i class="zmdi zmdi-trending-up"></i></button>
-            <button class="btn bgm-lightblue btn-icon"><i class="zmdi zmdi-apps"></i></button>
-            <button class="btn bgm-deeporange btn-icon"><i class="zmdi zmdi-phone"></i></button>-->
+      <!--<button class="btn btn-info btn-icon" title="Advanced search"><i class="zmdi zmdi-search"></i></button>
+
+      <span class="menu-spacer"/>-->
+
+      <div class="dropdown stop-propagate" uib-dropdown style="display: inline-block">
+        <button class="btn btn-warning btn-icon" title="New..." uib-dropdown-toggle><i class="zmdi zmdi-plus"></i></button>
+        <div class="dropdown-menu" style="padding: 10px">
+          <center>
+          <button class="btn btn-danger btn-icon" title="New document" ng-click="goToNewDocument()"><i class="zmdi zmdi-file-plus"></i></button>
+
+          <button class="btn btn-primary btn-icon" title="New initiative" ng-click="goToNewDocument()"><i class="zmdi zmdi-lamp"></i></button>
+
+          <button class="btn btn-success btn-icon" title="New project" ng-click="goToNewDocument('bill')"><i class="zmdi zmdi-assignment-o"></i></button>
+        </center>
+        </div>
+      </div>
+
+      <span class="menu-spacer"/>
+
+      <button class="btn bgm-teal btn-icon" title="Share" ng-disabled="!options.active"><i class="zmdi zmdi-share"></i></button>
+      <button class="btn bgm-cyan btn-icon" title="Follow" ng-disabled="!options.active"><i class="zmdi zmdi-eye"></i></button>
+      <button class="btn bgm-lightblue btn-icon" title="Download" ng-disabled="!options.active"><i class="zmdi zmdi-download"></i></button>
+
+      <!--<button class="btn bgm-lime btn-icon" title="Properties"><i class="zmdi zmdi-apps"></i></button>
+      <button class="btn bgm-lightgreen btn-icon" title="More options"><i class="zmdi zmdi-menu"></i></button>-->
+
+      <!--<button class="btn bgm-amber btn-icon"><i class="zmdi zmdi-check-all"></i></button>
+      <button class="btn bgm-gray btn-icon"><i class="zmdi zmdi-trending-up"></i></button>
+      <button class="btn bgm-lightblue btn-icon"><i class="zmdi zmdi-apps"></i></button>
+      <button class="btn bgm-deeporange btn-icon"><i class="zmdi zmdi-phone"></i></button>-->
 
 
     </div>
@@ -42,15 +53,23 @@
     <div class="card-body"ng-if="documents.length > 0">
       <div class="table-responsive">
         <table ng-table="cdCtrl.tableSorting" class="table table-striped table-vmiddle">
-          <tr ng-repeat="document in documents" data-ng-click="goToDocument(document)">
-            <td data-title="'ID'" sortable="'id'">
-              {{ document.id }}
+          <tr ng-repeat="document in documents">
+            <td>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" ng-model="document.selected" ng-click="activateOptions()">
+                  <i class="input-helper"></i>
+                </label>
+              </div>
             </td>
-            <td data-title="'Code'" sortable="'name'">
+            <td data-title="'Code'" data-ng-click="goToDocument(document)">
               {{ document.code }}
             </td>
-            <td data-title="'Title'" sortable="'email'">
+            <td data-title="'Title'" data-ng-click="goToDocument(document)">
               {{ document.title }}
+            </td>
+            <td>
+              <button class="btn btn-primary btn-icon" title="Edit" ng-click="goToEditDocument(document.id, document.title)"><i class="zmdi zmdi-edit"></i></button>
             </td>
           </tr>
         </table>

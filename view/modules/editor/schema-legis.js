@@ -1,6 +1,10 @@
 var legisSchema = {
 	'level': {
-
+		attributes: [{
+			name: 'type',
+			mandatory: false,
+			values: ['amending']
+		}]
 	},
 	'longTitle':{
 		minOccurs: 0,
@@ -28,6 +32,7 @@ var legisSchema = {
 		}
 	},
 	'section': {
+		base: 'level',
 		inlines: ['number', 'heading', 'text'],
 		blocks: ['subsection'],
 		nlp: {
@@ -66,15 +71,20 @@ var legisSchema = {
 	'number': {
 		type: 'inline'
 	},
+	'ref': {
+		attributes: ['href'],
+		type: 'inline'
+	},
 	'text': {
 		nlp: {
 			processors: [
 				{
+					name: 'amending',
 					triggers: {
-						'expression': new RegExp(/^\s*Section\s*([0-9a-zA-Z.)-]+)\s*of(.+)is\s*[repealed|amended|substituted]\s*/, 'i')
+						'expression': new RegExp(/section\s*([0-9a-zA-Z.)-]+)\s*of\s*(.+)is\s*[repealed|amended|substituted]/, 'i')
 					},
 					fn: function(context, textNode, editor){
-						var match = textNode.match(new RegExp(/^\s*Section\s*([0-9a-zA-Z.)-]+)\s*of(.+)is repealed\s*/, 'i'));
+						var match = textNode.match(new RegExp(/section\s*([0-9a-zA-Z.)-]+)\s*of\s*(.+)is\s*[repealed|amended|substituted]/, 'i'));
 						if(match && match.length>2){
 							var sectionId = match[1];
 							var documentId = match[2];
@@ -86,15 +96,26 @@ var legisSchema = {
 								showCancelButton: true,
 								closeOnConfirm: false
 							}, function(){
+								var match = textNode.match(new RegExp(/(section\s*[0-9a-zA-Z.)-]+\s*of\s*\b.+)is\s*[repealed|amended|substituted]/, 'i'));
+								if(match && match.length>1){
+									var matchedRef = match[1];
+									var newRef = editor.newElementByType('ref', matchedRef);
+									editor.currentNode.innerHTML = editor.currentNode.innerHTML.replace(matchedRef, newRef.outerHTML);
+								}
+								var sectionNode = editor.getPreviousByType(editor.currentNode, 'section');
+								if(sectionNode){
+									sectionNode.setAttribute('data-type', 'amending');
+								}
 								var scope = angular.element(editor.element).scope();
-								scope.$apply(function () {
-									scope.reference(function(textToInsert){
-										var newQuote = editor.newElementByType('quote');
-										newQuote.innerHTML = textToInsert;
-										editor.insertElementAfter(newQuote, 'block');
-										swal("Inserted!", "Your reference was inserted for modification.", "success");
-									});
+								//scope.$apply(function () {
+								scope.reference(function(textToInsert){
+									var newQuote = editor.newElementByType('quote');
+									newQuote.innerHTML = textToInsert;
+									editor.insertElementAfter(newQuote, 'block');
+									editor.nestBlock(newQuote, 1);
+									swal("Inserted!", "Your reference was inserted for modification.", "success");
 								});
+								//});
 							});
 						}
 					}

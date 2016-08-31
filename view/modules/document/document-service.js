@@ -1,4 +1,4 @@
-angular.module('legalHub').service('document', function($http, API) {
+angular.module('legalHub').service('documentService', function($http, API) {
   var self = this;
   this.search = function(form, expectedValues){
     var query = [];
@@ -27,6 +27,15 @@ angular.module('legalHub').service('document', function($http, API) {
         return data[0];
       }
       return null;
+    });
+  }
+  this.save = function(document){
+    return $http.post(API + 'document/save', document).then(function(response){
+      if(response.data.success){
+        return {success: true, code: response.data.code, id: response.data.id};
+      }else{
+        return {success: false, error: response.data.error };
+      }
     });
   }
 })

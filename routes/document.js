@@ -17,6 +17,22 @@ router.get('/search', function (req, res) {
     }
   });
 });
+/* save */
+router.post('/save', function (req, res) {
+  let document = new Document();
+  document.update(req.body);
+  if(req.body.collectionId){
+    document.setCollection(req.body.collectionId);
+  }
+  documentManager.save(document, req.body.content, function(err, document){
+    if(err){
+      res.json({success: false, error: err});
+    }else{
+      res.json({success: true, code: document.code, id: document.id});
+    }
+  });
+});
+
 /* upload */
 router.post('/upload', function (req, res, next) {
   req.pipe(req.busboy);

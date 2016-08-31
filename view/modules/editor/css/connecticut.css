@@ -9,23 +9,25 @@
   size: 8.5in 11in;
   text-align: justify;
 }
-section[itemtype=body]{
+.document section:first-child::before{
+  content: '';
   background-image: url(../img/billseal.gif);
-  padding-top: 180px;
+  height: 180px;
+  display: block;
   background-repeat: no-repeat;
-  background-position: center top;
+  background-position: left top;
 }
 [itemtype='longTitle']{
   text-transform: uppercase;
   font-weight: bold;
-  padding-bottom: 0.2in;
+  margin-bottom: 0.2in;
 }
 [itemtype='preamble']{
-  padding-bottom: 0.2in;
+  margin-bottom: 0.2in;
 }
 span[itemtype='text']::before{
   content: '  ';
 }
-[type='track'].add{
+[track='add']{
 	color: blue;
 }

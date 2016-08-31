@@ -7,6 +7,12 @@ var legalHubEditor = function(el){
 	this.ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.element = el;
+	this.setElement = function(el){
+		this.element = el;
+		this.init();
+	}
+	this.showLineNumbers = false;
+	this.lineNumbersElement;
 	this.schema = {};
 	this.minNLPScore = 0.8;
 	this.trackingChangesMode = false;
@@ -109,14 +115,11 @@ var legalHubEditor = function(el){
 		}
 		return false;
 	}
-	
+
 	this.addTrackingAttributes = function(node, type){
-		node.setAttribute('type', 'track');
-		if(type !== undefined){
-			node.className = type;
-		}
+		node.setAttribute('track', type);
 	}
-	
+
 	this.getDeletedElement = function(innerHTML){
 		var span = document.createElement("span");
 		lhe.addTrackingAttributes(span, 'del');
@@ -125,7 +128,7 @@ var legalHubEditor = function(el){
 		}
 		return span;
 	};
-	
+
 	this.getAddedElement = function(innerHTML){
 		var span = document.createElement("span");
 		lhe.addTrackingAttributes(span, 'add');
@@ -134,26 +137,26 @@ var legalHubEditor = function(el){
 		}
 		return span;
 	};
-	
+
 	this.isTrackingNode = function(node, type){
 		var parentNode = node.nodeType == 3 ? node.parentNode : node;
 		while(parentNode != lhe.element){
-			if(parentNode.hasAttribute('type') && parentNode.getAttribute('type') == 'track' && (type == undefined || parentNode.className == type)){
+			if(parentNode.hasAttribute('track') && (type == undefined || parentNode.getAttribute('track') == type)){
 				return true;
 			}
 			parentNode = parentNode.parentNode;
 		}
 		return false;
 	}
-	
+
 	this.isAddTrackingNode = function(node){
 		return lhe.isTrackingNode(node, 'add');
 	}
-	
+
 	this.isDeleteTrackingNode = function(node){
 		return lhe.isTrackingNode(node, 'add');
 	}
-	
+
 	this.trackAddChanges = function(context){
 		var textNode = lhe.getSelectionAnchor();
 		if(lhe.isAddTrackingNode(textNode)){
@@ -173,7 +176,7 @@ var legalHubEditor = function(el){
 		}
 		return true;
 	}
-	
+
 	this.trackDeleteChanges = function(context, foreward){
 		var textNode = lhe.getSelectionAnchor();
 		if(lhe.isAddTrackingNode(textNode)){
@@ -198,7 +201,7 @@ var legalHubEditor = function(el){
 		}
 		return true;
 	}
-	
+
 	this.deleteInSibling = function(context, node, sibling, foreward){
 		var textNode = lhe.getTextNode(sibling);
 		var textContent = lhe.getTextContent(textNode);
@@ -209,7 +212,7 @@ var legalHubEditor = function(el){
 		lhe.setCaretPosition(newText, foreward ? 0 : 'end');
 		return false;
 	}
-	
+
 	this.deleteOrJoin = function(context){
 		console.log('deleteOrJoin()');
 		// false for preventing progpagete actions
@@ -223,7 +226,7 @@ var legalHubEditor = function(el){
 				// Deletes backward
 				if(event.keyCode == 8 && context.position == 'start'){
 					if(lhe.isTrackingNode(lhe.currentNode)){
-						
+
 					}else if(context.container == 'block'){
 						return lhe.joinBlocks(lhe.getPreviousBlock(lhe.currentNode), lhe.getBlock(lhe.currentNode));
 					}
@@ -298,17 +301,55 @@ var legalHubEditor = function(el){
 		return true;
 	};
 
-	this.newElement = function(tag, empty){
+	this.newDocument = function(){
+		var node = lhe.newElement(lhe.config.container.elements[0]);
+		var paragraph = lhe.newElement(lhe.config.block.elements[0], true);
+		node.appendChild(paragraph);
+		return node;
+	}
+
+	this.newTable = function(rows, cols, header){
+		var table = document.createElement('table');
+		lhe.getId(table);
+		for(var it=0;it<rows;it++){
+			if(header && it==0){
+				var th = document.createElement('tr');
+				for(var it2=0; it2<cols;it2++){
+					th.appendChild(lhe.newElement('th', true));
+				}
+				table.appendChild(th);
+			}
+			var tr = document.createElement('tr');
+			for(var it2=0; it2<cols;it2++){
+				tr.appendChild(lhe.newElement('td', true));
+			}
+			table.appendChild(tr);
+		}
+		return table;
+	}
+
+	this.newElement = function(tag, emptyOrHtml){
 		var newElement = document.createElement(tag);
 		lhe.getId(newElement);
-		if(empty){
-			lhe.setEmptyNodeAttributes(newElement);
+		if(emptyOrHtml != undefined){
+			if(emptyOrHtml === true){
+				lhe.setEmptyNodeAttributes(newElement);
+			}else if(emptyOrHtml !== false){
+				newElement.innerHTML = emptyOrHtml;
+			}
 		}
 		return newElement;
 	};
 
-	this.newElementByType = function(type){
-		var element = lhe.newElement(lhe.schema[type].tag ? lhe.schema[type].tag : lhe.config.block.elements[0]);
+	this.newFloatingElement = function(type){
+		var element = document.createElement('div');
+		element.setAttribute('float', true);
+		element.setAttribute('type', type);
+		return element;
+	}
+
+	this.newElementByType = function(type, emptyOrHtml){
+		var element = lhe.newElement(lhe.schema[type].tag ? lhe.schema[type].tag : (lhe.schema[type].type ? lhe.config[lhe.schema[type].type].elements[0] : lhe.config.block.elements[0]), emptyOrHtml);
 		lhe.setType(type, element);
 		return element;
 	};
@@ -327,11 +368,17 @@ var legalHubEditor = function(el){
 	/*
 		Nest block using metadata formats
 	*/
-	this.nestBlock = function(context){
+	this.nestBlock = function(p1, p2){
 
-		var direction = event.shiftKey ? -1 : 1;
+		var currentNode = lhe.currentNode, direction;
+		if(p1.nodeType == 1){
+			currentNode = p1;
+			direction = p2;
+		}else{
+			direction = event.shiftKey ? -1 : 1;
+		}
 
-		var currentLevel = lhe.getBlockLevel(lhe.currentNode);
+		var currentLevel = lhe.getBlockLevel(currentNode);
 		var newLevel =  currentLevel + direction;
 
 		switch(direction){
@@ -339,7 +386,7 @@ var legalHubEditor = function(el){
 			// nesting
 			case 1:
 
-				var previousBlock = lhe.getPreviousBlock(lhe.currentNode);
+				var previousBlock = lhe.getPreviousBlock(currentNode);
 
 				if(previousBlock){
 					var previousBlockLevel = lhe.getBlockLevel(previousBlock);
@@ -347,10 +394,10 @@ var legalHubEditor = function(el){
 					// Here we force to keep inmediatly nested elements
 					if(previousBlockLevel + direction != currentLevel){
 						if(currentLevel != previousBlockLevel){
-							previousBlock = lhe.getPreviousBlock(lhe.currentNode, currentLevel);
+							previousBlock = lhe.getPreviousBlock(currentNode, currentLevel);
 						}
 
-						var currentId = lhe.getId(lhe.currentNode);
+						var currentId = lhe.getId(currentNode);
 						// Here we take off the old references
 						var oldParent = lhe.element.querySelector("[itemref*='" + currentId + "']");
 						if(oldParent){
@@ -358,9 +405,9 @@ var legalHubEditor = function(el){
 						}
 						// Here we tie up the new structure
 						lhe.setItemRef(previousBlock, currentId);
-						lhe.setBlockLevel(lhe.currentNode, newLevel);
+						lhe.setBlockLevel(currentNode, newLevel);
 						// We keep the hierarchy linked to the currentElement
-						lhe.updateChildrenLevels(lhe.currentNode, direction);
+						lhe.updateChildrenLevels(currentNode, direction);
 					}
 				}
 				break;
@@ -368,11 +415,11 @@ var legalHubEditor = function(el){
 			// un-nesting
 			case -1:
 
-				var currentParent = lhe.element.querySelector("[itemref*='" + lhe.getId(lhe.currentNode) + "']");
+				var currentParent = lhe.element.querySelector("[itemref*='" + lhe.getId(currentNode) + "']");
 
 				if(currentParent){
 
-					var currentId = lhe.getId(lhe.currentNode);
+					var currentId = lhe.getId(currentNode);
 					// Here we take off the old references
 					lhe.unsetItemRef(currentParent, currentId);
 
@@ -381,18 +428,18 @@ var legalHubEditor = function(el){
 						lhe.setItemRef(newParent, currentId);
 					}
 
-					lhe.setBlockLevel(lhe.currentNode, newLevel);
-					lhe.updateChildrenLevels(lhe.currentNode, direction);
+					lhe.setBlockLevel(currentNode, newLevel);
+					lhe.updateChildrenLevels(currentNode, direction);
 
 					// Updates following siblings reference
-					var nodes = lhe.getFollowingBlocks(lhe.currentNode, currentLevel);
+					var nodes = lhe.getFollowingBlocks(currentNode, currentLevel);
 
 					if(nodes.length>0 && currentParent.hasAttribute('itemref')){
 						var refs = currentParent.getAttribute('itemref');
 						nodes.forEach(function(node){
 							var id = lhe.getId(node);
 							refs = refs.replace(id, '');
-							lhe.setItemRef(lhe.currentNode, id);
+							lhe.setItemRef(currentNode, id);
 						});
 						currentParent.setAttribute('itemref', refs.trim());
 					}
@@ -436,7 +483,9 @@ var legalHubEditor = function(el){
 	};
 
 	this.setItemRef = function(element, id, unset){
-
+		if(id && id.nodeType == 1){
+			id = id.id;
+		}
 		var itemref = '';
 		if(element.hasAttribute('itemref')){
 			itemref = element.getAttribute('itemref').trim();
@@ -472,7 +521,7 @@ var legalHubEditor = function(el){
 				element.parentNode.focus();
 				if(startPos == 'end'){
 					startPos = element.length;
-				} 
+				}
 				var caret = startPos;
 				var range = document.createRange();
 				/*if(caret == 0){
@@ -535,7 +584,7 @@ var legalHubEditor = function(el){
 	*/
 	this.config = {
 		container: {
-			elements: ['section', 'table', 'div']
+			elements: ['section', 'div', 'table', 'tr', 'th', 'td']
 		},
 		block : {
 			elements: ['p'],
@@ -608,7 +657,7 @@ var legalHubEditor = function(el){
 			}
 		}
 		if(continues){
-			if(type 
+			if(type
 				&& lhe.schema[type]
 					&& lhe.schema[type].on
 						&& lhe.schema[type].on[context.eventName]
@@ -695,12 +744,12 @@ var legalHubEditor = function(el){
 		}
 		context.type = contextNode ? lhe.getType(contextNode) : null;
 	}
-	
-	
+
+
 	this.getTextContent = function(node){
 		return node.textContent;
 	}
-	
+
 	this.getTextNode = function(node){
 		while(node.nodeType != 3){
 			node = node.firstChild;
@@ -719,8 +768,9 @@ var legalHubEditor = function(el){
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
 				lhe.currentNode = lhe.getSelectionNode();
+				console.log('change scope');
 				var context = lhe.getEventContext(event, eventName);
-				console.log(context);
+				//console.log(context);
 				// Allow some browser behaviors
 				// 8 Backspace
 				// 33..36: PageUp, PageDown, End, Home
@@ -785,8 +835,11 @@ var legalHubEditor = function(el){
 						if(textNode == undefined){
 							textNode = lhe.getTextContent(lhe.currentNode);
 						}
-						if(lhe.validateNLPTriggers(processor.triggers, textNode)){
-							processor.fn(context, textNode, lhe);
+						if(!lhe.avoidNLPProcessor(lhe.currentNode, processor.name)){
+							if(lhe.validateNLPTriggers(processor.triggers, textNode)){
+								lhe.setNLPProcessor(lhe.currentNode, processor.name);
+								processor.fn(context, textNode, lhe);
+							}
 						}
 					}
 				}
@@ -807,6 +860,23 @@ var legalHubEditor = function(el){
 			element.innerHTML = element.innerHTML.replace(/\u200C/, '');
 			lhe.setCaretPosition(element, 'end');
 		}
+	}
+
+	this.setNLPProcessor = function(node, name){
+		var processors = [];
+		if(node.hasAttribute('processors')){
+			processors = node.getAttribute('processors').trim().split(' ');
+		}
+		processors.push(name);
+		node.setAttribute('processors', processors.join(' '));
+	}
+
+	this.avoidNLPProcessor = function(node, name){
+		var processors = [];
+		if(node.hasAttribute('processors')){
+			processors = node.getAttribute('processors').trim().split(' ');
+		}
+		return processors.indexOf(name) > -1;
 	}
 
 	this.validateNLPTriggers = function(triggers, text){
@@ -978,18 +1048,17 @@ var legalHubEditor = function(el){
 		Get Previous block
 	*/
 	this.getPreviousBlock = function(element, level){
-		for(var it=0; it<lhe.config.block.elements.length; it++){
-			var node = element.closest(lhe.config.block.elements[it]);
-			if(node){
-				var sibling = node;
-				while(sibling = sibling.previousSibling){
-					if(sibling.tagName.toLowerCase() == lhe.config.block.elements[it]
-						&& (level == undefined || level == lhe.getBlockLevel(sibling))){
-						return sibling;
-					}
-				}
+		if(element == lhe.element){
+			return true;
+		}
+		var sibling = element;
+		while(sibling = sibling.previousSibling){
+			if(lhe.config.block.elements.indexOf(sibling.tagName.toLowerCase()) > -1
+				&& (level == undefined || level == lhe.getBlockLevel(sibling))){
+					return sibling;
 			}
 		}
+		return lhe.getPreviousBlock(element.parentNode, level);
 	}
 
 	this.getContainer = function(element){
@@ -1004,7 +1073,7 @@ var legalHubEditor = function(el){
 		}
 	};
 
-	this.setTagPosition = function(event){
+	/*this.setTagPosition = function(event){
 		console.log("setTagPosition()");
 		if(event && lhe.element != event.srcElement && lhe.element.contains(event.srcElement)){
 			lhe.currentNode = event.srcElement;
@@ -1029,7 +1098,7 @@ var legalHubEditor = function(el){
 				}
 			}
 		}
-	};
+	};*/
 
 
 	/*
@@ -1087,6 +1156,22 @@ var legalHubEditor = function(el){
 		return node.querySelector("[itemtype='"+type+"']");
 	}
 
+	this.getPreviousByType = function(element, type){
+		if(element == lhe.element){
+			return null;
+		}
+		if(lhe.getType(element) == type){
+				return element;
+		}
+		var sibling = element;
+		while(sibling = sibling.previousSibling){
+			if(lhe.getType(sibling) == type){
+				return sibling;
+			}
+		}
+		return lhe.getPreviousByType(element.parentNode, type);
+	}
+
 	this.applyTemplate = function(node, template){
 		var options = '';
 		for(var i=0; i<template.length;i++){
@@ -1096,10 +1181,11 @@ var legalHubEditor = function(el){
 		return true;
 	}
 	this.insertBlockAfter = function(newNode){
-		if(lhe.currentBlock.nextSibling){
-			lhe.currentBlock.parentNode.insertBefore(newNode, lhe.currentBlock.nextSibling);
+		var currentBlock = lhe.getBlock(lhe.currentNode);
+		if(currentBlock.nextSibling){
+			currentBlock.parentNode.insertBefore(newNode, currentBlock.nextSibling);
 		}else{
-			lhe.currentBlock.parentNode.appendChild(newNode);
+			currentBlock.parentNode.appendChild(newNode);
 		}
 	};
 	this.insertElementAfter = function(newNode, containerType){
@@ -1115,6 +1201,9 @@ var legalHubEditor = function(el){
 			anchorElement.parentNode.appendChild(newNode);
 		}
 	};
+	this.insertTableAfter = function(rows, cols, header){
+		lhe.insertBlockAfter(lhe.newTable(rows, cols, header));
+	}
 
 	this.updateBreadcrumb = function(){
 		console.log("updateBreadcrumb()");
@@ -1161,27 +1250,72 @@ var legalHubEditor = function(el){
     }
   };
 
-	/*this.transform = function(element, type){
-		var newChildren = [];
-		for(var it=0; it<lhe.schema[type].children.length; it++){
-			var newElementTag = lhe.schema[type].children[it];
-			var newElement = lhe.newElement(newElementTag, element);
-			newChildren.push(newElement);
+	this.getHtml = function(clean){
+		var content = lhe.element.innerHTML;
+		if(clean){
+			content = content.replace(/\u200C/, '');
 		}
-		element.innerHTML = '';
-		for(var it=0;it<newChildren.length;it++){
-			element.appendChild(newChildren[it]);
-			lhe.currentNode = newChildren[it];
-		}
-	};*/
+		return content;
+	}
 
+	/* Line numbers */
+	this.initLineNumbersContainer = function(){
+		if(lhe.lineNumbersElement == undefined){
+			lhe.lineNumbersElement = lhe.newFloatingElement('lineNumbers');
+			lhe.element.appendChild(lhe.lineNumbersElement);
+		}
+	}
+	this.toggleLineNumbers = function(){
+		lhe.initLineNumbersContainer();
+		this.showLineNumbers = !this.showLineNumbers;
+		if(this.showLineNumbers){
+			lhe.refreshLineNumbers();
+		}else{
+			lhe.lineNumbersElement.innerHTML = '';
+		}
+	}
+	this.refreshLineNumbers = function(){
+		lhe.initLineNumbersContainer();
+		lhe.lineNumbersElement.innerHTML = '';
+		var lastPosition = 0;
+		var lastNumber = 1;
+		var elements = editor.element.querySelectorAll("span, p, th, td");
+		for (var it2 = 0; it2 < elements.length; it2++) {
+
+			if(!lhe.isEmpty(elements[it2])){
+
+				var element = elements[it2];
+				var divs = "";
+				var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
+				if(element.tagName.toLowerCase() == 'span' || Math.floor(lines) == 1){
+					var top = $(element).position().top;
+					if(top > lastPosition){
+						lastPosition = top;
+						divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
+					}
+				}else{
+					var blockOffset = $(element).position().top;
+					for(var it=0; it<lines; it++){
+						var top = blockOffset  + (lineHeight*it);
+						if(top > lastPosition){
+							lastPosition = top;
+							divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
+						}
+					}
+				}
+				lhe.lineNumbersElement.innerHTML += divs;
+
+			}
+		}
+	}
 
 	/*
 		Initialize actions
 	*/
-	(this.init = function(){
+	if(lhe.element){
 		lhe.initEvents();
-	})();
+	}
+
 };
 var legalHub = { tools: {
   nextNumber: function(element, currentValue){
@@ -1239,21 +1373,11 @@ var legalHub = { tools: {
   }
 }}
 
-var editor;
-
-var lastPosition = 0, lastNumber = 1;
-
 var editorConfig = {
-  lineNumbers: false,
   style: 'default'
 };
 function init(){
-  setLineNumbers();
   setPageStyle();
-}
-function toggleLineNumbers(){
-  editorConfig.lineNumbers = !editorConfig.lineNumbers;
-  setLineNumbers();
 }
 function setPageStyle(style){
   if(style){
@@ -1263,46 +1387,6 @@ function setPageStyle(style){
   $('link[href*="editor/css/common"]').removeAttr('disabled');
   $('link[href*="editor/css/legislative"]').removeAttr('disabled');
   $('link[href*="editor/css/'+ editorConfig.style+'"]').removeAttr('disabled');
-  setLineNumbers();
-}
-function setLineNumbers(){
-  document.getElementById('line-numbers').style.display = editorConfig.lineNumbers ? 'block' : 'none';
-  document.getElementById('line-numbers').innerHTML = '';
-  if(editorConfig.lineNumbers){
-    lastPosition = 0;
-    lastNumber = 1;
-    var elements = editor.element.querySelectorAll("span, p");
-    for (var i = 0; i != elements.length; i++) {
-      if(elements[i].innerHTML.trim() != '<br>'){
-        addClientRectsOverlay(elements[i]);
-      }
-    }
-  }
-}
-function addClientRectsOverlay(element) {
-	var divs = "";
-  var numbersLeftPosition = (editorConfig.style == 'paper' ? 50 : 60);
-	var scrollTop = document.getElementById('editor').scrollTop + document.body.scrollTop;
-	var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
-	if(element.tagName.toLowerCase() == 'span' || lines == 1){
-	  var rects = element.getClientRects();
-		for (var i = 0; i != rects.length; i++) {
-		  var rect = rects[i];
-		  var top = rect.top + scrollTop;
-		  if(top > lastPosition){
-			lastPosition = top;
-			divs += '<div class="line-number" style="top:' + top + 'px;left:' + numbersLeftPosition +'px;">' + lastNumber++ + '</div>';
-		  }
-	  }
-	}else{
-		var blockOffset = element.getClientRects()[0].top;
-		for(var it=0; it<lines; it++){
-		  var top = blockOffset + scrollTop + (lineHeight*it);
-		  if(top > lastPosition){
-			lastPosition = top;
-			divs += '<div class="line-number" style="top:' + top + 'px;left:' + numbersLeftPosition +'px;">' + lastNumber++ + '</div>';
-		  }
- 	   }
-	}
-	document.getElementById('line-numbers').innerHTML += divs;
+	if(editor)
+		editor.refreshLineNumbers();
 }

@@ -59,6 +59,7 @@ legalHub
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
                     'view/modules/document/document-service.js',
+                    'view/modules/collection/collection-service.js',
                     'view/modules/collection/collection-controller.js']);
                 }
               }
@@ -274,16 +275,20 @@ legalHub
             })
 
             .state ('new-document', {
-                url: '/new-document',
+                url: '/edit',
                 templateUrl: 'view/modules/document/new-document-template.html',
-				params: {
-					collectionId: ''
-				},
+				        params: {
+					          collectionId: '',
+                    documentId: '',
+                    documentTitle: '',
+                    template: ''
+				        },
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load([
 						'view/modules/version/version-service.js',
 						'view/modules/rendition/rendition-service.js',
+            'view/modules/document/document-service.js',
 						'view/modules/document/new-document-controller.js',
 						'view/modules/editor/schema-legis.js',
 						'view/modules/editor/legalhub-editor.js',

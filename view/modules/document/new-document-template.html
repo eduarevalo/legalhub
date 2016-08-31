@@ -1,5 +1,4 @@
 <div ng-controller="newDocumentCtrl as newDocCtrl">
-<div id="line-numbers"></div>
 	<header id="header-2" data-current-skin="{{mactrl.currentSkin}}" class="legalhub-header">
 
 		<ul class="header-inner clearfix">
@@ -12,7 +11,7 @@
 			</li>
 
 			<li class="logo hidden-xs">
-				<a data-ui-sref="home">LegisHub : New Document</a>
+				<a data-ui-sref="home">LegisHub : {{document.title}}</a>
 			</li>
 
 			<li class="pull-right">
@@ -261,13 +260,13 @@
 					<div class="waves-effect" data-ng-click="selectToolbar('file')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'file' }">File</div>
 				</li>
 				<li>
+					<div class="waves-effect" data-ng-click="selectToolbar('schema')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'schema' }">Document Type</div>
+				</li>
+				<li>
 					<div class="waves-effect" data-ng-click="selectToolbar('format')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'format' }">Format</div>
 				</li>
 				<li>
-					<div class="waves-effect" data-ng-click="selectToolbar('schema')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'schema' }">Schema</div>
-				</li>
-				<li>
-					<div class="waves-effect" data-ng-click="selectToolbar('references')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'references' }">References</div>
+					<div class="waves-effect" data-ng-click="selectToolbar('insert')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'insert' }">Insert</div>
 				</li>
 				<li>
 					<div class="waves-effect" data-ng-click="selectToolbar('themes')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'themes' }">Themes</div>
@@ -276,11 +275,32 @@
 		</nav>
 
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'file'">
-			<button class="btn" >New</button>
-			<button class="btn" >Open...</button>
-			<button class="btn" >Save</button>
-			<button class="btn" >Save as...</button>
-			<button class="btn" >Save as template...</button>
+			<button class="btn" ng-click="newDocument()">New</button>
+			<!--<button class="btn" >Open...</button>-->
+			<button class="btn" ng-click="saveDocument()">Save</button>
+
+			<div class="dropdown stop-propagate" uib-dropdown style="display: inline-block">
+				<button class="btn" uib-dropdown-toggle>Save as...</button>
+				<ul class="dropdown-menu" style="padding: 10px">
+					<li>
+						<div class="form-group">
+							<div class="fg-line">
+								<input type="text" class="form-control input-sm" ng-model="document.title">
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" ng-model="document.template">
+								<i class="input-helper"></i>
+								Template
+							</label>
+						</div>
+					</li>
+					<li><button class="btn pull-right" ng-click="saveDocument(true)">Save</button></li>
+				</ul>
+			</div>
 
 			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
 				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-collection-case-play"></i> Export as...</div>
@@ -327,16 +347,43 @@
 			<button class="btn bgm-teal" onclick="editor.setBlockFormat('right');"><i class="zmdi zmdi-format-align-right"></i></button>
 
 			<span class="menu-spacer"> </span>
-			<button class="btn btn-warning" onclick="toggleLineNumbers()"><i class="zmdi zmdi-format-list-numbered"></i></button>
-			<span class="menu-spacer"> </span>
-			<button class="btn btn-default"><i class="zmdi zmdi-border-all"></i></button>
+			<button class="btn btn-warning" onclick="editor.toggleLineNumbers()"><i class="zmdi zmdi-format-list-numbered"></i></button>
 
 		</nav>
 
 
-		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'references'">
-			<button class="btn bgm-teal" onclick="insertBlockQuote()"><i class="zmdi zmdi-link"></i></button>
-			<button class="btn btn-warning" onclick="insertBlockQuoteMichigan()"><i class="zmdi zmdi-link"></i></button>
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'insert'">
+
+			<div class="dropdown stop-propagate" uib-dropdown style="display: inline-block">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle title="Insert table..."><i class="zmdi zmdi-border-all"></i></div>
+				<ul class="dropdown-menu" style="padding: 10px">
+					<li>
+							<div class="fg-line" style="display: inline-block">
+								<input type="number" class="form-control input-sm" placeholder="Rows" ng-model="table.rows">
+							</div>
+					</li>
+					<li>
+							<div class="fg-line" style="display: inline-block">
+								<input type="number" class="form-control input-sm" placeholder="Cols" ng-model="table.cols">
+							</div>
+					</li>
+					<li>
+						<div class="checkbox">
+							<label>
+								<input type="checkbox" id="includeTableHeader" ng-model="table.header">
+								<i class="input-helper"></i>
+								Header
+							</label>
+						</div>
+					</li>
+					<li><br/><button class="btn pull-right" ng-click="insertTable()">Insert</button></li>
+				</ul>
+			</div>
+
+			<span class="menu-spacer"/>
+
+			<!--<button class="btn bgm-teal" onclick="insertBlockQuote()"><i class="zmdi zmdi-link"></i></button>-->
+			<!--<button class="btn btn-warning" onclick="insertBlockQuoteMichigan()"><i class="zmdi zmdi-link"></i></button>-->
 			<button class="btn btn-warning" ng-click="diff()"><i class="zmdi zmdi-eye"></i></button>
 
 			<div class="dropdown stop-propagate" uib-dropdown style="display: inline-block">
@@ -352,9 +399,9 @@
 
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'schema'">
 			<div class="dropdown" uib-dropdown style="display: inline-block" id="contextual-menu">
-				<div class="waves-effect btn bgm-teal" uib-dropdown-toggle><i class="zmdi zmdi-labels"></i> <span id="selected-schema">Schemaless</span></div>
+				<div class="waves-effect btn bgm-teal" uib-dropdown-toggle><i class="zmdi zmdi-labels"></i> {{schema}}</div>
 				<ul class="dropdown-menu">
-					<li><a ng-click="setSchema()">Schemaless</a></li>
+					<!--<li><a ng-click="setSchema()">Schemaless</a></li>-->
 					<li><a ng-click="setSchema('legis')">Legislative</a></li>
 					<li><a ng-click="setSchema('general')">General-Purpose</a></li>
 				</ul>
@@ -384,15 +431,15 @@
 		</nav>
 
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">
-			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-palette"></i></button>
+			<button uib-dropdown-toggle class="btn ss-icon"><i class="zmdi zmdi-wrench"></i></button>
 			<div class="dropdown-menu">
-				<span class="ss-skin zmdi zmdi-code"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
-				<span class="ss-skin zmdi zmdi-wrench"></span>
+				<span class="ss-skin zmdi zmdi-undo" title="Undo"></span>
+				<span class="ss-skin zmdi zmdi-redo" title="Redo"></span>
+				<span class="ss-skin zmdi zmdi-copy" title="Copy"></span>
+				<span class="ss-skin zmdi zmdi-paste" title="Paste"></span>
+				<span class="ss-skin zmdi zmdi-code" title="Show tags"></span>
+				<span class="ss-skin zmdi zmdi-comments" title="Collaboration"></span>
+				<span class="ss-skin zmdi zmdi-time-restore" title="History of changes"></span>
 				<span class="ss-skin zmdi zmdi-wrench"></span>
 			</div>
 		</div>
@@ -416,7 +463,7 @@
 					<div class="card">
 						<div class="card-header bgm-bluegray m-b-20">
 							<h2>Bill</h2>
-							<button class="btn bgm-green btn-float waves-effect" ng-click="goToTemplate('bill')"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+							<button class="btn bgm-green btn-float waves-effect" ng-click="setTemplate('bill')"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
 						</div>
 						<div class="card-body card-padding">
 						Bill template is used for describing the structure and content of a bill.
@@ -473,7 +520,7 @@
 					<div class="card">
 						<div class="card-header bgm-bluegray m-b-20">
 							<h2>Open Structure</h2>
-							<button class="btn bgm-gray btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+							<button class="btn bgm-gray btn-float waves-effect" ng-click="setTemplate('empty')"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
 						</div>
 						<div class="card-body card-padding">
 						Open template specifies the overall content model of all the document types that do not have a specific and peculiar structure.
@@ -509,8 +556,7 @@
 
 			  <div class="card" id="document-card">
 					<div style="display:flex;">
-						<div ng-bind-html="getHtml(content)" style="flex:1;" id="editor" contenteditable="true" onkeyup="setLineNumbers()" class="document">
-
+						<div ng-bind-html="getHtml(document.content)" style="flex:1;" id="editor" contenteditable="true" class="document" ng-init="initEditor()">
 						</div>
 					</div>
 			  </div>

@@ -1,51 +1,87 @@
-angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, version, rendition, $sce) {
-	$scope.mode ='new';
+var editor;
+
+angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, growlService, documentService, version, rendition, $sce) {
+	$scope.mode = 'new';
+	if($state.params.template.length > 0 || $state.params.documentId.length > 0){
+		$scope.mode = 'edit';
+	}
+	$scope.table = {rows: 2, cols: 2, header: true};
 	$scope.selectedToolbar = '';
-	$scope.documentId = '57acca5446d29b1c7cdd7266'/*/'57abdd6bc46e79118c8b6143'/**/;
+	$scope.template = $state.params.template;
+	$scope.document = {
+		id: $state.params.documentId,
+		title: $state.params.documentTitle || 'New Document',
+		content: '',
+		collectionId: $state.params.collectionId,
+		template: false
+	};
 	$scope.schema = '';
+	$scope.insertTable = function(){
+		editor.insertTableAfter($scope.table.rows, $scope.table.cols, $scope.table.header);
+	}
 	$scope.goToNew = function(){
 		$scope.mode = 'new';
-		$timeout(function() {
-		  $scope.$apply();
-		});
 	}
 	$scope.selectToolbar = function(toolbar){
 		$scope.selectedToolbar = toolbar;
 	};
-	$scope.getHtml = function(html){
-		html = '<section itemtype="body"><p id="57abdd6bc46e79118c8b6143" empty="true">&zwnj;</p></section>';
-		return $sce.trustAsHtml(html);
+	$scope.newDocument = function(){
+		$scope.mode = 'new';
+		$scope.template = '';
+		$scope.document = {
+			id: '',
+			title: 'New Document',
+			content: '',
+			collectionId: $state.params.collectionId,
+			template: false
+		};
+	};
+	$scope.emptyDocument = function(){
+		$scope.document.content = editor.newDocument().outerHTML;
+	}
+	$scope.getHtml = function(doc){
+		return $sce.trustAsHtml(doc);
 	};
 	$scope.setSchema = function(schema){
 		$scope.schema = schema;
-		var span = document.getElementById('selected-schema');
 		switch($scope.schema){
 			case 'legis':
-				span.innerHTML = ' Legislative';
 				editor.setSchema(legisSchema);
 				break;
 			case 'general':
-				span.innerHTML = ' General-Purpose';
 				editor.setSchema(generalSchema);
 				break;
 			default:
-				span.innerHTML = ' Schemaless';
 				editor.setSchema();
 		}
 	};
-	$scope.goToTemplate = function(templateId){
-		version.getLastVersion($scope.documentId).then(function(version){
-			$scope.content = version.content;
-			$scope.mode = 'edit';
-			$timeout(function() {
-				init();
-				editor = new legalHubEditor(document.getElementById('editor'));
-				$scope.$apply();
-			});
+	$scope.setTemplate = function(template){
+		$scope.template = template;
+		$scope.mode = 'edit';
+	}
+	$scope.openDocument = function(){
+		version.getLastVersion($scope.document.id).then(function(version){
+			$scope.document.content = version.content;
+			$scope.setSchema('legis');
+		});
+	};
+	$scope.saveDocument = function(newDocument){
+		if(newDocument){
+			$scope.document.id = '';
+		}
+		$scope.document.content = editor.getHtml();
+		documentService.save($scope.document).then(function(response){
+			if(response.success){
+				$scope.document.id = response.id;
+				$scope.document.code = response.code;
+				growlService.growl('Saved');
+			}
 		});
 	}
 	$scope.getRendition = function(type){
-		rendition.get(type, $scope.documentId);
+		var tempDoc = $scope.document;
+		tempDoc.content = editor.getHtml(true);
+		rendition.get(type, tempDoc);
 	}
 	$scope.diff = function(){
 		rendition.diff().then(function(data){
@@ -61,5 +97,24 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 		'<p>(f) In the event that the General Assembly disapproves or fails to act on the state water plan, in whole or in part, the state water plan shall be deemed to be rejected and shall be returned to the Water Planning Council for revisions and resubmittal to the General Assembly in accordance with the provisions of subsection (f) of this section.</p>',
 		'<p>(g) The Water Planning Council shall oversee the implementation and periodic updates of the state water plan. On or before January 1, 2016, and annually thereafter, the Water Planning Council shall submit a report, in accordance with section 11-4a, to the joint standing committees of the General Assembly having cognizance of matters relating to the environment, public health, planning and development and energy and technology on the status of the development and implementation of the state water plan and any updates to such plan. On and after January 1, 2016, the report required by this subsection shall supplant the requirement for an annual report as required pursuant to section 25-33o.</p>'];
 		cb(newRef.join(''));
+	}
+	$scope.initEditor = function(){
+		init();
+		editor = new legalHubEditor(document.getElementById('editor'));
+		if($scope.document.id.length > 0){
+			$scope.openDocument();
+			console.log($scope.mode);
+		}else{
+			switch($scope.template){
+				case 'bill':
+					$scope.setSchema('legis');
+					$scope.emptyDocument();
+					break;
+				default:
+					$scope.setSchema();
+					$scope.emptyDocument();
+					break;
+			}
+		}
 	}
 })

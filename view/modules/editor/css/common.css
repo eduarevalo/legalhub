@@ -1,16 +1,3 @@
-.line-number{
-  position: absolute;
-  margin: 0;
-  padding: 0;
-}
-/*#line-numbers{
-	flex: 0 0 0px;
-	border-right: 1px solid;
-	margin-right:-1px;
-	width: 25px;
-	left: 150px;
-    position: relative;
-}*/
 span[itemtype=quote]::before{
 	content: '“'
 }
@@ -70,28 +57,24 @@ span[itemtype=quote]::after{
 }
 
 /* Track changes */
-[type='track'].del{
+[track='del']{
 	color: red;
 	text-decoration: line-through;
 }
-[type='track'].del::after{
+[track='del']::after{
 	content: ']';
 	color: black;
 	padding-right: 0.05in;
 }
-[type='track'].del::before{
+[track='del']::before{
 	content: '[';
 	color: black;
 	padding-left: 0.05in;
 }
-[type='track'].add{
+[track='add']{
 	text-decoration: underline;
 }
 
-#line-numbers{
-	position: absolute;
-	z-index: 4;
-}
 #editor p {
 	white-space: pre-wrap;
 	margin-bottom: 0px;
@@ -126,6 +109,12 @@ span[itemtype=quote]::after{
 #editor p[level='10'] {
   padding-left:1.5in;
 }
+#editor table,#editor th,#editor td {
+  border: 1px #f0f0f0 dotted;
+}
+#editor table{
+  width: 100%;
+}
 [itemtype='quote']{
 	margin-top: 2em;
 }
@@ -159,4 +148,15 @@ span[itemtype=add]{
 .toolbar-option-selected{
 	font-weight: bold;
 	color:white !important;
+}
+[float]{
+  position: absolute;
+  background: red;
+  top:0px;
+  left:0px
+  z-index: 4;
+}
+.lineNumber{
+  position: absolute;
+  left: -40px;
 }

@@ -1,9 +1,11 @@
-angular.module('legalHub').controller('collectionCtrl', function($filter, $scope, ngTableParams, document, $state) {
+angular.module('legalHub').controller('collectionCtrl', function($filter, $scope, ngTableParams, documentService, $state) {
+  $scope.options = {active: false};
   $scope.title = $state.params.title;
   $scope.icon = $state.params.icon;
   var self = this;
   self.collectionId = $state.params.collectionId;
-  document.getDocuments(self.collectionId).then(function(documents){
+  documentService.getDocuments(self.collectionId).then(function(documents){
+    documents.forEach(function(document){ document.selected = false; });
     $scope.documents = documents;
     self.tableSorting = new ngTableParams(
       {
@@ -19,8 +21,20 @@ angular.module('legalHub').controller('collectionCtrl', function($filter, $scope
         }
       })
   });
-  $scope.goToNewDocument = function(){
-	$state.go('new-document', {collectionId: self.collectionId});
+  $scope.activateOptions = function(){
+    for(var it=0; it<$scope.documents.length; it++){
+      if($scope.documents[it].selected === true){
+        $scope.options.active = true;
+        return;
+      }
+    }
+    $scope.options.active = false;
+  }
+  $scope.goToNewDocument = function(templateName){
+	   $state.go('new-document', {collectionId: self.collectionId, template: templateName});
+  }
+  $scope.goToEditDocument = function(documentId, title){
+    $state.go('new-document', {collectionId: self.collectionId, documentId: documentId, documentTitle: title});
   }
   $scope.goToDocument = function(document){
     $state.go('document', {id: document.id, code: document.code});

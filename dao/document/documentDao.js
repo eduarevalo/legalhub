@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 var Document = require(__base + 'model/document/document');
 var db = require(__base + 'core/db/db');
@@ -74,6 +74,6 @@ var toQuery = (document) => {
 var toObject = (document) => {
   var obj = document.toObject();
   obj._id = new ObjectID(obj.id);
-  delete document.id;
+  delete obj.id;
   return obj;
 }

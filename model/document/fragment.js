@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 var Model = require(__base + 'model/model');
 
@@ -6,6 +6,7 @@ module.exports = class Fragment extends Model{
   constructor(id) {
     super();
     this.id = id;
+    this.documentId = undefined;
     this.type = undefined;
     this.startDate = undefined;
     this.endDate = undefined;

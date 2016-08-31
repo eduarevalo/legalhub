@@ -10,6 +10,7 @@ module.exports = class Document extends Model{
     this.description = undefined;
     this.documentType = undefined;
     this.fileName = undefined;
+    this.template = undefined;
     this.owner = undefined;
     this.collections = undefined;
     this.qrCode = undefined;

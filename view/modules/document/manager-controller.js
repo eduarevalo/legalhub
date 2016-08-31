@@ -1,4 +1,4 @@
-angular.module('legalHub').controller('documentManagerCtrl', function($scope, document, $timeout) {
+angular.module('legalHub').controller('documentManagerCtrl', function($scope, documentService, $timeout) {
   $scope.mode = 'add';
   $scope.isModelModified = false;
   $scope.searchModel = { code :'', title: '', description: ''};
@@ -16,7 +16,7 @@ angular.module('legalHub').controller('documentManagerCtrl', function($scope, do
     $scope.createModel = { code :''};
   }
   $scope.search = function() {
-    document.search($scope.searchModel).then(function(response){
+    documentService.search($scope.searchModel).then(function(response){
       $scope.documents = response.data;
       $timeout(function() {
         $scope.$apply();
@@ -43,7 +43,7 @@ angular.module('legalHub').controller('documentManagerCtrl', function($scope, do
     });
   }
   $scope.edit = function(id){
-    document.getDocument(id).then(function(response){
+    documentService.getDocument(id).then(function(response){
       if(response.data && response.data.length>0){
         $scope.createModel = response.data[0];
         $scope.goToEdit();
