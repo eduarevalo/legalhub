@@ -2,9 +2,10 @@
 
 var fs = require('fs'),
   saxon = require('saxon-stream2');
-
+  
 const os = require('os'),
-  execSync = require('child_process').execSync;
+  execSync = require('child_process').execSync,
+  configuration = require(__base + 'configuration');
 
 var documentManager = require(__base + 'manager/document/documentManager');
 
@@ -61,19 +62,22 @@ var getRenditionFromContent = (type, content, style, cb) => {
 			if(err) {
 				return console.log(err);
 			}
-			var cmd = [
-			  `"C:/Program Files/Antenna House/AHFormatterV63/AHFCmd.exe"`,
-			  '-d', `"${tempFile}"`,
-			  '-o', `"${outFile}"`,
-			  '-x', '4'
-			].join(" ");
-			
-			/*cmd = [`"C:/Program Files (x86)/Prince/engine/bin/prince.exe"`,
-			`"${tempFile}"`,
-			'-o', `"${outFile}"`].join(" ");*/
-			console.log(cmd);
+			var cmd;
+			switch(configuration.formatters[type]){
+				case "ah":
+					cmd = [configuration.providers["ah"],
+						  '-d', `"${tempFile}"`,
+						  '-o', `"${outFile}"`,
+						  '-x', '4'
+						].join(" ");
+					break;
+				case "prince":
+					cmd = [configuration.providers["prince"],
+							`"${tempFile}"`,
+							'-o', `"${outFile}"`].join(" ");
+					break;
+			}
 			var code = execSync(cmd);
-			console.log(code);
 			cb(null, outFile);
 		});
 	}else if(type == 'xml'){

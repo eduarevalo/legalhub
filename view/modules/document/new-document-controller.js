@@ -69,8 +69,8 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 		if(newDocument){
 			$scope.document.id = '';
 		}
-		$scope.document.content = editor.getHtml();
-		documentService.save($scope.document).then(function(response){
+		var tempDoc = {content: editor.getHtml(), id: $scope.document.id, title: $scope.document.title, collectionId: $scope.document.collectionId, template: $scope.document.template };
+		documentService.save(tempDoc).then(function(response){
 			if(response.success){
 				$scope.document.id = response.id;
 				$scope.document.code = response.code;

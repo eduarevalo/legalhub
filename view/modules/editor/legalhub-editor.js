@@ -1304,13 +1304,11 @@ var legalHubEditor = function(el){
 
 	this.getHtml = function(clean){
 		var documentNode = lhe.element;
-		if(clean){
-			var toDelete = documentNode.querySelectorAll('[float]');
-			var nodes = [];
-			for(var it=0;it<toDelete.length; it++){
-				nodes.push({parent: toDelete[it].parentNode, child: toDelete[it], next: toDelete[it].nextSibling});
-				toDelete[it].parentNode.removeChild(toDelete[it]);
-			}
+		var toDelete = documentNode.querySelectorAll('[float]');
+		var nodes = [];
+		for(var it=0;it<toDelete.length; it++){
+			nodes.push({parent: toDelete[it].parentNode, child: toDelete[it], next: toDelete[it].nextSibling});
+			toDelete[it].parentNode.removeChild(toDelete[it]);
 		}
 		var content = documentNode.innerHTML;
 		for(var it=0; it<nodes.length; it++){
