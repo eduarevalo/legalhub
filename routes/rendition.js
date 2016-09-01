@@ -29,7 +29,7 @@ router.get('/get', function (req, res) {
 
 router.post('/generate', function (req, res) {
   if(req.body.content){
-	renditionManager.getRenditionFromContent(req.body.type, req.body.content, function(err, filePath){
+	renditionManager.getRenditionFromContent(req.body.type, req.body.content, req.body.style, function(err, filePath){
 		if(err){
 		  // Error 404
 		  res.json({success: false, error: err});

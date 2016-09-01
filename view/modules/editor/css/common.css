@@ -59,7 +59,6 @@ span[itemtype=quote]::after{
 /* Track changes */
 [track='del']{
 	color: red;
-	text-decoration: line-through;
 }
 [track='del']::after{
 	content: ']';

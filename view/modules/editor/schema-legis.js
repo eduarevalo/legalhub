@@ -1,4 +1,11 @@
 var legisSchema = {
+	'@lineNumberRules': {
+		'sections': {
+			include: ["[itemtype='section']"]
+		},
+		'everything': {
+		}
+	},
 	'level': {
 		attributes: [{
 			name: 'type',

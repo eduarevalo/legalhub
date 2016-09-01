@@ -78,10 +78,9 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			}
 		});
 	}
-	$scope.getRendition = function(type){
-		var tempDoc = $scope.document;
-		tempDoc.content = editor.getHtml(true);
-		rendition.get(type, tempDoc);
+	$scope.generateRendition = function(type){
+		var tempDoc = {content: editor.getHtml(true), id: $scope.document.id, title: $scope.document.title };
+		rendition.generate(type, tempDoc, editorConfig.style);
 	}
 	$scope.diff = function(){
 		rendition.diff().then(function(data){

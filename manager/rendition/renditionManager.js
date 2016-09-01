@@ -46,14 +46,17 @@ var getRendition = (params, cb) => {
   if(err){
 		cb(err);
 	}
-	getRenditionFromContent(params.type, version[0].content, cb);
+	getRenditionFromContent(params.type, version[0].content, '', cb);
   });
 }
 
-var getRenditionFromContent = (type, content, cb) => {
+var getRenditionFromContent = (type, content, style, cb) => {
 	var tempFile = os.tmpdir() + '/test1.html', outFile = os.tmpdir() + '/test2.' + type;
 	if(type == 'pdf'){
-		var cssStyle = [__base + 'view\\modules\\editor\\css\\paper.css', __base + 'view\\modules\\editor\\css\\common.css'];
+		var cssStyle = [
+			__base + 'view\\modules\\editor\\css\\'+style+'.css', 
+			__base + 'view\\modules\\editor\\css\\common.css'
+		];
 		fs.writeFile(tempFile,wrapHtml(content, cssStyle), function(err) {
 			if(err) {
 				return console.log(err);
@@ -65,9 +68,9 @@ var getRenditionFromContent = (type, content, cb) => {
 			  '-x', '4'
 			].join(" ");
 			
-			cmd = [`"C:/Program Files (x86)/Prince/engine/bin/prince.exe"`,
+			/*cmd = [`"C:/Program Files (x86)/Prince/engine/bin/prince.exe"`,
 			`"${tempFile}"`,
-			'-o', `"${outFile}"`].join(" ");
+			'-o', `"${outFile}"`].join(" ");*/
 			console.log(cmd);
 			var code = execSync(cmd);
 			console.log(code);

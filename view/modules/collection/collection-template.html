@@ -62,11 +62,11 @@
                 </label>
               </div>
             </td>
-            <td data-title="'Code'" data-ng-click="goToDocument(document)">
-              {{ document.code }}
-            </td>
             <td data-title="'Title'" data-ng-click="goToDocument(document)">
               {{ document.title }}
+            </td>
+			<td data-title="'Doc Id'" data-ng-click="goToDocument(document)">
+              {{ document.code }}
             </td>
             <td>
               <button class="btn btn-primary btn-icon" title="Edit" ng-click="goToEditDocument(document.id, document.title)"><i class="zmdi zmdi-edit"></i></button>

@@ -1,13 +1,19 @@
 #document-card{
-  padding: 1in;
+  padding: 1.5in;
   width: 8.5in;
   min-height: 11in;
   text-align: justify;
 }
 @page {
-  margin: 1in;
+  margin: 1.5in;
   size: 8.5in 11in;
   text-align: justify;
+}
+.document{
+  font-size: 12pt;
+  font-family: "Book Antiqua", "Times New Roman";
+  text-align: justify;
+  line-height: 150%;
 }
 .document section:first-child::before{
   content: '';
@@ -20,14 +26,36 @@
 [itemtype='longTitle']{
   text-transform: uppercase;
   font-weight: bold;
-  margin-bottom: 0.2in;
+  /*margin-bottom: 0.2in;*/
 }
 [itemtype='preamble']{
-  margin-bottom: 0.2in;
+  /*margin-bottom: 0.2in;*/
 }
 span[itemtype='text']::before{
   content: '  ';
 }
 [track='add']{
 	color: blue;
+}
+.sections > .lineNumber{
+  left: 0px;
+}
+[itemtype='section']{
+  margin-left: 0.3in;
+  -ah-line-number: show;
+  -ah-line-number-font-family: "Book Antiqua", "Times New Roman";
+  -ah-line-number-font-size: 12pt;
+}
+[itemtype='quote']{
+  margin-left: 0.3in;
+  -ah-line-number: show;
+  -ah-line-number-font-family: "Book Antiqua", "Times New Roman";
+  -ah-line-number-font-size: 12pt;
+}
+[itemtype='section']{
+	text-indent: 0.2in;
+}
+[itemtype='quote'] > p{
+	margin-top: 0.25in;
+	text-indent: 0.2in;
 }

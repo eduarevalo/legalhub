@@ -8,17 +8,17 @@ angular.module('legalHub').service('rendition', function($http, API) {
       }
     });
   }
-  this.generate = function(type, document){
+  this.generate = function(type, doc, style){
     return $http({
       method: 'POST',
       url: API + 'rendition/generate',
       responseType: 'arraybuffer',
-      data: {type: type, content: document.content}}).then(function(response){
+      data: {type: type, content: doc.content, style: style}}).then(function(response){
       if(response.data){
           var blob = new Blob([response.data], { type: 'application/' + type });
           var link = document.createElement('a');
           link.href = window.URL.createObjectURL(blob);
-          link.download = documentId + '.' + type;
+          link.download = doc.title + '.' + type;
           link.click();
           window.URL.revokeObjectURL(link.href);
       }
