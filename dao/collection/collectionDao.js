@@ -31,9 +31,7 @@ exports.search = (searchKeys, projection,  cb) => {
     searchKeys._id = new ObjectID(searchKeys.id);
     delete searchKeys.id;
   }
-  console.log(searchKeys);
   db.findAll(collectionName, searchKeys, projection, function(err, collections){
-    console.log(collections);
     for(var it in collections){
       var collection = new Collection(collections[it]._id);
       collection.update(collections[it]);

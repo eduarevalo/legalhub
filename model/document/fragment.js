@@ -11,10 +11,13 @@ module.exports = class Fragment extends Model{
     this.startDate = undefined;
     this.endDate = undefined;
     this.content = undefined;
+	this.filePath = undefined;
     this.status = undefined;
     this.tags = undefined;
     this.permissions = undefined;
     this.properties = undefined;
+	this.rendition = undefined;
+	this.renditionName = undefined;
   }
   toString() {
     return `${this.id} []${this.type}] ${this.startDate}`;

@@ -37,7 +37,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 		};
 	};
 	$scope.emptyDocument = function(){
-		$scope.document.content = editor.newDocument().outerHTML;
+		$scope.document.content = editor.newDocument();
 	}
 	$scope.getHtml = function(doc){
 		return $sce.trustAsHtml(doc);
@@ -45,7 +45,10 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 	$scope.setSchema = function(schema){
 		$scope.schema = schema;
 		switch($scope.schema){
-			case 'legis':
+			case 'amendment':
+				editor.setSchema(schemaAmendment);
+				break;
+			case 'bill':
 				editor.setSchema(legisSchema);
 				break;
 			case 'general':
@@ -65,7 +68,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			$scope.setSchema('legis');
 		});
 	};
-	$scope.saveDocument = function(newDocument){
+	$scope.saveDocument = function(newDocument, cb){
 		if(newDocument){
 			$scope.document.id = '';
 		}
@@ -75,12 +78,21 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 				$scope.document.id = response.id;
 				$scope.document.code = response.code;
 				growlService.growl('Saved');
+				if(cb){
+					cb();
+				}
 			}
 		});
 	}
-	$scope.generateRendition = function(type){
+	$scope.generateRendition = function(type, renditionName, save){
+		if(save == undefined){
+			save = false;
+		}
 		var tempDoc = {content: editor.getHtml(true), id: $scope.document.id, title: $scope.document.title };
-		rendition.generate(type, tempDoc, editorConfig.style);
+		rendition.generate(type, tempDoc, editorConfig.style, renditionName, save);
+	}
+	$scope.saveAndGenerateRendition = function(type, renditionName){
+		$scope.generateRendition(type, renditionName, true);
 	}
 	$scope.diff = function(){
 		rendition.diff().then(function(data){
@@ -104,16 +116,8 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			$scope.openDocument();
 			console.log($scope.mode);
 		}else{
-			switch($scope.template){
-				case 'bill':
-					$scope.setSchema('legis');
-					$scope.emptyDocument();
-					break;
-				default:
-					$scope.setSchema();
-					$scope.emptyDocument();
-					break;
-			}
+			$scope.setSchema($scope.template);
+			$scope.emptyDocument();
 		}
 	}
 })

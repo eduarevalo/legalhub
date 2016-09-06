@@ -26,7 +26,7 @@ router.post('/save', function (req, res) {
   if(req.body.collectionId){
     document.setCollection(req.body.collectionId);
   }
-  documentManager.save(document, req.body.content, function(err, document){
+  documentManager.save(document, req.body.content, 'editor', '', function(err, document){
     if(err){
       res.json({success: false, error: err});
     }else{
@@ -41,20 +41,16 @@ router.post('/upload', function (req, res, next) {
   var collectionId = req.query['collection'] ? req.query['collection'] : '';
   var parser = req.query['parser'] ? req.query['parser'] : '';
   req.busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
+  
 	var fileExtension = filename.split('.');
 	var fileContent = '';
     fileExtension = fileExtension[fileExtension.length-1];
-    file.on('data', function(chunk) {
-      fileContent += chunk;
-    });
-	file.on('end', function(){
-	  documentManager.upload({
-	    fileName: filename,
-	    fileContent: fileContent,
+	documentManager.upload({
+	    file: file,
+		fileName: filename,
 	    collectionId: collectionId,
-		parser: parser
-	  }, function(){});
-	});
+		parser: parser 
+	});  
   });
   req.busboy.on('field', function(fieldname, val){
     if(fieldname == 'collection'){

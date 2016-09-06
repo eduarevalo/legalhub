@@ -1,9 +1,11 @@
 "use strict";
 
 // Utils
-var chance = require('chance').Chance(),
+const chance = require('chance').Chance(),
   fs    = require("fs");
 var imageUtils = require(__base + 'core/utils/image');
+
+const configuration = require(__base + 'configuration');
 
 // Models
 var Document = require(__base + 'model/document/document'),
@@ -15,31 +17,38 @@ var documentDao = require(__base + 'dao/document/documentDao'),
 // Parsers
 var parserFactory = require(__base + 'manager/parser/parserFactory');
 
-var save = (document, content, cb) => {
+var save = (document, content, renditionType, renditionName, cb) => {
   suggestProperties(document);
-  console.log(document);
   documentDao.save(document, function(err, results){
     if(results.result.nModified > 0 || (results.result.upserted && results.result.upserted.length > 0)){
       if((document.id == undefined || document.id.length == 0) && results.result.upserted && results.result.upserted.length > 0 && results.result.upserted[0]._id){
         document.id = results.result.upserted[0]._id;
       }
     }
-      console.log('------------------');
-      console.log(document);
     if(content != undefined){
-      let fragment = new Fragment();
-      fragment.documentId = document.id;
-      fragment.startDate = new Date();
-      fragment.type = '$root';
-      fragment.content = content;
-      fragmentDao.save(fragment, function(err, fragment){
-        cb(err, document);
-      });
+      setContent(document, content, renditionType, renditionName, cb);
     }else{
       cb(err, document);
     }
   });
 }
+
+var setContent = (document, content, renditionType, renditionName, cb) => {
+	let fragment = new Fragment();
+      fragment.documentId = document.id;
+      fragment.startDate = new Date();
+      fragment.type = '$root';
+	  if(renditionType != 'editor' && fs.statSync(content)){
+		fragment.filePath = content;
+	  }else{
+		fragment.content = content;
+	  }
+	  fragment.rendition = renditionType;
+	  fragment.renditionName = renditionName;
+      fragmentDao.save(fragment, function(err, fragment){
+        cb(err, document, fragment);
+      });
+};
 
 var search = (searchKeys, projectionKeys, cb) => {
   documentDao.search(searchKeys, projectionKeys, cb);
@@ -49,7 +58,7 @@ var suggestQrCode = (document) => {
   var type = 'svg';
   var imgPath = 'media/generated/' + document.code + '.' + type;
   var localPath = __base + 'view/' + imgPath;
-  imageUtils.createQRCode("http://legalhub.vimmit.com/document/" + document.code, type, localPath);
+  imageUtils.createQRCode(configuration.app.qrCodeDomain + document.code, type, localPath);
   return imgPath;
 }
 
@@ -69,31 +78,39 @@ var suggestProperties = (document) => {
   document.owner = 'earevalosuarez@gmail.com';
 }
 
-var uploadContent = (content, fileName, collectionId, cb) => {
+var saveWithContent = (content, renditionType, renditionName, fileName, collectionId, cb) => {
   let document = new Document();
   document.fileName = fileName;
   document.title = fileName.split('.')[0];
   document.setCollection(collectionId);
-  save(document, content, cb);
+  save(document, content, renditionType, renditionName, cb);
 }
 
 var upload = (data, cb) => {
-  var tmpPath = "data/upload/" + data.fileName;
-  fs.writeFile(__base + tmpPath, data.fileContent, function(err) {
-    if(err) {
-      return console.log(err);
-    }
-    try{
-	     var parser = data.parser ? parserFactory.getParser(data.parser) : parserFactory.guessParser(data.fileName, data.fileContent);
-       parser.marshall(tmpPath, function(content){
-         uploadContent(content, data.fileName, data.collectionId, cb);
-       });
-       return;
-    }catch(err){
-      console.log(err);
-    }
-    uploadContent(data.fileContent, data.fileName, data.collectionId, cb);
-  });
+	var tmpPath = __base + "data/upload/" + chance.string({length: 3});
+	if (!fs.existsSync(tmpPath)){
+		fs.mkdirSync(tmpPath);
+	}
+	tmpPath += '/' + data.fileName;
+	var fstream = fs.createWriteStream(tmpPath);
+	data.file.pipe(fstream);
+	fstream.on('close', function() {
+		
+		var parser = data.parser ? parserFactory.getParser(data.parser) : parserFactory.guessParser(data.fileName, data.file);
+		if(parser){
+			try{
+					parser.marshall(tmpPath, function(content, type, name){
+						saveWithContent(content, type, name, data.fileName, data.collectionId, cb);
+					});
+					return;
+			}catch(err){
+			  console.log(err);
+			}
+		}else{
+			saveWithContent(tmpPath, 'original', '', data.fileName, data.collectionId, cb);
+		}
+		
+	});
 }
 
 var getLastVersion = (documentId, cb) => {
@@ -107,5 +124,6 @@ var getVersions = (documentId, cb) => {
 exports.getLastVersion = getLastVersion;
 exports.getVersions = getVersions;
 exports.save = save;
+exports.setContent = setContent;
 exports.search = search;
 exports.upload = upload;

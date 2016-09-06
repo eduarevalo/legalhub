@@ -38,16 +38,16 @@ span[itemtype='text']::before{
 	color: blue;
 }
 .sections > .lineNumber{
-  left: 0px;
+  left: -10px;
 }
 [itemtype='section']{
-  margin-left: 0.3in;
+  margin-left: 0.25in;
   -ah-line-number: show;
   -ah-line-number-font-family: "Book Antiqua", "Times New Roman";
   -ah-line-number-font-size: 12pt;
 }
 [itemtype='quote']{
-  margin-left: 0.3in;
+  margin-left: 0.25in;
   -ah-line-number: show;
   -ah-line-number-font-family: "Book Antiqua", "Times New Roman";
   -ah-line-number-font-size: 12pt;
@@ -59,3 +59,8 @@ span[itemtype='text']::before{
 	margin-top: 0.25in;
 	text-indent: 0.2in;
 }
+/*[type='line-number'].sections{
+	position: absolute;
+	left: 50px;
+	content: attr(line-number)
+}*/

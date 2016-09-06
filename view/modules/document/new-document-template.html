@@ -305,12 +305,18 @@
 			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
 				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-collection-case-play"></i> Export as...</div>
 				<ul class="dropdown-menu">
-					<li><a ng-click="generateRendition('xml')">Xml USLM</a></li>
-					<li><a href="">Xml AKN</a></li>
-					<li><a href="">Html</a></li>
+					<li><a ng-click="generateRendition('uslm')">Xml USLM</a></li>
+					<li><a ng-click="generateRendition('akn')">Xml AKN</a></li>
+					<li><a ng-click="generateRendition('html')">Html</a></li>
 					<li><a ng-click="generateRendition('pdf')">Pdf</a></li>
-					<!--<li><a href="/api/rendition/get?id={{documentId}}&type=pdf" target="_blank" download="{{documentId}}.pdf">Pdf</a></li>-->
-					<li><a href="">Epub</a></li>
+					<li><a ng-click="generateRendition('epub')">Epub</a></li>
+				</ul>
+			</div>
+			
+			<div class="dropdown" uib-dropdown style="display: inline-block" id="fonts-menu">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle><i class="zmdi zmdi-collection-case-play"></i> Generate...</div>
+				<ul class="dropdown-menu">
+					<li><a ng-click="saveAndGenerateRendition('pdf', 'official')">Official Pdf</a></li>
 				</ul>
 			</div>
 		</nav>
@@ -408,7 +414,8 @@
 				<div class="waves-effect btn bgm-teal" uib-dropdown-toggle><i class="zmdi zmdi-labels"></i> {{schema}}</div>
 				<ul class="dropdown-menu">
 					<!--<li><a ng-click="setSchema()">Schemaless</a></li>-->
-					<li><a ng-click="setSchema('legis')">Legislative</a></li>
+					<li><a ng-click="setSchema('bill')">Bill</a></li>
+					<li><a ng-click="setSchema('amendment')">Amendment</a></li>
 					<li><a ng-click="setSchema('general')">General-Purpose</a></li>
 				</ul>
 			</div>
@@ -431,9 +438,11 @@
 		</nav>
 
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'themes'">
-			<button class="btn" onClick="setPageStyle('default')">Default</button>
-			<button class="btn" onClick="setPageStyle('paper')">Paper</button>
-			<button class="btn" onClick="setPageStyle('connecticut')">Connecticut</button>
+			<button class="btn" onClick="setPageStyle('default')">Desktop</button>
+			<!--<button class="btn" onClick="setPageStyle('paper')">Paper</button>-->
+			<button class="btn" onClick="setPageStyle('demoa')">State Demo A</button>
+			<button class="btn" onClick="setPageStyle('demob')">State Demo B</button>
+			<button class="btn" onClick="setPageStyle('democ')">State Demo C</button>
 		</nav>
 
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">
@@ -491,7 +500,7 @@
 					<div class="card">
 						<div class="card-header bgm-bluegray m-b-20">
 							<h2>Amendment</h2>
-							<button class="btn bgm-green btn-float waves-effect"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
+							<button class="btn bgm-green btn-float waves-effect" ng-click="setTemplate('amendment')"><i class="zmdi zmdi-mail-send zmdi-hc-fw"></i></button>
 						</div>
 						<div class="card-body card-padding">
 						Amendment template specifies the overall content model of the document types that describe amendments.

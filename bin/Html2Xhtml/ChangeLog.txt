@@ -1,0 +1,190 @@
+2014-09-23  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released version 1.3
+	* html2xhtml Improved solution to the vsnprintf problem
+	* html2xhtml New snippet mode.
+	* html2xhtml Web API example clients for BASH, Node.js and Python.
+	* html2xhtml Fixed a segfault error.
+	* html2xhtml Updated the autotools files to recent versions.
+
+2010-04-07  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released version 1.1.2-2
+	* html2xhtml Bugfix related to the use of vsnprintf
+
+2009-11-05  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as stable, version 1.1.2
+
+2009-10-11  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml The DTD coder module implements now a cache of
+	downloaded DTD entities. The User-Agent header of that feature
+	has also been changed to avoid being blocked by W3C servers.
+
+2009-07-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml More robust HTML parser, using the Bison's error
+	recovery mechanism.
+	* html2xhtml Released as 1.1.2-rc3
+
+2009-07-02  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml More robust handling of invalid chars
+
+2009-06-30  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Several bugfixes.
+	* html2xhtml Released as 1.1.2-rc2
+
+2009-05-28  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Updated DTD data.
+
+2009-04-13  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1.2-rc1
+
+2009-04-08  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml End-of-line (UNIX-like or DOS-like) characters can be
+	chosen with a command-line parameter.
+	* html2xhtml Improved documentation.
+
+2009-03-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Updated DTD data.
+
+2009-03-25  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Redesigned CGI-handling code. Support to both
+	multipart/form-data input and direct (text/html) input.
+
+2009-03-10  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New --compact-empty-elem-tags option. Renamed
+	option --empty-elm-tags-always.
+	* html2xhtml Support for many input/output character sets using iconv.
+
+2009-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Adapted the lexer to recent flex versions (2.5.35)
+
+2008-07-28  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New test system, to help to detect regressions.
+
+2008-07-27  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Empty element tags written only for elements 
+	declared as empty in DTD.
+
+2008-06-26  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Updated DTD data.
+	* html2xhtml Ported dtd_query from the old source tree.
+
+2008-06-17  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as stable, version 1.1.1.
+
+2008-05-29  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Removed the REJECT rule from the parser.
+
+2008-05-22  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug in the CGI related to charset.
+
+2008-04-17  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b6
+
+2008-04-08  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed two bugs related to incorrect memory access.
+
+2008-03-31  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug when "<" and "&" follow "]" in CDATA.
+	* html2xhtml Fixed whitespace problems with entity references.
+	* html2xhtml Entity reference "percnt" is replaced by "%". 
+	* html2xhtml Flexibility added to the parser: allows closing 
+	XML PIs with ">" instead of "%>"
+	
+2008-03-05  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b5
+
+2008-03-03  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug when an end tags appears inside
+	a script. The end tag was not properly wrapped inside a CDATA
+	section.
+	* html2xhtml Fixed a bug in the CGI: comments were not properly
+	escaped.
+	* html2xhtml Changed the result page of the CGI to make it
+	look closer to the other pages of the html2xhtml website.
+
+2008-01-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Released as 1.1b4
+
+	* html2xhtml Fixed some bugs with Windows carriage returns.
+
+	* html2xhtml Fixed a bug when line breaks appeared inside
+	attribute values.
+
+	* html2xhtml Added the --compact-block-elements option.
+
+2008-01-04  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml New output formatting code. Now indentation 
+	length and line length are configurable. Line wrapping is 
+	now better.
+
+	* html2xhtml Integrated the code of the CGI version of the
+	program in the executable file html2xhtml. Define the
+	macro WITH_CGI to activate it at compilation time. The
+	executable will decide at run time if it works in command
+	line or as a CGI.
+
+	* html2xhtml Better support of XHTML input.
+
+	* html2xhtml Better support for CDATA sections.
+	
+	* html2xhtml Fixed several other minor issues.
+
+2007-10-30  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Fixed a bug regarding whitespaces: spacing was
+	removed in situations like "<b>1</b> <b>2</b>"
+
+2007-09-16  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Added support for XHTML Print 1.0
+
+	* html2xhtml Bug fixes and help message improved
+
+	* html2xhtml Now converts from XHTML to XHTML
+
+	* html2xhtml Released as 1.1b3
+	
+2007-09-15  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml Added support for XHTML Basic 1.1 and updated DTDs
+
+	* html2xhtml Released as 1.1b2
+	
+2007-05-19  Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+	* html2xhtml First release under the GNU GPL license (1.1b1)
+	
+	* html2xhtml First version with autotools-based build system
+	
+	* html2xhtml Removed from the source tree the CGI and DLL
+	versions, dtd_test and xhtmlpedia.
+
+	
+	
+

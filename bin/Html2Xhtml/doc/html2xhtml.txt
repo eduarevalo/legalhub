@@ -1,0 +1,185 @@
+html2xhtml(1)               General Commands Manual              html2xhtml(1)
+
+
+
+NAME
+       html2xhtml - Converts HTML files to XHTML
+
+SYNTAX
+       html2xhtml [ filename ] [ options ]
+
+
+DESCRIPTION
+       Html2xhtml  is  a  command-line  tool that converts HTML files to XHTML
+       files. The path of the HTML input file can be provided  as  a  command-
+       line argument. If not, it is read from stdin.
+
+       Xhtml2xhtml  tries always to generate valid XHTML files.  It is able to
+       correct many common errors in input HTML files without loose of  infor‐
+       mation.  However,  for some errors, html2xhtml may decide to loose some
+       information in order to generate a valid XHTML  output.   This  can  be
+       avoided  with  the  -e option, which allows html2xhtml to generate non-
+       valid output in these cases.
+
+       Html2xhtml can generate the XHTML output compliant to one of  the  fol‐
+       lowing  document  types: XHTML 1.0 (Transitional, Strict and Frameset),
+       XHTML 1.1, XHTML Basic and XHTML Mobile Profile.
+
+OPTIONS
+       The command line options/arguments are:
+
+       filename            Read the HTML input from filename  (optional  argu‐
+                           ment).  If  this argument is not provided, the HTML
+                           input is read from standard input.
+
+       -o filename         Output XHTML file. The file is  overwritten  if  it
+                           exists.  If  not provided, the output is written to
+                           standard output.
+
+       -e                  Instructs the program to propagate input chunks  to
+                           the  output  even  if it is unable to adapt them to
+                           the output XHTML doctype. Using  this  option,  the
+                           XHTML  output  may  be  non-valid.  Not  using this
+                           option, some input data could be removed  from  the
+                           output in some [rare] cases.
+
+       -t output-doctype   Doctype of the output XHTML file. If not specified,
+                           the program selects automatically either XHTML  1.0
+                           Transitional or XHTML 1.0 Frameset depending on the
+                           input. Current available doctypes are:
+                            o transitional XHTML 1.0 Transitional
+                            o frameset XHTML 1.0 Frameset
+                            o strict XHTML 1.0 Strict
+                            o 1.1 XHTML 1.1
+                            o basic-1.0 XHTML Basic 1.0
+                            o basic-1.1 XHTML Basic 1.1
+                            o mp XHTML Mobile Profile
+                            o print-1.0 XHTML Print 1.0
+
+       --ics input_charset Character set of the input  document.  This  option
+                           overrides the default input character set detection
+                           mechanism.
+
+       --ocs output_charset
+                           Character set for the  output  XHTML  document.  If
+                           this  option  is  not present, the character set of
+                           the input is used as default.
+
+       --lcs               Dump the list of available  character  set  aliases
+                           and  exit  html2xhtml.   No conversion is performed
+                           when this option is present.
+
+       -l line_length      Number of characters per line. The default value is
+                           80.   It  must be greater or equal to 40, otherwise
+                           the parameter is ignored.
+
+       -b tab_length       Tab length in number of characters. It  must  be  a
+                           number between 0 and 16, otherwise the parameter is
+                           ignored.  Use 0 to avoid indentation in the output.
+
+       --preserve-space-comments
+                           Use this option to preserve white spaces, tabs  and
+                           ends of lines in HTML comments. The default, if not
+                           provided, is to rearrange spacing.
+
+       --no-protect-cdata  Enclose CDATA sections in "script" and "style" fol‐
+                           lowing   the   XHTML   1.0   specification   (using
+                           "<!CDATA[[" and "]]>"). It  might  be  incompatible
+                           with some browsers.  The default in this version is
+                           to enclose CDATA sections using  "//<!CDATA[["  and
+                           "//]]>", because major browsers handle it properly.
+
+       --compact-block-elements
+                           No  white spaces or line breaks are written between
+                           the start tag of a block element and the start  tag
+                           of  its first enclosed inline element (or character
+                           data) and between the end tag of its last  enclosed
+                           inline  element (or character data) and the end tag
+                           of the block element. By default, if this option is
+                           not  set,  a  new line character and indentation is
+                           written between them.
+
+       --compact-empty-elm-tags
+                           Do not write a  whitespace  before  the  slash  for
+                           empty  element  tags (i.e. write "<br/>" instead of
+                           the default "<br />").   Note  that  although  both
+                           notations  are  correct in XML, the XHTML 1.0 stan‐
+                           dard recommends the latter to improve compatibility
+                           with old browsers.
+
+       --empty-elm-tags-always
+                           By default, empty element tags are written only for
+                           elements declared as empty in the DTD. This  option
+                           makes  any element not having content to be written
+                           with the empty element  tag,  even  if  it  is  not
+                           declared as empty in the DTD. This option may cause
+                           problems when  the  XHTML  document  is  opened  by
+                           browsers in HTML (tag soup) mode.
+
+       --dos-eol           Write  the output XHTML file with DOS--style (CRLF)
+                           end of line, instead of the default UNIX--style end
+                           of  line.   Both  end of line styles are allowed by
+                           the XML recommendation.
+
+       --generate-snippet  Treat the input as an HTML fragment  instead  of  a
+                           full  document.   The output will also be a snippet
+                           and will not contain either  the  XML  and  doctype
+                           declarations or the html, head and body elements.
+
+       --help              Show a brief help message and exit.
+
+       --version           Show the version number and exit.
+
+
+NOTE ON CHARACTER SETS
+       Since  version  1.1.2,  html2xhtml  is able to parse and write HTML and
+       XHTML documents using the most popular character sets / encodings.   It
+       is also able to read the input document using a given character set and
+       generate an output that uses  a  different  character  set.  The  iconv
+       implementation in the GNU C library is used with that purpose.
+
+       Any  IANA-registered  character  set  that  is  supported  by the iconv
+       library may be used. When naming a character  set,  any  IANA--approved
+       alias  for  it  may  be  used.  The  full list of aliases recognised by
+       html2xhtml can be obtained with the --lcs command-line option.
+
+       If the character set of the input document is not specified, html2xhtml
+       tries  to  guess  it automatically.  If the character set of the output
+       document is not specified, html2xhtml writes the output using the  same
+       character set as the input document.
+
+
+NOTE ON END OF LINE CHARACTES
+       By  default,  the  UNIX-style  one-byte  end of line is used. It can be
+       changed to DOS-style CRLF end of line with the  --dos-eol  command-line
+       option.
+
+       However,  when the program is compiled in the MinGW environment and the
+       output is sent to standard output, the  output  is  automatically  con‐
+       verted  by the environment to CRLF by default. Do not use the --dos-eol
+       command-line option in that situation.  When the output is  sent  to  a
+       file  with the -o command-line option, the output is as expected (UNIX-
+       style by default), and the --dos-eol option may be used.
+
+
+ACKNOWLEDGMENTS
+       Program developer up to current version:
+       Jesus Arias Fisteus <jaf@it.uc3m.es>
+
+       The first working version of this program has been developed as
+       a Master Thesis at the University of Vigo (Spain) [http://www.uvigo.es],
+       advised by:
+
+       Rebeca Diaz Redondo
+       Ana Fernandez Vilas
+
+       Copyright 2000-2001 by Jesus Arias Fisteus, Rebeca Diaz Redondo, Ana
+       Fernandez Vilas.
+       Copyright 2002-2009 by Jesus Arias Fisteus
+
+
+
+
+
+
+                                                                 html2xhtml(1)

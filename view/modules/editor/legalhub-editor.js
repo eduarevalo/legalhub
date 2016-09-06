@@ -302,10 +302,51 @@ var legalHubEditor = function(el){
 	};
 
 	this.newDocument = function(){
-		var node = lhe.newElement(lhe.config.container.elements[0]);
-		var paragraph = lhe.newElement(lhe.config.block.elements[0], true);
-		node.appendChild(paragraph);
-		return node;
+		var document = "";
+		var nodes = [];
+		if(lhe.schema["@template"]){
+			for(var i=0; i<lhe.schema["@template"].length; i++){
+				nodes.push(lhe.buildTemplate(lhe.schema["@template"][i].type));
+			}
+		}else{
+			var node = lhe.newElement(lhe.config.container.elements[0]);
+			var paragraph = lhe.newElement(lhe.config.block.elements[0], true);
+			node.appendChild(paragraph);
+			nodes.push(node);
+		}
+		for(var i=0; i<nodes.length; i++){
+			if (typeof nodes[i] === 'string' || nodes[i] instanceof String){
+				document += nodes[i];
+			}else{
+				document += nodes[i].outerHTML;
+			}
+		}
+		return document;
+	}
+	
+	this.buildTemplate = function(type){
+		var node = lhe.newElementByType(type);
+		if(lhe.schema[type]){
+			if(lhe.schema[type]["@template"]){
+				for(var i=0; i<lhe.schema[type]["@template"].length; i++){
+					var newType = lhe.schema[type]["@template"][i].type;
+					if(lhe.schema[type]["@template"][i].wrapper){
+						var paragraph = lhe.newElement(lhe.config.block.elements[0]);
+						paragraph.appendChild(lhe.newElementByType(newType, true));
+						node.appendChild(paragraph);
+					}else{
+						node.appendChild(lhe.newElementByType(newType, true));
+					}
+				}
+			}
+		}
+		if(node.childNodes.length ==0){
+			if(lhe.schema[type].type == 'container'){
+				var paragraph = lhe.newElement(lhe.config.block.elements[0], true);
+				node.appendChild(paragraph);
+			}
+		}
+		return node.outerHTML;
 	}
 
 	this.newTable = function(rows, cols, header){
@@ -410,6 +451,12 @@ var legalHubEditor = function(el){
 					levels = levels.concat(innerLevels);
 				}
 			}
+		}else{
+			master = node.closest("[itemtype]");
+			if(master){
+				levels.push(master);
+			}
+			// TODO: Apply recursive...
 		}
 		return levels;
 	}
@@ -1355,7 +1402,7 @@ var legalHubEditor = function(el){
 				if(!lhe.isEmpty(element)){
 
 					// 1st chance
-						var toNumber = lhe.schema['@lineNumberRules'] == undefined || lhe.schema['@lineNumberRules'][numberingRule].include == undefined;
+					var toNumber = lhe.schema['@lineNumberRules'] == undefined || (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include == undefined);
 					// 2nd chance
 					if(!toNumber && lhe.schema['@lineNumberRules'][numberingRule].include){
 						toNumber = lhe.validateAnyCondition(element, lhe.schema['@lineNumberRules'][numberingRule].include, true);
@@ -1386,6 +1433,35 @@ var legalHubEditor = function(el){
 							}
 						//}
 						lhe.lineNumbersElement.innerHTML += divs;
+						
+						
+						
+						/*switch(element.tagName.toLowerCase()){
+							case 'p':
+								if(element.childNodes.length == 1){
+									element.innerHTML = element.childNodes[0].textContent.replace(/ /g, "<a type='line-number'>#</a> ");
+									
+									for(var it=0; it<element.childNodes.length; it++){
+										if(element.childNodes[it].tagName && element.childNodes[it].tagName.toLowerCase() == 'a' && element.childNodes[it].getAttribute('type') == 'line-number'){
+											var top = $(element.childNodes[it]).position().top;
+											if(top > lastPosition){
+												lastPosition = top;
+												element.childNodes[it].setAttribute("line-number", ++lastNumber);
+												element.childNodes[it].innerHTML = lastNumber;
+												if(numberingRule != undefined){
+													element.childNodes[it].className = numberingRule;
+												}
+											}else{
+												element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
+											}
+										}
+									}
+								}
+								break;
+								
+						}*/
+						
+						
 					}
 				}
 			}

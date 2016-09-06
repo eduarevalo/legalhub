@@ -41,6 +41,5 @@ var toObject = (fragment) => {
   obj._id = new ObjectID(obj.id);
   obj.documentId = new ObjectID(obj.documentId);
   delete obj.id;
-  console.log(obj);
   return obj;
 }

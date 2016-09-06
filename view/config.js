@@ -288,16 +288,20 @@ legalHub
                         return $ocLazyLoad.load([
 						'view/modules/version/version-service.js',
 						'view/modules/rendition/rendition-service.js',
-            'view/modules/document/document-service.js',
+						'view/modules/document/document-service.js',
 						'view/modules/document/new-document-controller.js',
 						'view/modules/editor/schema-legis.js',
+						'view/modules/editor/schema-amendment.js',
 						'view/modules/editor/legalhub-editor.js',
 						'view/modules/editor/start.js',
 						'view/modules/editor/css/legislative.css',
 						'view/modules/editor/css/common.css',
 						'view/modules/editor/css/default.css',
-						'view/modules/editor/css/paper.css',
-            'view/modules/editor/css/connecticut.css',
+						/*'view/modules/editor/css/paper.css',
+						'view/modules/editor/css/connecticut.css',*/
+						'view/modules/editor/css/demoa.css',
+						'view/modules/editor/css/demob.css',
+						'view/modules/editor/css/democ.css',
             {
               name: 'css',
               insertBefore: '#app-level',

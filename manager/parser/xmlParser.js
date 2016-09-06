@@ -4,7 +4,7 @@ var fs = require('fs'),
   
 var Parser = require(__base + 'manager/parser/parser');
 
-module.exports = class xmlParser extends Parser{
+module.exports = class XmlParser extends Parser{
   constructor(id, xmlns, marshallXSL, unmarshallXSL) {
 	super(id);
 	this.xmlns = xmlns;
@@ -25,8 +25,7 @@ module.exports = class xmlParser extends Parser{
 	  content += cont;
 	});
 	stream.on('end', function(){
-		cb(content);
+		cb(content, 'editor');
 	});
-
   }
 }

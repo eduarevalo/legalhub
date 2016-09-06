@@ -19,7 +19,8 @@ exports.getVersion = (documentId, startDate, cb) => {
   db.find(collectionName, {
       documentId: new ObjectID(documentId),
       startDate: startDate,
-      type: '$root'
+      type: '$root',
+	  rendition: 'editor'
     },
     versionFields,
     function(results){
@@ -30,7 +31,8 @@ exports.getVersion = (documentId, startDate, cb) => {
 exports.getVersions = (documentId, cb) => {
   db.findSortLimit(collectionName, {
       documentId: new ObjectID(documentId),
-      type: '$root'
+      type: '$root',
+	  rendition: 'editor'
     },
     versionFields,
     {startDate:-1},
@@ -43,13 +45,19 @@ exports.getVersions = (documentId, cb) => {
 exports.getLastVersion = (documentId, cb) => {
   db.findSortLimit(collectionName, {
     documentId: new ObjectID(documentId),
-    type: '$root'
+    type: '$root',
+	  rendition: 'editor'
   },
   { content: 1 },
   {startDate:-1},
   1,
   function(err, results){
-    cb(err, toVersion(results));
+	var versions = toVersion(results);
+	if(versions.length>0){
+		cb(err, versions[0]);
+	}else{
+		cb(err, null);
+	}
   });
 }
 
