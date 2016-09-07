@@ -5,8 +5,6 @@ const os = require('os'),
 	configuration = require(__base + 'configuration');
 
 var extractTextWithLines = (filePath, cb) => {
-console.log("------------------------------------------------------------------------------extractTextWithLines");
-console.log("------------------------------------------------------------------------------extractTextWithLines" + filePath);
 	var tmpDir = os.tmpdir() + '/' + chance.guid();
 	if (!fs.existsSync(tmpDir)){
 		fs.mkdirSync(tmpDir);
@@ -51,7 +49,6 @@ console.log("-------------------------------------------------------------------
 					  `-xsl:"${xslPath}"`,
 					  `-warnings:silent`,
 					  ].join(" ");
-					  console.log(cmd);
 					  
 					var code = execSync(cmd);
 					cb(null, newOutFile);

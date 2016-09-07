@@ -6,6 +6,7 @@ const fs = require('fs'),
   execSync = require('child_process').execSync,
   configuration = require(__base + 'configuration'),
   pdfUtils =  require(__base + 'core/utils/pdf'),
+  stringUtils =  require(__base + 'core/utils/string'),
   xpath = require('xpath'),
   dom = require('xmldom').DOMParser;
 
@@ -123,7 +124,7 @@ var getRenditionFromContent = (params, cb) => {
 							
 							var newContentFile = os.tmpdir() + '/' + chance.guid();
 							var newContentOutFile = os.tmpdir() + '/' + chance.guid();
-							console.log("savinf newCOntent" + newContentFile);
+							
 							/*fs.writeFile(newContentFile,content, function(err) {
 								if(err) {
 									return console.log(err);
@@ -165,21 +166,22 @@ var getRenditionFromContent = (params, cb) => {
 							}
 							
 							let document = new Document(params.documentId);
-							documentManager.setContent(document, content, 'editor', '', function(){
+							content = stringUtils.replaceAll('track="del"', 'itemtype="del"', stringUtils.replaceAll('track="add"', 'itemtype="add"', content));
+							documentManager.setContent(document, {content: content, rendition: 'editor'}, function(){
 								cb(null, __base + outFile);
 							});							
 							
 						});
 						
 						let document = new Document(params.documentId);
-						documentManager.setContent(document, outFile, type, params.renditionName, function(){
+						documentManager.setContent(document, {filePath: outFile, rendtion: type,renditionName: params.renditionName}, function(){
 							cb(null, __base + outFile);
 						});
 						
 					}else{					
 					
 						let document = new Document(params.documentId);
-						documentManager.setContent(document, outFile, type, params.renditionName, function(){
+						documentManager.setContent(document, {filePath: outFile, rendition: type, renditionName: params.renditionName}, function(){
 							cb(null, outFile);
 						});
 					}

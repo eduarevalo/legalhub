@@ -48,7 +48,12 @@ exports.getLastVersion = (documentId, cb) => {
     type: '$root',
 	  rendition: 'editor'
   },
-  { content: 1 },
+  { 
+	_id: 1,
+	content: 1, 
+	style: 1,
+	schema: 1
+  },
   {startDate:-1},
   1,
   function(err, results){
@@ -70,7 +75,7 @@ var toVersion = (obj) => {
   var output = [];
   for(let it=0; it<obj.length; it++){
     let version = new Version(obj[it]._id);
-    version.update(obj[it]);
+	version.update(obj[it]);
     output.push(version);
   }
   return isArray ? output : output[0];

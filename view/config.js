@@ -77,8 +77,29 @@ legalHub
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
                     'view/modules/document/document-service.js',
+					'view/modules/collection/collection-service.js',
                     'view/modules/version/version-service.js',
                     'view/modules/document/document-controller.js']
+                  );
+                }
+              }
+            })
+			
+			.state ('engross', {
+              url: '/engross/:code',
+              params: {
+                id: '',
+                title: '',
+                icon: '',
+              },
+              templateUrl: 'view/modules/engross/engross-template.html',
+              resolve: {
+                loadPlugin: function($ocLazyLoad) {
+                  return $ocLazyLoad.load ([
+                    'view/modules/document/document-service.js',
+					'view/modules/collection/collection-service.js',
+                    'view/modules/version/version-service.js',
+                    'view/modules/engross/engross-controller.js']
                   );
                 }
               }
@@ -288,9 +309,10 @@ legalHub
                         return $ocLazyLoad.load([
 						'view/modules/version/version-service.js',
 						'view/modules/rendition/rendition-service.js',
+						'view/modules/reference/reference-service.js',
 						'view/modules/document/document-service.js',
 						'view/modules/document/new-document-controller.js',
-						'view/modules/editor/schema-legis.js',
+						'view/modules/editor/schema-bill.js',
 						'view/modules/editor/schema-amendment.js',
 						'view/modules/editor/legalhub-editor.js',
 						'view/modules/editor/start.js',

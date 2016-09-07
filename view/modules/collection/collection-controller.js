@@ -33,6 +33,9 @@ angular.module('legalHub').controller('collectionCtrl', function($filter, $scope
   $scope.goToNewDocument = function(templateName){
 	   $state.go('new-document', {collectionId: self.collectionId, template: templateName});
   }
+  $scope.goToEngrossDocument = function(document){
+	$state.go('engross', {id: document.documentId, code: document.code, title: document.title, icon: document.icon});
+  }
   $scope.goToEditDocument = function(documentId, title){
     $state.go('new-document', {collectionId: self.collectionId, documentId: documentId, documentTitle: title});
   }

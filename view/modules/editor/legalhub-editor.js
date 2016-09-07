@@ -310,7 +310,7 @@ var legalHubEditor = function(el){
 			}
 		}else{
 			var node = lhe.newElement(lhe.config.container.elements[0]);
-			var paragraph = lhe.newElement(lhe.config.block.elements[0], true);
+			var paragraph = lhe.newBlock(true);
 			node.appendChild(paragraph);
 			nodes.push(node);
 		}
@@ -381,6 +381,10 @@ var legalHubEditor = function(el){
 		}
 		return newElement;
 	};
+	
+	this.newBlock = function(emptyOrHtml){
+		return lhe.newElement(lhe.config.block.elements[0], emptyOrHtml);
+	}
 
 	this.newFloatingElement = function(type){
 		var element = document.createElement('div');
@@ -392,8 +396,16 @@ var legalHubEditor = function(el){
 	this.newElementByType = function(type, emptyOrHtml){
 		var element = lhe.newElement(lhe.schema[type].tag ? lhe.schema[type].tag : (lhe.schema[type].type ? lhe.config[lhe.schema[type].type].elements[0] : lhe.config.block.elements[0]), emptyOrHtml);
 		lhe.setType(type, element);
+		lhe.setEventListeners(type, element);
 		return element;
 	};
+	
+	this.setEventListeners = function(type, element){
+		if(lhe.schema[type].on && 
+			lhe.schema[type].on['blur']){
+			element.addEventListener('blur', lhe.schema[type].on['blur']);
+		}
+	}
 
 	/*
 		Get element id, if it is not defined, creates a new one.
@@ -758,19 +770,29 @@ var legalHubEditor = function(el){
 					&& lhe.schema[type].on
 						&& lhe.schema[type].on[context.eventName]
 							&& lhe.schema[type].on[context.eventName][context.keyCode]
-								&& lhe.schema[type].on[context.eventName][context.keyCode][context.position]){
-				continues = lhe.schema[type].on[context.eventName][context.keyCode][context.position](context, lhe);
+								&& lhe.schema[type].on[context.eventName][context.keyCode]){
+								
+				if(typeof lhe.schema[type].on[context.eventName][context.keyCode] === 'function'){
+					lhe.schema[type].on[context.eventName][context.keyCode](context, lhe);
+				}else if(lhe.schema[type].on[context.eventName][context.keyCode][context.position]){
+					continues = lhe.schema[type].on[context.eventName][context.keyCode][context.position](context, lhe);
+				}
 			}else{
 				continues = lhe.triggerCoreEvent('on', context);
 			}
+			
 			if(continues
 				&& type
 					&& lhe.schema[type]
 						&& lhe.schema[type].after
 							&& lhe.schema[type].after[context.eventName]
-								&& lhe.schema[type].after[context.eventName][context.keyCode]
-									&& lhe.schema[type].after[context.eventName][context.keyCode][context.position]){
-				continues = lhe.schema[type].after[context.eventName][context.keyCode][context.position](context, lhe);
+								&& lhe.schema[type].after[context.eventName][context.keyCode]){
+								
+				if(typeof lhe.schema[type].after[context.eventName][context.keyCode] === 'function'){
+					lhe.schema[type].after[context.eventName][context.keyCode](context, lhe);
+				}else if(lhe.schema[type].after[context.eventName][context.keyCode][context.position]){
+					continues = lhe.schema[type].after[context.eventName][context.keyCode][context.position](context, lhe);
+				}
 
 			}
 		}
@@ -859,7 +881,7 @@ var legalHubEditor = function(el){
 	*/
 	this.initEvents = function(){
 
-		var supportedCoreEvents = [/*'keyup',*/ 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
+		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
 
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
@@ -1231,7 +1253,7 @@ var legalHubEditor = function(el){
 			node = lhe.currentNode;
 		}
 		lhe.setElementType(node, type);
-		if(lhe.schema[type].transform){
+		if(lhe.schema[type] && lhe.schema[type].transform){
 			return lhe.schema[type].transform(lhe);
 		}
 		return true;
@@ -1404,7 +1426,7 @@ var legalHubEditor = function(el){
 					// 1st chance
 					var toNumber = lhe.schema['@lineNumberRules'] == undefined || (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include == undefined);
 					// 2nd chance
-					if(!toNumber && lhe.schema['@lineNumberRules'][numberingRule].include){
+					if(!toNumber && (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include)){
 						toNumber = lhe.validateAnyCondition(element, lhe.schema['@lineNumberRules'][numberingRule].include, true);
 						// 3rd chance
 						if(!toNumber){
@@ -1532,20 +1554,13 @@ var legalHub = { tools: {
   }
 }}
 
-var editorConfig = {
-  style: 'default'
-};
-function init(){
-  setPageStyle();
-}
 function setPageStyle(style){
-  if(style){
-    editorConfig.style = style;
-  }
   $('link[href*="editor/css"]').attr('disabled', 'disabled');
   $('link[href*="editor/css/common"]').removeAttr('disabled');
   $('link[href*="editor/css/legislative"]').removeAttr('disabled');
-  $('link[href*="editor/css/'+ editorConfig.style+'"]').removeAttr('disabled');
+  if(style){
+	$('link[href*="editor/css/'+ style+'"]').removeAttr('disabled');
 	if(editor)
 		editor.refreshLineNumbers();
+  }
 }

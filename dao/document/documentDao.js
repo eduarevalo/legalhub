@@ -61,10 +61,10 @@ var toQuery = (document) => {
     query._id = new ObjectID(document.id);
   }
   if(document.code){
-    query.code = document.code;
+    query.code = new RegExp(document.code,"g")
   }
   if(document.title){
-    query.title = document.title;
+    query.title = new RegExp(document.title,"g");
   }
   if(document.collections){
     query.collections = document.collections;

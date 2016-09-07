@@ -26,7 +26,9 @@ router.post('/save', function (req, res) {
   if(req.body.collectionId){
     document.setCollection(req.body.collectionId);
   }
-  documentManager.save(document, req.body.content, 'editor', '', function(err, document){
+  var params = req.body;
+  params.rendition = 'editor';
+  documentManager.save(document, params, function(err, document){
     if(err){
       res.json({success: false, error: err});
     }else{

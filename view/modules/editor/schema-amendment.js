@@ -1,7 +1,7 @@
 var schemaAmendment = {
 	'@lineNumberRules': {
-		'sections': {
-			include: ["[itemtype='section']", "[itemtype='quote']"]
+		'body': {
+			include: ["[itemtype='body']"]
 		},
 		'everything': {
 		}
@@ -30,7 +30,12 @@ var schemaAmendment = {
 		]
 	},
 	'body':{
-		type: 'container'
+		type: 'container',
+		'@template': [
+			{
+				type: 'text'
+			}
+		]
 	},
 	'level': {
 		attributes: [{
@@ -40,7 +45,30 @@ var schemaAmendment = {
 		}]
 	},
 	"billNumber" :{
-		type: 'inline'
+		type: 'inline',
+		after: {
+			'keyup':{
+				'a#' : function(context, lhe){
+				
+					var scope = angular.element(editor.element).scope();
+					scope.getProperties({title: lhe.currentNode.textContent.replace(/\u200C/, '')}, function(properties){
+						
+						var longTitleRef = properties.longTitle;
+						
+						var newBlock = document.getElementById('longTitleRef');
+						if(newBlock == null){
+							newBlock = lhe.newBlock(longTitleRef);
+							lhe.insertBlockAfter(newBlock);
+							newBlock.id = 'longTitleRef';
+							newBlock.setAttribute('type', 'longTitleRef');
+						}else{
+							newBlock.innerHTML = longTitleRef;
+						}
+						
+					});
+				}
+			}
+		}
 	},
 	'longTitle':{
 		minOccurs: 0,
@@ -115,43 +143,47 @@ var schemaAmendment = {
 		nlp: {
 			processors: [
 				{
-					name: 'amending',
+					name: 'fetch-lines',
 					triggers: {
-						'expression': new RegExp(/section\s*([0-9a-zA-Z.)-]+)\s*of\s*(.+)is\s*(repealed|amended|substituted)/, 'i')
+						'expression': new RegExp(/line.*\s+([0-9]+)\s*to\s*([0-9]+).*substitute/, 'i')
 					},
 					fn: function(context, textNode, editor){
-						var match = textNode.match(new RegExp(/section\s*([0-9a-zA-Z.)-]+)\s*of\s*(.+)is\s*(repealed|amended|substituted)/, 'i'));
+						var match = textNode.match(new RegExp(/line.*\s+([0-9]+)\s*to\s*([0-9]+).*substitute/, 'i'));
 						if(match && match.length>2){
-							var sectionId = match[1];
-							var documentId = match[2];
+							var fromLine = match[1];
+							var toLine = match[2];
+							var documentRef = editor.element.querySelector("[itemtype='billNumber']");
+							if(documentRef){
+								documentRef = documentRef.innerHTML;
+							}
 							swal({
 								title: "Amendatory instruction",
-								text: "You seem to be referencing section " + sectionId + " of " + documentId + ". Would you like to continue fetching this provision?",
+								text: "You seem to be referencing from line " + fromLine + " to " + toLine + " from the " +documentRef +". Would you like to continue fetching this provision?",
 								html: true,
 								type: "info",
 								showCancelButton: true,
-								closeOnConfirm: false
+								closeOnConfirm: true
 							}, function(){
-								var match = textNode.match(new RegExp(/(section\s*[0-9a-zA-Z.)-]+\s*of\s*\b.+)is\s*(repealed|amended|substituted)/, 'i'));
+								var match = textNode.match(new RegExp(/line.*\s+([0-9]+\s*to\s*[0-9]+).*substitute/, 'i'));
 								if(match && match.length>1){
 									var matchedRef = match[1];
 									var newRef = editor.newElementByType('ref', matchedRef);
 									editor.currentNode.innerHTML = editor.currentNode.innerHTML.replace(matchedRef, newRef.outerHTML);
 								}
-								var sectionNode = editor.getPreviousByType(editor.currentNode, 'section');
-								if(sectionNode){
-									sectionNode.setAttribute('data-type', 'amending');
+								var currentBlock = editor.getBlock(editor.currentNode);
+								if(currentBlock){
+									currentBlock.setAttribute('data-type', 'amending');
 								}
 								var scope = angular.element(editor.element).scope();
-								//scope.$apply(function () {
-								scope.reference(function(textToInsert){
+								scope.getProvision({fromLine: fromLine, toLine: toLine, title: documentRef}, function(textToInsert){
 									var newQuote = editor.newElementByType('quote');
-									newQuote.innerHTML = textToInsert;
+									
+
+									newQuote.innerHTML = textToInsert.content.replace(/<a([^\/]*)\/>/g, '<a$1>'+ String.fromCodePoint(0x200C) +'</a>');
 									editor.insertElementAfter(newQuote, 'block');
 									editor.nestBlock(newQuote, 1);
-									swal("Inserted!", "Your reference was inserted for modification.", "success");
+									//swal("Inserted!", "Your reference was inserted for modification.", "success");
 								});
-								//});
 							});
 						}
 					}

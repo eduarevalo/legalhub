@@ -16,6 +16,9 @@ router.use('/template', templateRouter);
 var renditionRouter = require(__base + 'routes/rendition');
 router.use('/rendition', renditionRouter);
 
+var referenceRouter = require(__base + 'routes/reference');
+router.use('/reference', referenceRouter);
+
 /* index */
 router.get('/', function(req, res, next) {
   res.end('Unknown operation.');

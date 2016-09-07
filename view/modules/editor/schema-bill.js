@@ -101,7 +101,7 @@ var legisSchema = {
 								html: true,
 								type: "info",
 								showCancelButton: true,
-								closeOnConfirm: false
+								closeOnConfirm: true
 							}, function(){
 								var match = textNode.match(new RegExp(/(section\s*[0-9a-zA-Z.)-]+\s*of\s*\b.+)is\s*(repealed|amended|substituted)/, 'i'));
 								if(match && match.length>1){
@@ -114,15 +114,15 @@ var legisSchema = {
 									sectionNode.setAttribute('data-type', 'amending');
 								}
 								var scope = angular.element(editor.element).scope();
-								//scope.$apply(function () {
-								scope.reference(function(textToInsert){
-									var newQuote = editor.newElementByType('quote');
-									newQuote.innerHTML = textToInsert;
-									editor.insertElementAfter(newQuote, 'block');
-									editor.nestBlock(newQuote, 1);
-									swal("Inserted!", "Your reference was inserted for modification.", "success");
-								});
-								//});
+								if(scope){
+									scope.getProvision({title: documentId, section: sectionId}, function(textToInsert){
+										var newQuote = editor.newElementByType('quote');
+										newQuote.innerHTML = textToInsert.content;
+										editor.insertElementAfter(newQuote, 'block');
+										editor.nestBlock(newQuote, 1);
+										//swal("Inserted!", "Your reference was inserted for modification.", "success");
+									});
+								}
 							});
 						}
 					}

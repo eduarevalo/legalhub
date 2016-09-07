@@ -26,16 +26,23 @@
 [itemtype='longTitle']{
   text-transform: uppercase;
   font-weight: bold;
-  /*margin-bottom: 0.2in;*/
+  margin-top: 0.4in !important;
+  margin-bottom: 0.2in !important;
 }
 [itemtype='preamble']{
-  /*margin-bottom: 0.2in;*/
+  margin-bottom: 0.2in !important;
 }
 span[itemtype='text']::before{
   content: '  ';
 }
 [track='add']{
 	color: blue;
+}
+[itemtype='del']{
+	color: red;
+}
+[itemtype='add']{
+	font-weight: bold;
 }
 .sections > .lineNumber{
   left: -10px;
@@ -52,6 +59,15 @@ span[itemtype='text']::before{
   -ah-line-number-font-family: "Book Antiqua", "Times New Roman";
   -ah-line-number-font-size: 12pt;
 }
+[itemtype='quote'] p:first-child::before{
+  display: inline;
+  content: '"';
+}
+[itemtype='quote'] p:last-child::after{
+  display: inline;
+  content: '"';
+   text-indent: 0in;
+}
 [itemtype='section']{
 	text-indent: 0.2in;
 }
@@ -66,7 +82,22 @@ span[itemtype='text']::before{
 }*/
 [itemtype='body']{
 	border-top: 1px dotted black;
+	padding-top: 0.5in;
+	margin-top: 0.5in;
 }
-[itemtype='billNumber'][empty='true']::before{
-	content: 'Tap here your bill number: ';
+[itemtype='billNumber']::before{
+	content: 'To Senate Bill No. ';
+}
+[type='longTitleRef']::before{
+	content: '"'
+}
+[type='longTitleRef']::after{
+	content: '"'
+}
+[type='longTitleRef']{
+	font-weight: bold;
+	text-align: center;
+	text-transform: uppercase;
+	font-style: italic;
+	margin-top: 0.25in;
 }

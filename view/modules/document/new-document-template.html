@@ -357,7 +357,8 @@
 				<div class="waves-effect btn btn-info" uib-dropdown-toggle title="Toggle line numbers"><i class="zmdi zmdi-format-list-numbered"></i></div>
 				<ul class="dropdown-menu">
 					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('everything')"><i class="zmdi zmdi-format-list-numbered"></i> Everything</span></li>
-					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('sections')"><i class="zmdi zmdi-format-list-numbered"></i> Sections</span></li>
+					<li style="padding:5px; padding-left:10px;" ng-if="schema =='bill' "><span onclick="editor.toggleLineNumbers('sections')"><i class="zmdi zmdi-format-list-numbered"></i> Sections</span></li>
+					<li style="padding:5px; padding-left:10px;" ng-if="schema =='amendment' "><span onclick="editor.toggleLineNumbers('body')"><i class="zmdi zmdi-format-list-numbered"></i> Body</span></li>
 				</ul>
 			</div>
 
@@ -438,11 +439,11 @@
 		</nav>
 
 		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'themes'">
-			<button class="btn" onClick="setPageStyle('default')">Desktop</button>
+			<button class="btn" ng-click="setStyle('default')">Desktop</button>
 			<!--<button class="btn" onClick="setPageStyle('paper')">Paper</button>-->
-			<button class="btn" onClick="setPageStyle('demoa')">State Demo A</button>
-			<button class="btn" onClick="setPageStyle('demob')">State Demo B</button>
-			<button class="btn" onClick="setPageStyle('democ')">State Demo C</button>
+			<button class="btn" ng-click="setStyle('demoa')">State Demo A</button>
+			<button class="btn" ng-click="setStyle('demob')">State Demo B</button>
+			<button class="btn" ng-click="setStyle('democ')">State Demo C</button>
 		</nav>
 
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">

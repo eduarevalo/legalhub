@@ -2,10 +2,12 @@
 
 // Utils
 const chance = require('chance').Chance(),
-  fs    = require("fs");
-var imageUtils = require(__base + 'core/utils/image');
+  fs    = require("fs"),
+  imageUtils = require(__base + 'core/utils/image'),
+  configuration = require(__base + 'configuration'),
+  xpath = require('xpath'),
+  dom = require('xmldom').DOMParser;
 
-const configuration = require(__base + 'configuration');
 
 // Models
 var Document = require(__base + 'model/document/document'),
@@ -17,34 +19,38 @@ var documentDao = require(__base + 'dao/document/documentDao'),
 // Parsers
 var parserFactory = require(__base + 'manager/parser/parserFactory');
 
-var save = (document, content, renditionType, renditionName, cb) => {
+var save = (document, params, cb) => {
   suggestProperties(document);
+  if(params.rendition == 'editor' && params.content != undefined){
+	extractPropertiesFromContent(params.content, document);
+  }
   documentDao.save(document, function(err, results){
     if(results.result.nModified > 0 || (results.result.upserted && results.result.upserted.length > 0)){
       if((document.id == undefined || document.id.length == 0) && results.result.upserted && results.result.upserted.length > 0 && results.result.upserted[0]._id){
         document.id = results.result.upserted[0]._id;
       }
     }
-    if(content != undefined){
-      setContent(document, content, renditionType, renditionName, cb);
+    if(params.content != undefined){
+      setContent(document, params, cb);
     }else{
       cb(err, document);
     }
   });
 }
 
-var setContent = (document, content, renditionType, renditionName, cb) => {
+var setContent = (document, params, /*renditionType, renditionName,*/ cb) => {
 	let fragment = new Fragment();
       fragment.documentId = document.id;
       fragment.startDate = new Date();
       fragment.type = '$root';
-	  if(renditionType != 'editor' && fs.statSync(content)){
-		fragment.filePath = content;
+	  fragment.update(params);
+	  /*if(renditionType != 'editor' && fs.statSync(params.content)){
+		fragment.filePath = params.content;
 	  }else{
-		fragment.content = content;
-	  }
-	  fragment.rendition = renditionType;
-	  fragment.renditionName = renditionName;
+		fragment.content = params.content;
+	  }*/
+	  /*fragment.rendition = renditionType;
+	  fragment.renditionName = renditionName;*/
       fragmentDao.save(fragment, function(err, fragment){
         cb(err, document, fragment);
       });
@@ -78,12 +84,22 @@ var suggestProperties = (document) => {
   document.owner = 'earevalosuarez@gmail.com';
 }
 
-var saveWithContent = (content, renditionType, renditionName, fileName, collectionId, cb) => {
+var extractPropertiesFromContent = (content, document) => {
+	var doc = new dom().parseFromString(content, "text/xml");
+	var longTitleNodes = xpath.select("//*[@itemtype='longTitle']//text()", doc);
+	if(longTitleNodes.length>0){
+		document.longTitle = '';
+		for(var it=0; it<longTitleNodes.length; it++){
+			document.longTitle += longTitleNodes[it].toString();
+		}
+	}
+};
+
+var saveWithContent = (params, collectionId, cb) => {
   let document = new Document();
-  document.fileName = fileName;
-  document.title = fileName.split('.')[0];
+  document.title = params.filePath ? params.filePath.split('.')[0] : '';
   document.setCollection(collectionId);
-  save(document, content, renditionType, renditionName, cb);
+  save(document, params, cb);
 }
 
 var upload = (data, cb) => {
@@ -100,14 +116,15 @@ var upload = (data, cb) => {
 		if(parser){
 			try{
 					parser.marshall(tmpPath, function(content, type, name){
-						saveWithContent(content, type, name, data.fileName, data.collectionId, cb);
+						// File name data.fileName
+						saveWithContent({content: content, rendition: type, renditionName: name}, data.collectionId, cb);
 					});
 					return;
 			}catch(err){
 			  console.log(err);
 			}
 		}else{
-			saveWithContent(tmpPath, 'original', '', data.fileName, data.collectionId, cb);
+			saveWithContent({filePath: tmpPath, filePath: data.fileName, rendition: 'original'}, data.collectionId, cb);
 		}
 		
 	});

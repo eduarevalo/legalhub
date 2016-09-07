@@ -18,6 +18,8 @@ module.exports = class Fragment extends Model{
     this.properties = undefined;
 	this.rendition = undefined;
 	this.renditionName = undefined;
+	this.schema = undefined;
+	this.style = undefined;
   }
   toString() {
     return `${this.id} []${this.type}] ${this.startDate}`;

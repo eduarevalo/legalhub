@@ -1,0 +1,88 @@
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+
+<section id="main">
+  <aside id="sidebar" data-ng-include="'view/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+
+  <aside id="chat" data-ng-include="'view/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+
+  <section id="content">
+
+    <div class="container" data-ng-controller="engrossCtrl as eCtrl">
+
+      <div class="card">
+        <div class="card-header">
+          <h2>{{title}} <small>For engrossing, drag and drop from the awainting list into the corresponding list to</small></h2>
+        </div>
+
+        <div class="card-body">
+
+
+          <div class="container" >
+
+            <div class="row col-md-12">
+              <div class="col-md-6">
+
+			  
+			  <div class="card">
+				<div class="card-header ch-alt">
+					<h2>Awaiting incorporation ({{awaiting.length}})</h2>
+				</div>
+				<div class="card-body card-padding" style="min-height: 320px;">
+					
+					
+					<div class="animated bgm-teal {{$index == (awaiting.length - 1) ? '' : 'card-transparent'}}"  ng-model="amendment" data-drag="true" jqyoui-draggable="{animate:true}" ng-repeat="amendment in awaiting" id="amendment{{$index}}" style="color:white; visibility: hidden; position: absolute; vertical-align:middle;width: 180px; height: 270px; left: {{25+(25*$index)}}px;">
+                      <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
+                    </div>
+					
+					
+				</div>
+			  </div>
+			  
+              </div>
+			  <div class="col-md-3">
+			  
+			  <div class="card">
+				<div class="card-header ch-alt">
+					<h2>Adopted</h2>
+				</div>
+				<div class="card-body card-padding">
+					<div class="animated bgm-lightgreen" style="width: 180px; height: 270px;">
+                      
+                    </div>
+					
+					
+					<!--<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="list2" jqyoui-droppable style='height:50px;'>
+  <div class="btn btn-success" data-drag="false" data-jqyoui-options ng-model="list2" jqyoui-draggable ng-hide="!list2.title">{{list2.title}}</div>
+</div>-->
+					
+				</div>
+			  </div>
+			  
+			  </div>
+			  <div class="col-md-3">
+			  
+			  <div class="card">
+				<div class="card-header ch-alt">
+					<h2>Rejected</h2>
+				</div>
+				<div class="card-body card-padding">
+					<div class="animated bgm-gray" style="width: 180px; height: 270px;">
+                      
+                    </div>
+				</div>
+			  </div>
+			  			 
+			  </div>
+            </div>
+            <br/><br/>
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+</section>
+
+<footer id="footer" data-ng-include="'view/template/footer.html'"></footer>
