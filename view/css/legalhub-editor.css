@@ -14,6 +14,37 @@
 #header-2 + #main{
 	margin-top: 70px;
 }
-.card-transparent{
-	opacity: 0.1;
+#awaiting-stack .amendment-card{
+	background-color: #009688 !important;
+}
+#adopted-stack .amendment-card{
+	background-color: #8BC34A !important;
+}
+#rejected-stack .amendment-card{
+	background-color: #9E9E9E !important;
+}
+.amendment-card{
+	color:white;
+	position: absolute;
+	vertical-align:middle;
+	width: 180px;
+	height: 270px;
+}
+#awaiting-stack .amendment-card:not(.gu-transit){
+	opacity:0.1;
+}
+#awaiting-stack .amendment-card:last-child:not(.gu-transit){
+	opacity: 1;
+}
+#awaiting-stack .amendment-card:nth-child(1):not(.gu-transit):not(.ng-leave){
+	left: 25px;
+}
+#awaiting-stack .amendment-card:nth-child(2):not(.gu-transit):not(.ng-leave){
+	left: 50px;
+}
+#awaiting-stack .amendment-card:nth-child(3):not(.gu-transit):not(.ng-leave){
+	left: 75px;
+}
+#awaiting-stack .amendment-card:nth-child(4):not(.gu-transit):not(.ng-leave){
+	left: 100px;
 }

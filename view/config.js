@@ -84,7 +84,7 @@ legalHub
                 }
               }
             })
-			
+
 			.state ('engross', {
               url: '/engross/:code',
               params: {
@@ -97,8 +97,9 @@ legalHub
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
                     'view/modules/document/document-service.js',
-					'view/modules/collection/collection-service.js',
+					          'view/modules/collection/collection-service.js',
                     'view/modules/version/version-service.js',
+                    'view/modules/engross/drag-and-drop.js',
                     'view/modules/engross/engross-controller.js']
                   );
                 }

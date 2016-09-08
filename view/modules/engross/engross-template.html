@@ -11,7 +11,13 @@
 
       <div class="card">
         <div class="card-header">
-          <h2>{{title}} <small>For engrossing, drag and drop from the awainting list into the corresponding list to</small></h2>
+          <h3 style="margin-top:0px;">{{title}} <small>Step {{currentStep}} / {{totalSteps}}</small>
+            <button class="btn btn-warning btn-icon pull-right" style="margin-left:25px;" ng-if="currentStep != totalSteps" ng-disabled="awaiting.length > 0" ng-click="nextStep()"><i class="zmdi zmdi-arrow-right"></i></button>
+            <button class="btn btn-warning btn-icon pull-right" ng-if="currentStep != 1" ng-click="previousStep()"><i class="zmdi zmdi-arrow-left"></i></button>
+          </h3>
+          <p ng-if="currentStep == 1">Adopted amendments: Drag and drop from the awaiting stack into the corresponding state</p>
+          <p ng-if="currentStep == 2">Conflict Management: Amendments will be applied in the same order than the list below</p>
+          <p ng-if="currentStep == 3">Engrossing: Preview of the engrossed document</p>
         </div>
 
         <div class="card-body">
@@ -19,62 +25,161 @@
 
           <div class="container" >
 
-            <div class="row col-md-12">
+            <div class="row col-md-12" ng-if="currentStep == 1">
               <div class="col-md-6">
 
-			  
-			  <div class="card">
-				<div class="card-header ch-alt">
-					<h2>Awaiting incorporation ({{awaiting.length}})</h2>
-				</div>
-				<div class="card-body card-padding" style="min-height: 320px;">
-					
-					
-					<div class="animated bgm-teal {{$index == (awaiting.length - 1) ? '' : 'card-transparent'}}"  ng-model="amendment" data-drag="true" jqyoui-draggable="{animate:true}" ng-repeat="amendment in awaiting" id="amendment{{$index}}" style="color:white; visibility: hidden; position: absolute; vertical-align:middle;width: 180px; height: 270px; left: {{25+(25*$index)}}px;">
-                      <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
-                    </div>
-					
-					
-				</div>
-			  </div>
-			  
+
+        			  <div class="card">
+        				<div class="card-header ch-alt">
+        					<h2>Awaiting incorporation ({{awaiting.length}})</h2>
+        				</div>
+        				<div class="card-body card-padding" style="min-height: 320px;" id="awaiting-stack">
+
+
+        					<div class="animated bgm-teal amendment-card" ng-repeat="amendment in awaiting" id="amendment{{$index}}" amendment-id="{{amendment.id}}" style="visibility: hidden;">
+                    <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
+                  </div>
+
+
+        				</div>
+        			  </div>
+
               </div>
-			  <div class="col-md-3">
-			  
-			  <div class="card">
-				<div class="card-header ch-alt">
-					<h2>Adopted</h2>
-				</div>
-				<div class="card-body card-padding">
-					<div class="animated bgm-lightgreen" style="width: 180px; height: 270px;">
-                      
-                    </div>
-					
-					
-					<!--<div class="thumbnail" data-drop="true" data-jqyoui-options ng-model="list2" jqyoui-droppable style='height:50px;'>
-  <div class="btn btn-success" data-drag="false" data-jqyoui-options ng-model="list2" jqyoui-draggable ng-hide="!list2.title">{{list2.title}}</div>
-</div>-->
-					
-				</div>
-			  </div>
-			  
-			  </div>
-			  <div class="col-md-3">
-			  
-			  <div class="card">
-				<div class="card-header ch-alt">
-					<h2>Rejected</h2>
-				</div>
-				<div class="card-body card-padding">
-					<div class="animated bgm-gray" style="width: 180px; height: 270px;">
-                      
-                    </div>
-				</div>
-			  </div>
-			  			 
-			  </div>
+      			  <div class="col-md-3">
+
+        			  <div class="card">
+        				<div class="card-header ch-alt">
+        					<h2>Adopted ({{adopted.length}})</h2>
+        				</div>
+        				<div class="card-body card-padding" style="min-height: 320px;" id="adopted-stack">
+
+                  <div class="animated amendment-card" ng-repeat="amendment in adopted" amendment-id="{{amendment.id}}">
+                    <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
+                  </div>
+
+        				</div>
+        			  </div>
+
+      			  </div>
+      			  <div class="col-md-3">
+
+        			  <div class="card">
+        				<div class="card-header ch-alt">
+        					<h2>Rejected ({{rejected.length}})</h2>
+        				</div>
+        				<div class="card-body card-padding" style="min-height: 320px;" id="rejected-stack">
+
+                  <div class="animated amendment-card" ng-repeat="amendment in rejected" amendment-id="{{amendment.id}}">
+                    <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
+                  </div>
+
+        				</div>
+        			  </div>
+
+      			  </div>
             </div>
-            <br/><br/>
+
+            <div class="row col-md-12" ng-if="currentStep == 2">
+
+              <div class="card rating-list">
+                <div class="card-header ch-alt">
+                  <h2>Adopting {{adopted.length}} amendments.<div class="pull-right" ng-if="totalConflicts>0">Total conflicts: {{totalConflicts}}</div></h2>
+                </div>
+                <div class="listview">
+
+                  <div class="lv-body">
+                    <div class="p-15">
+                      <div class="lv-item" ng-repeat="amendment in adopted">
+                        <div class="media">
+                          <div class="pull-left">{{amendment.title}} <i class="zmdi zmdi-caret-down" style="font-size:18px;"></i> </div>
+
+                          <div class="pull-right">{{(amendment.conflicts > 0 ? amendment.conflicts + ' / ' : '') + amendment.amendments}}</div>
+
+                          <div class="media-body">
+                            <div class="progress">
+                              <div class="progress-bar" ng-class="{'progress-bar-danger' : amendment.conflicts > 0}" role="progressbar" aria-valuenow="{{amendment.conflicts}}" aria-valuemin="0" aria-valuemax="{{amendment.amendments}}" style="width: {{((amendment.amendments - amendment.conflicts) / amendment.amendments)*100}}%">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!--<div class="lv-item">
+                        <div class="media">
+                          <div class="pull-left">
+                            2 <i class="zmdi zmdi-assignment-alert"></i>
+                          </div>
+
+                          <div class="pull-right">45</div>
+
+                          <div class="media-body">
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="lv-item">
+                        <div class="media">
+                          <div class="pull-left">
+                            3 <i class="zmdi zmdi-star"></i>
+                          </div>
+
+                          <div class="pull-right">60</div>
+
+                          <div class="media-body">
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="lv-item">
+                        <div class="media">
+                          <div class="pull-left">
+                            4 <i class="zmdi zmdi-star"></i>
+                          </div>
+
+                          <div class="pull-right">78</div>
+
+                          <div class="media-body">
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100" style="width: 78%">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="lv-item">
+                        <div class="media">
+                          <div class="pull-left">
+                            5 <i class="zmdi zmdi-star"></i>
+                          </div>
+
+                          <div class="pull-right">22</div>
+
+                          <div class="media-body">
+                            <div class="progress">
+                              <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="22" aria-valuemin="0" aria-valuemax="100" style="width: 22%">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>-->
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
           </div>
 
 
