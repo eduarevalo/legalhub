@@ -1,13 +1,18 @@
 "use strict";
 
-// Utils
+// System
+const path = require('path');
+
+// Installed dependencies
 const chance = require('chance').Chance(),
-  fs    = require("fs"),
-  imageUtils = require(__base + 'core/utils/image'),
-  configuration = require(__base + 'configuration'),
   xpath = require('xpath'),
   dom = require('xmldom').DOMParser;
 
+// Project libraries
+const imageUtils = require(__base + 'core/utils/image'),
+  xpathUtils = require(__base + 'core/utils/xpath'),
+  pathUtils = require(__base + 'core/utils/path'),
+  configuration = require(__base + 'configuration');
 
 // Models
 var Document = require(__base + 'model/document/document'),
@@ -22,49 +27,65 @@ var parserFactory = require(__base + 'manager/parser/parserFactory');
 var save = (document, params, cb) => {
   suggestProperties(document);
   if(params.rendition == 'editor' && params.content != undefined){
-	extractPropertiesFromContent(params.content, document);
+	extractDocumentPropertiesFromContent(params.content, document);
   }
+  if(document.id == undefined || document.id.length == 0){
+	document.creationDate = new Date();
+  }
+  document.lastModificationDate = new Date();
   documentDao.save(document, function(err, results){
     if(results.result.nModified > 0 || (results.result.upserted && results.result.upserted.length > 0)){
       if((document.id == undefined || document.id.length == 0) && results.result.upserted && results.result.upserted.length > 0 && results.result.upserted[0]._id){
         document.id = results.result.upserted[0]._id;
       }
     }
-    if(params.content != undefined){
-      setContent(document, params, cb);
-    }else{
-      cb(err, document);
-    }
+    setContent(document, params, cb);
   });
 }
 
-var setContent = (document, params, /*renditionType, renditionName,*/ cb) => {
+var setContent = (document, params, cb) => {
 	let fragment = new Fragment();
       fragment.documentId = document.id;
-      fragment.startDate = new Date();
+      fragment.startDate = params.date ? params.date : new Date();
       fragment.type = '$root';
 	  fragment.update(params);
-	  /*if(renditionType != 'editor' && fs.statSync(params.content)){
-		fragment.filePath = params.content;
-	  }else{
-		fragment.content = params.content;
-	  }*/
-	  /*fragment.rendition = renditionType;
-	  fragment.renditionName = renditionName;*/
+	  extractLinksFromContent(fragment);
+	  extractPropertiesFromContent(fragment);
       fragmentDao.save(fragment, function(err, fragment){
-        cb(err, document, fragment);
+		if(cb){
+			cb(err, document, fragment);
+		}
       });
 };
 
 var search = (searchKeys, projectionKeys, cb) => {
-  documentDao.search(searchKeys, projectionKeys, cb);
+  documentDao.search(searchKeys, projectionKeys, function(err, documents){
+  
+	  var promises = documents.map(function(document){
+	  
+        return new Promise(function(resolve, reject) {
+			
+          getRenditions(document.id, function(err, renditions){
+            try{
+              document.renditions = renditions;
+              resolve(true);
+            }catch(err){
+              reject(err);
+            }
+          });
+        });
+      });
+      Promise.all(promises).then(function(){
+        cb(err, documents);
+      });
+  
+  });
 }
 
 var suggestQrCode = (document) => {
   var type = 'svg';
-  var imgPath = 'media/generated/' + document.code + '.' + type;
-  var localPath = __base + 'view/' + imgPath;
-  imageUtils.createQRCode(configuration.app.qrCodeDomain + document.code, type, localPath);
+  var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
+  imageUtils.createQRCode(configuration.app.qrCodeDomain + document.code, type, imgPath);
   return imgPath;
 }
 
@@ -79,12 +100,9 @@ var suggestProperties = (document) => {
   if(document.qrCode == undefined){
     document.qrCode = suggestQrCode(document);
   }
-  document.description = 'Description... to be extracted';
-  document.documentType = 'AKN3.0';
-  document.owner = 'earevalosuarez@gmail.com';
 }
 
-var extractPropertiesFromContent = (content, document) => {
+var extractDocumentPropertiesFromContent = (content, document) => {
 	var doc = new dom().parseFromString(content, "text/xml");
 	var longTitleNodes = xpath.select("//*[@itemtype='longTitle']//text()", doc);
 	if(longTitleNodes.length>0){
@@ -95,51 +113,103 @@ var extractPropertiesFromContent = (content, document) => {
 	}
 };
 
-var saveWithContent = (params, collectionId, cb) => {
+var extractLinksFromContent = (fragment) => {
+	if(fragment.rendition == 'editor'){
+		switch(fragment.schema){
+			case 'amendment':
+				var links = [];
+				var billNumber;
+				var documentId
+				var doc = new dom().parseFromString(fragment.content, "text/xml");
+				var billNumberNodes = xpath.select("//*[@itemtype='billNumber']", doc);
+				if(billNumberNodes.length>0){
+					billNumber = xpathUtils.getText(billNumberNodes);
+					if(billNumberNodes[0].hasAttribute("idref")){
+						documentId = billNumberNodes[0].getAttribute("idref");
+					}
+				}
+				var baseLink = { type: 'amending' };
+				if(billNumber){
+					baseLink.bill = billNumber;
+				}
+				if(documentId){
+					baseLink.idref = documentId;
+				}
+				var refLines = xpath.select("//p[child::span[@itemtype='ref']]", doc);
+				for(var it=0; it<refLines.length; it++){
+					var link = {};
+					link.text = xpathUtils.getText(refLines[it]);
+					link.lines = xpathUtils.getText(xpath.select("./span[@itemtype='ref']", refLines[it]));
+					links.push(Object.assign(baseLink, link));
+				}
+				if(links.length > 0){
+					fragment.links = links;
+				}
+				break;
+		}
+	}
+}
+
+var extractPropertiesFromContent = (fragment) => {
+
+}
+
+var saveRendition = (params, collectionId, cb) => {
   let document = new Document();
-  document.title = params.filePath ? params.filePath.split('.')[0] : '';
+  document.title = path.parse(params.filePath).name;
   document.setCollection(collectionId);
   save(document, params, cb);
 }
 
-var upload = (data, cb) => {
-	var tmpPath = __base + "data/upload/" + chance.string({length: 3});
-	if (!fs.existsSync(tmpPath)){
-		fs.mkdirSync(tmpPath);
-	}
-	tmpPath += '/' + data.fileName;
-	var fstream = fs.createWriteStream(tmpPath);
-	data.file.pipe(fstream);
-	fstream.on('close', function() {
-		
+var upload = (data, cb) => {	
+	try{
+	
 		var parser = data.parser ? parserFactory.getParser(data.parser) : parserFactory.guessParser(data.fileName, data.file);
 		if(parser){
-			try{
-					parser.marshall(tmpPath, function(content, type, name){
-						// File name data.fileName
-						saveWithContent({content: content, rendition: type, renditionName: name}, data.collectionId, cb);
-					});
-					return;
-			}catch(err){
-			  console.log(err);
-			}
+			
+			parser.marshall(data, function(params){
+			
+				// Could be called mutiple times depending on the parser
+				saveRendition(params, data.collectionId, cb);
+				
+			});
+			
 		}else{
-			saveWithContent({filePath: tmpPath, filePath: data.fileName, rendition: 'original'}, data.collectionId, cb);
-		}
 		
-	});
+			// Original format upload
+			saveRendition({filePath: uploadFilePath, rendition: 'original'}, data.collectionId, cb);
+		}		
+	
+	}catch(err){
+	  console.log(err);
+	}
 }
 
-var getLastVersion = (documentId, cb) => {
-  versionDao.getLastVersion(documentId, cb);
+var getLastVersion = (params, cb) => {
+  versionDao.getLastVersion(params, cb);
+}
+
+var getRenditions = (documentId, cb) => {
+	versionDao.getLastVersion({documentId: documentId}, function(err, version){
+		if(err){
+			cb(err, version);
+		}else if(version){
+			versionDao.getRenditions({documentId: version.documentId, date: version.startDate}, cb);
+		}
+	});
 }
 
 var getVersions = (documentId, cb) => {
   versionDao.getVersions(documentId, cb);
 }
 
+var getLinkedDocuments = (documentId, linkType, cb) => {
+  versionDao.getLinkedVersions(documentId, linkType, cb);
+}
+
 exports.getLastVersion = getLastVersion;
 exports.getVersions = getVersions;
+exports.getLinkedDocuments = getLinkedDocuments;
 exports.save = save;
 exports.setContent = setContent;
 exports.search = search;

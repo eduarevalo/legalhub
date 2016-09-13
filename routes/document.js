@@ -19,6 +19,17 @@ router.get('/search', function (req, res) {
     }
   });
 });
+/* links */
+router.get('/links', function (req, res) {
+  documentManager.getLinkedDocuments(req.query.documentId, req.query.linkType, function(err, documents){
+    if(err){
+      res.json({success: false, error: err});
+    }else{
+      res.json({success: true, data: documents});
+    }
+  });
+});
+
 /* save */
 router.post('/save', function (req, res) {
   let document = new Document();

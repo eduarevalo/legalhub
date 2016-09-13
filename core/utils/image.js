@@ -4,8 +4,7 @@ var fs = require('fs'),
   crypto = require('crypto');
 
 exports.createQRCode = function(text, type, path){
-  var qr_svg = qr.image(text, { type: type });
-  qr_svg.pipe(fs.createWriteStream(path));
+  qr.image(text, {type: type }).pipe(fs.createWriteStream(path));
 }
 
 exports.createIcon = function(text, size, path){

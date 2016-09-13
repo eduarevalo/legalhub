@@ -36,7 +36,12 @@ var legalHubEditor = function(el){
 		if(context.tag == '' || lhe.currentNode == undefined){
 			return false;
 		}
-		var newElement = lhe.newElement(context.tag, true);
+		var currentBlock = lhe.getBlock(lhe.currentNode);
+		var type = lhe.getType(currentBlock);
+		if(type != null && lhe.schema[type].suggest !== true){
+			type = null;
+		}
+		var newElement = type == null ? lhe.newElement(context.tag, true) : lhe.newElementByType(type, true);
 		if(lhe.trackingChangesMode || lhe.isContextualTrackingChanges()){
 			lhe.addTrackingAttributes(newElement, 'add');
 		}
@@ -163,7 +168,7 @@ var legalHubEditor = function(el){
 			return true;
 		}
 		if(lhe.trackingChangesMode || lhe.isContextualTrackingChanges()){
-			var newData = lhe.getAddedElement(String.fromCharCode(event.keyCode));
+			var newData = lhe.getAddedElement(event.key || String.fromCharCode(event.keyCode));
 			var textContent = lhe.getTextContent(textNode);
 			var prefix = document.createTextNode(textContent.substring(0, context.start));
 			var suffix = document.createTextNode(textContent.substring(context.start));
@@ -886,7 +891,7 @@ var legalHubEditor = function(el){
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
 				lhe.currentNode = lhe.getSelectionNode();
-				console.log('change scope');
+				//console.log('change scope');
 				var context = lhe.getEventContext(event, eventName);
 				//console.log(context);
 				// Allow some browser behaviors
@@ -916,9 +921,9 @@ var legalHubEditor = function(el){
 				}
 			});
 		});
-		lhe.events['core.paste'] = lhe.element.addEventListener('paste', function(event){
+		/*lhe.events['core.paste'] = lhe.element.addEventListener('paste', function(event){
 			alert('paste');
-		});
+		});*/
 		/*
 		 This evens is triggered inmediatly after keyup:
 		 Purposes:
@@ -965,6 +970,7 @@ var legalHubEditor = function(el){
 					}
 				}
 			}
+			lhe.refreshLineNumbers();
 		});
 
 	};
@@ -1410,6 +1416,8 @@ var legalHubEditor = function(el){
 	this.refreshLineNumbers = function(numberingRule){
 		if(numberingRule != undefined){
 			lhe.lineNumbersElement.className = numberingRule;
+		}else if(lhe.lineNumbersElement){
+			numberingRule = lhe.lineNumbersElement.className;
 		}
 		lhe.initLineNumbersContainer();
 		lhe.lineNumbersElement.innerHTML = '';
@@ -1560,7 +1568,7 @@ function setPageStyle(style){
   $('link[href*="editor/css/legislative"]').removeAttr('disabled');
   if(style){
 	$('link[href*="editor/css/'+ style+'"]').removeAttr('disabled');
-	if(editor)
-		editor.refreshLineNumbers();
+	/*if(editor)
+		editor.refreshLineNumbers();*/
   }
 }

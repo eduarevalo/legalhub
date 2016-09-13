@@ -20,6 +20,7 @@ var schemaAmendment = {
 			type: 'body' 
 		}
 	],
+	"@name" : 'amendment',
 	'cover':{
 		type: 'container',
 		'@template': [
@@ -64,6 +65,8 @@ var schemaAmendment = {
 						}else{
 							newBlock.innerHTML = longTitleRef;
 						}
+						
+						lhe.currentNode.setAttribute('idref', properties.id);
 						
 					});
 				}
@@ -140,15 +143,24 @@ var schemaAmendment = {
 		type: 'inline'
 	},
 	'text': {
+		suggest: true,
+		
+		/*'keydown':{
+			13:{
+				'start': lhe.suggestBefore,
+				'middle': lhe.split,
+				'end': lhe.suggestAfter
+			}
+		},*/
 		nlp: {
 			processors: [
 				{
 					name: 'fetch-lines',
 					triggers: {
-						'expression': new RegExp(/line.*\s+([0-9]+)\s*to\s*([0-9]+).*substitute/, 'i')
+						'expression': new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i')
 					},
 					fn: function(context, textNode, editor){
-						var match = textNode.match(new RegExp(/line.*\s+([0-9]+)\s*to\s*([0-9]+).*substitute/, 'i'));
+						var match = textNode.match(new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i'));
 						if(match && match.length>2){
 							var fromLine = match[1];
 							var toLine = match[2];
@@ -158,13 +170,13 @@ var schemaAmendment = {
 							}
 							swal({
 								title: "Amendatory instruction",
-								text: "You seem to be referencing from line " + fromLine + " to " + toLine + " from the " +documentRef +". Would you like to continue fetching this provision?",
+								text: "You seem to be referencing lines " + fromLine + " to " + toLine + " of Bill " +documentRef +". Would you like to continue fetching this provision?",
 								html: true,
 								type: "info",
 								showCancelButton: true,
 								closeOnConfirm: true
 							}, function(){
-								var match = textNode.match(new RegExp(/line.*\s+([0-9]+\s*to\s*[0-9]+).*substitute/, 'i'));
+								var match = textNode.match(new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i'));
 								if(match && match.length>1){
 									var matchedRef = match[1];
 									var newRef = editor.newElementByType('ref', matchedRef);
@@ -175,14 +187,11 @@ var schemaAmendment = {
 									currentBlock.setAttribute('data-type', 'amending');
 								}
 								var scope = angular.element(editor.element).scope();
-								scope.getProvision({fromLine: fromLine, toLine: toLine, title: documentRef}, function(textToInsert){
+								scope.getProvision({fromLine: fromLine, toLine: toLine, title: documentRef}, function(provision){
 									var newQuote = editor.newElementByType('quote');
-									
-
-									newQuote.innerHTML = textToInsert.content.replace(/<a([^\/]*)\/>/g, '<a$1>'+ String.fromCodePoint(0x200C) +'</a>');
+									newQuote.innerHTML = provision.content.replace(/<a([^\/]*)\/>/g, '<a$1>'+ String.fromCodePoint(0x200C) +'</a>');
 									editor.insertElementAfter(newQuote, 'block');
 									editor.nestBlock(newQuote, 1);
-									//swal("Inserted!", "Your reference was inserted for modification.", "success");
 								});
 							});
 						}

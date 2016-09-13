@@ -38,4 +38,16 @@ angular.module('legalHub').service('documentService', function($http, API) {
       }
     });
   }
+  this.getLinkedDocuments = function(documentId, linkType){
+    var promise = $http.get(API + 'document/links?documentId=' + encodeURIComponent(documentId) + "&linkType=" + encodeURIComponent(linkType)).then(function(response){
+      if(response.data.success){
+        return response.data.data;
+      }
+      return null;
+    });
+    return promise;
+  }
+  this.getAmendmentsByBill = function(documentId){
+    return self.getLinkedDocuments(documentId, 'amending');
+  }
 })

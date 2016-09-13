@@ -1,29 +1,45 @@
-const os = require('os'),
-	execSync = require('child_process').execSync,
-	fs = require('fs'),
-	chance = require('chance').Chance(),
+// System
+const execSync = require('child_process').execSync,
+	fs = require('fs');
+
+// Installed dependencies
+const chance = require('chance').Chance();
+
+// Project libraries
+const pathUtils = require(__base + 'core/utils/path'),
 	configuration = require(__base + 'configuration');
 
-var extractTextWithLines = (filePath, cb) => {
-	var tmpDir = os.tmpdir() + '/' + chance.guid();
-	if (!fs.existsSync(tmpDir)){
-		fs.mkdirSync(tmpDir);
-	}
-	var tmpFile = tmpDir + "/" + chance.guid();
+var extractText = (options, cb) => {
+	var tempFilePath = pathUtils.getTempFilePath();
+	var tmpFile = pathUtils.join(tempFilePath);
+	var mode = options.html ? '-html' : '';
     var cmd = [
-      `java -jar ${configuration.providers.pdfbox}`,
-      `ExtractText -html`,
-	  `"${filePath}"`,
+      `${configuration.providers.pdfbox}`,
+      `ExtractText ${mode}`,
+	  `"${options.filePath}"`,
       `"${tmpFile}"`].join(" ");
-	  console.log(cmd);
-	var code = execSync(cmd);
-	var content;
-	var stream = fs.createReadStream(tmpFile,{encoding:'utf-8'});
-	var content = '';
-	stream.on('data',function(cont){
-	  content += cont;
-	});
-	stream.on('end', function(){
+	  
+	try{
+		
+		var code = execSync(cmd);
+		var stream = fs.createReadStream(tmpFile, {encoding:'utf-8'});
+		var content = '';
+		stream.on('data',function(cont){
+		  content += cont;
+		});
+		stream.on('end', function(){
+			cb(null, content);
+		});
+		
+	}catch(err){
+		cb(err);
+	}
+}
+	
+var extractTextWithLines = (filePath, cb) => {
+
+	extractText({filePath: filePath, html:true}, function(err, content){
+		
 		var start = content.indexOf('<body>');
 		if(start > 0){
 			content = content.substring(start);
@@ -31,27 +47,29 @@ var extractTextWithLines = (filePath, cb) => {
 			if(end > 0){	
 				content = content.substring(0, end + 7);
 				
-				var newTmpFile = os.tmpdir() + '/' + chance.guid();
-				var newOutFile = os.tmpdir() + '/' + chance.guid();
+				var newTempInFile = pathUtils.getTempFilePath();
+				var newTempInFilePath = pathUtils.join(newTempInFile);
+				newTempInFile.pop();
+				var newTempOutFilePath = pathUtils.join(pathUtils.getTempFilePath({path:newTempInFile}));
 				
-				fs.writeFile(newTmpFile, content, function(err) {
+				fs.writeFile(newTempInFilePath, content, function(err) {
 				
 					if(err) {
 						return console.log(err);
 					}
 					
-					var jarPath = configuration.providers.saxon;
+					var saxonPath = configuration.providers.saxon;
 					var xslPath = __base + "/manager/parser/pdf/xsl/pdfBoxOutputProcessor.xsl";
 					var cmd = [
-					  `java -jar "${jarPath}"`,
-					  `-s:"${newTmpFile}"`,
-					  `-o:"${newOutFile}"`,
+					  `${saxonPath}`,
+					  `-s:"${newTempInFilePath}"`,
+					  `-o:"${newTempOutFilePath}"`,
 					  `-xsl:"${xslPath}"`,
 					  `-warnings:silent`,
 					  ].join(" ");
 					  
 					var code = execSync(cmd);
-					cb(null, newOutFile);
+					cb(null, newTempOutFilePath);
 					
 				});
 				
@@ -60,11 +78,12 @@ var extractTextWithLines = (filePath, cb) => {
 	});
 };
 
-var setLineNumbers = (filePath, cb) => {
+/*var setLineNumbers = (filePath, cb) => {
 	if(cb){
 		cb(null, filePath);
 	}
-}
+}*/
 
 exports.extractTextWithLines = extractTextWithLines;
-exports.setLineNumbers = setLineNumbers;
+exports.extractText = extractText;
+//exports.setLineNumbers = setLineNumbers;

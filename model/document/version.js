@@ -12,10 +12,13 @@ module.exports = class Version extends Model{
     this.status = undefined;
     this.type = undefined;
     this.content = undefined;
+	this.filePath = undefined;
 	this.schema = undefined;
 	this.style = undefined;
+	this.links = undefined;
+	this.rendition = undefined;
   }
   toString() {
-    return `${this.fragmentId} []${this.documentId}] ${this.startDate}`;
+    return `${this.fragmentId} [${this.documentId}] ${this.startDate}`;
   }
 }

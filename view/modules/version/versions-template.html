@@ -23,16 +23,17 @@
               <div class="col-md-12">
 
                     <div class="animated bgm-bluegray" ng-repeat="version in versions" id="version{{$index}}" style="color:white; visibility: hidden;float:left; margin-left: 25px; vertical-align:middle;width: 180px; height: 270px;">
-                      <h2><center style="vertical-align:middle;"><br/>{{version.startDate | limitTo:10}}</center></h2>
+                      <h2><center style="vertical-align:middle;"><br/>{{version.startDate | date:'mediumDate'}}</center></h2>
                       <small><ul>
                         <!--<li ng-if="version.properties.original">Original version</li>
                         <li ng-if="version.properties.sections>0">{{version.properties.sections}} sections</li>
                         <li ng-if="version.properties.amendments>0">{{version.properties.amendments}} amendments from </li>
                         <li ng-if="version.properties.bills>0">{{version.properties.bills}} bills</li>-->
+						<li>{{version.startDate | date:'mediumTime'}}</li>
                         <li ng-if="$index==(versions.length-1)">Original version</li>
                         <li >2 sections</li>
-                        <li ng-if="$index==0">2 amendments from </li>
-                        <li ng-if="$index==0">1 bills </li>
+                        <li ng-if="$index==0">2 amendments </li>
+                        <!--<li ng-if="$index==0">1 bills </li>-->
                         </ul>
                         </small>
                     </div>

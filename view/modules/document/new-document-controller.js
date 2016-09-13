@@ -83,7 +83,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			if(response.success){
 				$scope.document.id = response.id;
 				$scope.document.code = response.code;
-				growlService.growl('Saved');
+				growlService.growl('Saved', 'inverse');
 				if(cb){
 					cb();
 				}

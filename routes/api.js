@@ -19,6 +19,9 @@ router.use('/rendition', renditionRouter);
 var referenceRouter = require(__base + 'routes/reference');
 router.use('/reference', referenceRouter);
 
+var engrossRouter = require(__base + 'routes/engross');
+router.use('/engross', engrossRouter);
+
 /* index */
 router.get('/', function(req, res, next) {
   res.end('Unknown operation.');

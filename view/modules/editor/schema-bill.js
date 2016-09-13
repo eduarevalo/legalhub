@@ -6,6 +6,7 @@ var legisSchema = {
 		'everything': {
 		}
 	},
+	"@name" : 'bill',
 	'level': {
 		attributes: [{
 			name: 'type',

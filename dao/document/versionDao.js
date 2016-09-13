@@ -15,7 +15,7 @@ const versionFields = {
   type:1
 };
 
-exports.getVersion = (documentId, startDate, cb) => {
+var getVersion = (documentId, startDate, cb) => {
   db.find(collectionName, {
       documentId: new ObjectID(documentId),
       startDate: startDate,
@@ -28,43 +28,113 @@ exports.getVersion = (documentId, startDate, cb) => {
     });
 }
 
-exports.getVersions = (documentId, cb) => {
+var getVersions = (documentId, cb) => {
   db.findSortLimit(collectionName, {
       documentId: new ObjectID(documentId),
       type: '$root',
 	  rendition: 'editor'
     },
     versionFields,
-    {startDate:-1},
+    {
+		startDate: -1
+	},
     0,
     function(err, results){
       cb(err, toVersion(results));
     });
 }
 
-exports.getLastVersion = (documentId, cb) => {
+var getRenditions = (params, cb) => {
+	var searchKeys = {type: '$root'};
+	if(params.documentId){
+		searchKeys.documentId = new ObjectID(params.documentId);
+	}
+	if(params.date){
+		searchKeys.startDate = params.date;
+	}
+	db.findAll(collectionName, searchKeys,
+	{ 
+		_id: 1,
+		rendition: 1
+	},
+	function(err, results){
+		var versions = toVersion(results);
+		if(versions && versions.length>0){
+			cb(err, versions);
+		}else{
+			cb(err, null);
+		}
+	});
+};
+
+var getLastVersion = (params, cb) => {
+	var searchKeys = {
+		documentId: new ObjectID('' + params.documentId),
+		type: '$root'
+	};
+	if(params.rendition){
+		searchKeys.rendition = {
+			$in: [params.rendition]
+		};
+	}else{
+		searchKeys.rendition = {
+			$in: ['editor', 'original']
+		}
+	}
+	db.findSortLimit(collectionName, searchKeys,
+	{ 
+		_id: 1,
+		documentId: 1,
+		content: 1, 
+		filePath: 1, 
+		style: 1,
+		schema: 1,
+		startDate: 1
+	},{
+		startDate: -1
+	},
+	1,
+	function(err, results){
+		var versions = toVersion(results);
+		if(versions.length>0){
+			cb(err, versions[0]);
+		}else{
+			cb(err, null);
+		}
+	});
+}
+
+var getLinkedVersions = (documentId, linkType, cb) => {
   db.findSortLimit(collectionName, {
-    documentId: new ObjectID(documentId),
     type: '$root',
-	  rendition: 'editor'
+	rendition: 'editor',
+	links: {
+		$elemMatch: {
+			type: linkType,
+			idref: documentId
+		}
+	}
   },
   { 
 	_id: 1,
-	content: 1, 
-	style: 1,
-	schema: 1
+	links: 1,
+	documentId: 1,
+	startDate:1,
+	endDate:1,
+	status:1,
+	type:1
   },
   {startDate:-1},
-  1,
+  0,
   function(err, results){
 	var versions = toVersion(results);
 	if(versions.length>0){
-		cb(err, versions[0]);
+		cb(err, versions);
 	}else{
 		cb(err, null);
 	}
   });
-}
+};
 
 var toVersion = (obj) => {
   if(obj == null){
@@ -80,3 +150,9 @@ var toVersion = (obj) => {
   }
   return isArray ? output : output[0];
 }
+
+exports.getVersion = getVersion;
+exports.getVersions = getVersions;
+exports.getRenditions = getRenditions;
+exports.getLastVersion = getLastVersion;
+exports.getLinkedVersions = getLinkedVersions;

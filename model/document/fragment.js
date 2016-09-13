@@ -20,6 +20,7 @@ module.exports = class Fragment extends Model{
 	this.renditionName = undefined;
 	this.schema = undefined;
 	this.style = undefined;
+	this.links = undefined;
   }
   toString() {
     return `${this.id} []${this.type}] ${this.startDate}`;

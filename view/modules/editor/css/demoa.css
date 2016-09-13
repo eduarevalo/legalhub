@@ -15,10 +15,23 @@
   text-align: justify;
   line-height: 150%;
 }
-.document section:first-child::before{
+.document[schema='bill'] section:first-child::before{
   content: '';
   background-image: url(../img/demoa.png);
   height: 180px;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+.document[schema='amendment'] section:first-child::before{
+  content: 'Amendment';
+  padding-top: 170px;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 22px;
+  text-align: right;
+  background-image: url(../img/demoa.png);
+  height: 220px;
   display: block;
   background-repeat: no-repeat;
   background-position: left top;

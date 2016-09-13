@@ -30,11 +30,19 @@ angular.module('legalHub').controller('collectionCtrl', function($filter, $scope
     }
     $scope.options.active = false;
   }
+  $scope.hasRendition = function(document, type){
+	for(var it=0; it<document.renditions.length; it++){
+		if(document.renditions[it].rendition.toLowerCase() == type.toLowerCase()){
+			return true;
+		}
+	}
+	return false;
+  }
   $scope.goToNewDocument = function(templateName){
 	   $state.go('new-document', {collectionId: self.collectionId, template: templateName});
   }
   $scope.goToEngrossDocument = function(document){
-	$state.go('engross', {id: document.documentId, code: document.code, title: document.title, icon: document.icon});
+	$state.go('engross', {id: document.id, code: document.code, title: document.title, icon: document.icon});
   }
   $scope.goToEditDocument = function(documentId, title){
     $state.go('new-document', {collectionId: self.collectionId, documentId: documentId, documentTitle: title});

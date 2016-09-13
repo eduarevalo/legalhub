@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 /* Client WEB Interface  */
+app.use('/data', express.static('data'));
 app.use('/view', express.static('view'));
 
 /* login.html */

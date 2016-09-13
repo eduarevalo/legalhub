@@ -12,12 +12,13 @@
       <div class="card">
         <div class="card-header">
           <h3 style="margin-top:0px;">{{title}} <small>Step {{currentStep}} / {{totalSteps}}</small>
-            <button class="btn btn-warning btn-icon pull-right" style="margin-left:25px;" ng-if="currentStep != totalSteps" ng-disabled="awaiting.length > 0" ng-click="nextStep()"><i class="zmdi zmdi-arrow-right"></i></button>
-            <button class="btn btn-warning btn-icon pull-right" ng-if="currentStep != 1" ng-click="previousStep()"><i class="zmdi zmdi-arrow-left"></i></button>
+            <button class="btn btn-warning btn-icon pull-right" style="margin-left:25px;" ng-if="currentStep != totalSteps" ng-disabled="!allowedToGo()" ng-click="nextStep()"><i class="zmdi zmdi-arrow-right"></i></button>
+            <button class="btn btn-warning btn-icon pull-right" ng-if="currentStep != 1 && currentStep != totalSteps" ng-click="previousStep()"><i class="zmdi zmdi-arrow-left"></i></button>
+			<button class="btn btn-success btn-icon pull-right" ng-if="currentStep == totalSteps" ng-click="confirm()"><i class="zmdi zmdi-check"></i></button>
           </h3>
-          <p ng-if="currentStep == 1">Adopted amendments: Drag and drop from the awaiting stack into the corresponding state</p>
-          <p ng-if="currentStep == 2">Conflict Management: Amendments will be applied in the same order than the list below</p>
-          <p ng-if="currentStep == 3">Engrossing: Preview of the engrossed document</p>
+          <p ng-if="currentStep == 1">Adopted amendments: Drag and drop from the awaiting stack into the corresponding state.</p>
+          <p ng-if="currentStep == 2">Conflict Management: Amendments will be applied in the same order as thery arelisted below.</p>
+          <p ng-if="currentStep == 3">Engrossing: Preview of the engrossed document.</p>
         </div>
 
         <div class="card-body">
@@ -182,7 +183,12 @@
 
           </div>
 
-
+		  
+		  <div class="row" ng-if="currentStep == 3">
+			<div style="margin: 50px;" ng-bind-html="getHtml(engrossedContent)">
+			</div>
+		  </div>
+		  
         </div>
       </div>
 

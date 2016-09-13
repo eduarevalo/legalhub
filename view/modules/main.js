@@ -32,7 +32,7 @@ legalHub
         }
 
         //Welcome Message
-        growlService.growl('Welcome back Eduardo!', 'inverse')
+        //growlService.growl('Welcome back Eduardo!', 'inverse')
 
 
         // Detact Mobile Browser

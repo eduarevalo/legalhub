@@ -1,8 +1,12 @@
-var xpath = require('xpath')
-  , dom = require('xmldom').DOMParser,
-  Uslm1_0_15Parser = require(__base + 'manager/parser/uslm/uslm1_0_15Parser'),
+// Installed dependencies
+const xpath = require('xpath'),
+	dom = require('xmldom').DOMParser;
+
+// Project libraries
+var Uslm1_0_15Parser = require(__base + 'manager/parser/uslm/uslm1_0_15Parser'),
   UsbillParser = require(__base + 'manager/parser/usbill/usbillParser');
-  PdfParser = require(__base + 'manager/parser/pdf/pdfParser');
+  PdfParser = require(__base + 'manager/parser/pdf/pdfParser'),
+  BinaryParser = require(__base + 'manager/parser/binaryParser');
  
 var getParser = (id) => {
 	switch(id){
@@ -12,6 +16,8 @@ var getParser = (id) => {
 			return new UsbillParser();
 		case 'pdf':
 			return new PdfParser();
+		case 'binary':
+			return new BinaryParser();
 	}
 };
 
@@ -25,7 +31,7 @@ var guessParser = (fileName, fileContent) => {
 		case 'pdf':
 			return this.getParser('pdf');
 		default:
-			throw new Error(`We're unable to guess your document type '${fileName}'`);
+			return this.getParser('binary');
 	}
 }
 

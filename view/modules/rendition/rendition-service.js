@@ -14,6 +14,7 @@ angular.module('legalHub').service('rendition', function($http, API) {
 		content: doc.content, 
 		style: style,
 		documentId: doc.id,
+		schema: doc.schema,
 		save: save
 	};
 	if(renditionName){

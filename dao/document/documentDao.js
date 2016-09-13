@@ -24,7 +24,7 @@ exports.getDocumentsCountByCollection = (collection, cb) => {
 
 exports.search = (collectionModel, projection, cb) => {
   projection = projection || {};
-  db.findAll(collectionName, toQuery(collectionModel), {}, function(err, documents){
+  db.findSortLimit(collectionName, toQuery(collectionModel), {}, {creationDate: -1}, 0, function(err, documents){
     cb(err, fromDocument(documents));
   });
 }

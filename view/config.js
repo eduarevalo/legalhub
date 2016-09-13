@@ -76,6 +76,8 @@ legalHub
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
+					'view/js/pdf.js',
+				    'view/modules/document/pdf-render.js',
                     'view/modules/document/document-service.js',
 					'view/modules/collection/collection-service.js',
                     'view/modules/version/version-service.js',
@@ -96,8 +98,9 @@ legalHub
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
+					'view/modules/engross/engross-service.js',
                     'view/modules/document/document-service.js',
-					          'view/modules/collection/collection-service.js',
+					'view/modules/collection/collection-service.js',
                     'view/modules/version/version-service.js',
                     'view/modules/engross/drag-and-drop.js',
                     'view/modules/engross/engross-controller.js']
@@ -270,25 +273,25 @@ legalHub
                       name: 'css',
                       insertBefore: '#app-level',
                       files: [
-                      'vendors/bower_components/nouislider/jquery.nouislider.css',
-                      'vendors/farbtastic/farbtastic.css',
-                      'vendors/bower_components/summernote/dist/summernote.css',
-                      'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-                      'vendors/bower_components/chosen/chosen.min.css'
+						'view/vendors/bower_components/nouislider/jquery.nouislider.css',
+						'view/vendors/farbtastic/farbtastic.css',
+						'view/vendors/bower_components/summernote/dist/summernote.css',
+						'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+						'view/vendors/bower_components/chosen/chosen.min.css'
                       ]
                     },
                     {
                       name: 'vendors',
                       files: [
-                      'vendors/input-mask/input-mask.min.js',
-                      'vendors/bower_components/nouislider/jquery.nouislider.min.js',
-                      'vendors/bower_components/moment/min/moment.min.js',
-                      'vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-                      'vendors/bower_components/summernote/dist/summernote.min.js',
-                      'vendors/fileinput/fileinput.min.js',
-                      'vendors/bower_components/chosen/chosen.jquery.js',
-                      'vendors/bower_components/angular-chosen-localytics/chosen.js',
-                      'vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+						'view/vendors/input-mask/input-mask.min.js',
+						'view/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+						'view/vendors/bower_components/moment/min/moment.min.js',
+						'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+						'view/vendors/bower_components/summernote/dist/summernote.min.js',
+						'view/vendors/fileinput/fileinput.min.js',
+						'view/vendors/bower_components/chosen/chosen.jquery.js',
+						'view/vendors/bower_components/angular-chosen-localytics/chosen.js',
+						'view/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
                       ]
                     }
                     ])

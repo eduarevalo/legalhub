@@ -16,6 +16,7 @@
 }
 #awaiting-stack .amendment-card{
 	background-color: #009688 !important;
+	transition:all 0.5s linear;
 }
 #adopted-stack .amendment-card{
 	background-color: #8BC34A !important;
@@ -37,14 +38,50 @@
 	opacity: 1;
 }
 #awaiting-stack .amendment-card:nth-child(1):not(.gu-transit):not(.ng-leave){
-	left: 25px;
+	left: 20px;
 }
 #awaiting-stack .amendment-card:nth-child(2):not(.gu-transit):not(.ng-leave){
-	left: 50px;
+	left: 40px;
 }
 #awaiting-stack .amendment-card:nth-child(3):not(.gu-transit):not(.ng-leave){
-	left: 75px;
+	left: 60px;
 }
 #awaiting-stack .amendment-card:nth-child(4):not(.gu-transit):not(.ng-leave){
+	left: 80px;
+}
+#awaiting-stack .amendment-card:nth-child(5):not(.gu-transit):not(.ng-leave){
 	left: 100px;
+}
+#awaiting-stack .amendment-card:nth-child(6):not(.gu-transit):not(.ng-leave){
+	left: 120px;
+}
+#awaiting-stack .amendment-card:nth-child(7):not(.gu-transit):not(.ng-leave){
+	left: 140px;
+}
+#awaiting-stack .amendment-card:nth-child(8):not(.gu-transit):not(.ng-leave){
+	left: 160px;
+}
+#awaiting-stack .amendment-card:nth-child(9):not(.gu-transit):not(.ng-leave){
+	left: 180px;
+}
+#awaiting-stack .amendment-card:nth-child(10):not(.gu-transit):not(.ng-leave){
+	left: 200px;
+}
+.logo-footer{
+	background: url(../img/irosoft_gray.png) no-repeat center center;
+	background-size:contain;
+	width: 80px;
+	height: 30px;
+	margin: auto;
+}
+
+.logo-legishub{
+	background: url(../img/irosoft_legishub_white.png) no-repeat 10px 0px;
+	background-size:contain;
+	min-width: 260px;
+	text-indent: 80px;
+}
+#pdf-holder > canvas{
+	margin: auto;
+	width: 100%;
 }

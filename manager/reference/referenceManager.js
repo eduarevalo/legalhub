@@ -6,49 +6,53 @@ const documentManager = require(__base + 'manager/document/documentManager'),
 
 var searchProvision = (params, cb) => {
   documentManager.search(params, {}, function(err, documents){
-	var provisions = [];
-	var promises = documents.map(function(document){
-        return new Promise(function(resolve, reject) {
-          documentManager.getLastVersion(document.id, function(err, version){
-            try{
-				var content = filterProvision(params, version);
-				if(content){
-					provisions.push({id: document.id, content: content});
-				}
-				resolve(true);
-            }catch(err){
-              reject(err);
-            }
-          });
-        });
-      });
-      Promise.all(promises).then(function(err){
-		if(provisions.length ==0){
-			cb(null, [{id: '', content: filterProvision(params)}]);
+	if(documents.length > 0){
+		documentManager.getLastVersion({documentId: documents[0].id}, function(err, version){
+			
+			var content = filterProvision(params, version);
+			if(content){
+				cb(null, [{id: documents[0].id, content: content}]);
+			}else{
+				cb('No lines found.');
+			}
+		});
+	}else{
+		var content = filterProvision(params);
+		if(content){
+			cb(null, [{id: params.title, content: content}]);
 		}else{
-			cb(null, provisions);
+			cb('No provisions found.');
 		}
-      });
-	});
+	}
+  });
 }
 
 var filterProvision = (params, version) =>{
-	if(params.fromLine && params.toLine){
+	console.log(params);
+	if(version){
+		console.log(version.content);
+		}
+	if(params.fromLine && params.toLine && version){
 	
 		var newContent = '';
 		var doc = new dom().parseFromString(version.content, "text/xml");
 		var fromNodes = xpath.select("//a[@type='line-number'][@number='"+params.fromLine+"']", doc);
 		var toNodes = xpath.select("//a[@type='line-number'][@number='"+params.toLine+"']", doc);
-		var lastNode = toNodes[0].nextSibling;
 		var selectedNodes = [];
+		
 		if(fromNodes.length == 1 && toNodes.length == 1){
+		
+			var lastNode = toNodes[0].nextSibling;
+		
 			if(fromNodes[0].parentNode != toNodes[0].parentNode){
+				
 				if(fromNodes[0].previousSibling == null && toNodes[0].nextSibling.nextSibling == null){
 					fromNodes[0] = fromNodes[0].parentNode;
 					toNodes[0] = toNodes[0].parentNode;
 					lastNode = toNodes[0];
 				}
 			}else{
+			
 				if(fromNodes[0].previousSibling == null && toNodes[0].nextSibling.nextSibling == null){
 					selectedNodes.push(fromNodes[0].parentNode);
 				}
@@ -61,8 +65,15 @@ var filterProvision = (params, version) =>{
 				}
 			}
 			
+			var wrap = false;
 			for(var it=0; it<selectedNodes.length; it++){
+				if(it==0 && selectedNodes[0].localName.toLowerCase() != 'p'){
+					wrap = true;
+				}
 				newContent += selectedNodes[it].toString();
+			}
+			if(wrap){
+				newContent = '<p>' + newContent + '</p>';
 			}
 		}
 		return newContent;
@@ -74,6 +85,7 @@ var filterProvision = (params, version) =>{
 		'<p>(e) Said joint standing committees shall conduct a joint public hearing on the state water plan  not later than forty-five days after receiving the plan pursuant to subsection (d) of this section, provided the Water Planning Council submits the plan at least sixty days prior to the end of the 2018 regular session of the General Assembly. If the Water Planning Council does not submit the plan at least sixty days prior to the end of the 2018 regular session, said joint standing committees shall conduct a joint public hearing on the plan not later than forty-five days after the convening of the 2019 regular session of the General Assembly. Not later than forty-five days after the joint public hearing, said joint standing committees shall either submit the plan with said joint standing committees\' joint recommendations for approval to the General Assembly or return the plan to the Water Planning Council indicating their disapproval and any recommendations for revisions to the plan.</p>',
 		'<p>(f) In the event that the General Assembly disapproves or fails to act on the state water plan, in whole or in part, the state water plan shall be deemed to be rejected and shall be returned to the Water Planning Council for revisions and resubmittal to the General Assembly in accordance with the provisions of subsection (f) of this section.</p>',
 		'<p>(g) The Water Planning Council shall oversee the implementation and periodic updates of the state water plan. On or before January 1, 2016, and annually thereafter, the Water Planning Council shall submit a report, in accordance with section 11-4a, to the joint standing committees of the General Assembly having cognizance of matters relating to the environment, public health, planning and development and energy and technology on the status of the development and implementation of the state water plan and any updates to such plan. On and after January 1, 2016, the report required by this subsection shall supplant the requirement for an annual report as required pursuant to section 25-33o.</p>'];
+		newRef = ['<p>(e) If the Auditors of Public Accounts discover, or if it should come to their knowledge, that any unauthorized, illegal, irregular or unsafe handling or expenditure of state funds or any breakdown in the safekeeping of any resources of the state has occurred or is contemplated, they shall forthwith present the facts to the Governor, the State Comptroller, the clerk of each house of the General Assembly, the Legislative Program Review and Investigations Committee and the Attorney General. Any Auditor of Public Accounts neglecting to make such a report, or any agent of the auditors neglecting to report to the Auditors of Public Accounts any such matter discovered by him or coming to his knowledge shall be fined not more than one hundred dollars or imprisoned not more than six months or both.</p>'];
 		return newRef.join('');
 	}
 	return "";

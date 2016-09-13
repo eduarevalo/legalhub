@@ -4,9 +4,7 @@ var startDragAndDrop = function(){
     document.getElementById('awaiting-stack'),
     document.getElementById('adopted-stack'),
     document.getElementById('rejected-stack')
-  ],{
-    //removeOnSpill: true
-  });
+  ]);
   drake.on('drop', function(el, target, source, sibling){
     if(el.parentNode){
       var sourceStack = source.id;
