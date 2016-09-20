@@ -60,7 +60,7 @@ span[itemtype='text']::before{
 .sections > .lineNumber{
   left: -10px;
 }
-[itemtype='section']{
+[itemtype='section'], [itemtype='subsection'], [itemtype='paragraph']{
   margin-left: 0.25in;
   -ah-line-number: show;
   -ah-line-number-font-family: "Book Antiqua", "Times New Roman";

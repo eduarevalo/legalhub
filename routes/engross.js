@@ -6,7 +6,7 @@ var documentManager = require(__base + 'manager/document/documentManager');
 
 /* preview */
 router.get('/preview', function (req, res) {
-  documentManager.getLastVersion(req.query.original, function(err, version){
+  documentManager.getLastVersion({documentId: req.query.original}, function(err, version){
     if(err){
       res.json({success: false, error: err});
     }else{

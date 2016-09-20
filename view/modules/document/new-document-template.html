@@ -310,6 +310,7 @@
 					<li><a ng-click="generateRendition('html')">Html</a></li>
 					<li><a ng-click="generateRendition('pdf')">Pdf</a></li>
 					<li><a ng-click="generateRendition('epub')">Epub</a></li>
+					<li><a>Word</a></li>
 				</ul>
 			</div>
 			
@@ -354,11 +355,12 @@
 
 			<span class="menu-spacer"> </span>
 			<div class="dropdown" uib-dropdown style="display: inline-block">
-				<div class="waves-effect btn btn-info" uib-dropdown-toggle title="Toggle line numbers"><i class="zmdi zmdi-format-list-numbered"></i></div>
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle title="Line numbers"><i class="zmdi zmdi-format-list-numbered"></i></div>
 				<ul class="dropdown-menu">
-					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('everything')"><i class="zmdi zmdi-format-list-numbered"></i> Everything</span></li>
+					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('everything')"><i class="zmdi zmdi-format-list-numbered"></i> All</span></li>
 					<li style="padding:5px; padding-left:10px;" ng-if="schema =='bill' "><span onclick="editor.toggleLineNumbers('sections')"><i class="zmdi zmdi-format-list-numbered"></i> Sections</span></li>
 					<li style="padding:5px; padding-left:10px;" ng-if="schema =='amendment' "><span onclick="editor.toggleLineNumbers('body')"><i class="zmdi zmdi-format-list-numbered"></i> Body</span></li>
+					<li style="padding:5px; padding-left:10px;"><span ><i class="zmdi zmdi-format-list-numbered"></i> Page per page</span></li>
 				</ul>
 			</div>
 

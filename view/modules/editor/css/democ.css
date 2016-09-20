@@ -3,6 +3,7 @@
   width: 8.5in;
   min-height: 11in;
   text-align: justify;
+  background-image: url(../img/background.gif);
 }
 @page {
   margin: 2in;
@@ -17,7 +18,8 @@
 }
 .document section:first-child::before{
   content: '';
-  background-image: url(../img/democ.png);
+  background-image: url(../img/250px-Blason_-_Sable.png);
+background-size: contain;
   height: 180px;
   display: block;
   background-repeat: no-repeat;
