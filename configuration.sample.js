@@ -1,6 +1,7 @@
 var configuration = {
 	"app":{
-		"qrCodeDomain": "http://legishub.irosoft.com/document/"
+		"qrCodeDomain": "http://legishub.irosoft.com/document/",
+		"qrCodeDomainCollection": "http://legishub.irosoft.com/collection/"
 	},
 	"server": {
 		"port": 80

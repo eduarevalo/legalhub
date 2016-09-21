@@ -1,9 +1,9 @@
-<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
 
 <section id="main">
-  <aside id="sidebar" data-ng-include="'view/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+  <aside id="sidebar" data-ng-include="'web-client/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
 
-  <aside id="chat" data-ng-include="'view/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+  <aside id="chat" data-ng-include="'web-client/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
 
   <section id="content">
 
@@ -29,4 +29,4 @@
   </section>
 </section>
 
-<footer id="footer" data-ng-include="'view/modules/home/footer.html'"></footer>
+<footer id="footer" data-ng-include="'web-client/modules/home/footer.html'"></footer>

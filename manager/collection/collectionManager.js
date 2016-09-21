@@ -1,9 +1,15 @@
-"use strict"; 
-var chance = require('chance').Chance();
+"use strict";
+// Installed dependencies
+const chance = require('chance').Chance();
+
+// Project libraries
+const configuration = require(__base + 'configuration');
 var Collection = require(__base + 'model/collection/collection');
 var collectionDao = require(__base + 'dao/collection/collectionDao');
 var documentDao = require(__base + 'dao/document/documentDao');
-var imageUtils = require(__base + 'core/utils/image');
+
+const imageUtils = require(__base + 'core/utils/image'),
+  pathUtils = require(__base + 'core/utils/path');
 
 exports.search = (searchKeys, projectionKeys, cb) => {
   collectionDao.search(searchKeys, projectionKeys, cb);
@@ -32,17 +38,15 @@ exports.save = (data, callback) => {
         collection.id = results.result.upserted[0]._id;
         if(collection.qrCode == undefined){
           var type = 'svg';
-          var imgPath = 'media/generated/' + collection.id + '.' + type;
-          var localPath = __base + 'view/' + imgPath;
-          imageUtils.createQRCode("legalhub.vimmit.com/" + collection.id, type, localPath);
+          var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
+          imageUtils.createQRCode(configuration.app.qrCodeDomainCollection + collection.id, type, imgPath);
           collection.qrCode = imgPath;
           saveAgain = true;
         }
         if(collection.icon == undefined){
           var type = 'svg';
-          var imgPath = 'media/generated/icon_' + collection.id + '.' + type;
-          var localPath = __base + 'view/' + imgPath;
-          imageUtils.createIcon("legalhub.vimmit.com/" + collection.id, 200, localPath);
+          var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
+          imageUtils.createIcon(configuration.app.qrCodeDomainCollection + collection.id, 200, imgPath);
           collection.icon = imgPath;
           saveAgain = true;
         }

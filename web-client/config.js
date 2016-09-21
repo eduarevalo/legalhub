@@ -36,12 +36,12 @@ legalHub
 
             .state ('home', {
                 url: '/home',
-                templateUrl: 'view/modules/home/template.html',
+                templateUrl: 'web-client/modules/home/template.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
-                          'view/modules/collection/collection-service.js',
-                          'view/modules/home/home-collection-controller.js'
+                          'web-client/modules/collection/collection-service.js',
+                          'web-client/modules/home/home-collection-controller.js'
                           ]);
                     }
                 }
@@ -54,13 +54,13 @@ legalHub
                 title: '',
                 icon: '',
               },
-              templateUrl: 'view/modules/collection/collection-template.html',
+              templateUrl: 'web-client/modules/collection/collection-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/modules/document/document-service.js',
-                    'view/modules/collection/collection-service.js',
-                    'view/modules/collection/collection-controller.js']);
+                    'web-client/modules/document/document-service.js',
+                    'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/collection/collection-controller.js']);
                 }
               }
             })
@@ -72,16 +72,16 @@ legalHub
                 title: '',
                 icon: '',
               },
-              templateUrl: 'view/modules/document/document-template.html',
+              templateUrl: 'web-client/modules/document/document-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-					'view/js/pdf.js',
-				    'view/modules/document/pdf-render.js',
-                    'view/modules/document/document-service.js',
-					'view/modules/collection/collection-service.js',
-                    'view/modules/version/version-service.js',
-                    'view/modules/document/document-controller.js']
+					'web-client/js/pdf.js',
+				    'web-client/modules/document/pdf-render.js',
+                    'web-client/modules/document/document-service.js',
+					'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/version/version-service.js',
+                    'web-client/modules/document/document-controller.js']
                   );
                 }
               }
@@ -94,16 +94,16 @@ legalHub
                 title: '',
                 icon: '',
               },
-              templateUrl: 'view/modules/engross/engross-template.html',
+              templateUrl: 'web-client/modules/engross/engross-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-					'view/modules/engross/engross-service.js',
-                    'view/modules/document/document-service.js',
-					'view/modules/collection/collection-service.js',
-                    'view/modules/version/version-service.js',
-                    'view/modules/engross/drag-and-drop.js',
-                    'view/modules/engross/engross-controller.js']
+					'web-client/modules/engross/engross-service.js',
+                    'web-client/modules/document/document-service.js',
+					'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/version/version-service.js',
+                    'web-client/modules/engross/drag-and-drop.js',
+                    'web-client/modules/engross/engross-controller.js']
                   );
                 }
               }
@@ -114,12 +114,12 @@ legalHub
               params: {
                 id: ''
               },
-              templateUrl: 'view/modules/version/versions-template.html',
+              templateUrl: 'web-client/modules/version/versions-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/modules/version/version-service.js',
-                    'view/modules/version/version-controller.js']
+                    'web-client/modules/version/version-service.js',
+                    'web-client/modules/version/version-controller.js']
                   );
                 }
               }
@@ -130,22 +130,22 @@ legalHub
             //------------------------------
             .state ('headers', {
                 url: '/headers',
-                templateUrl: 'view/views/common-2.html'
+                templateUrl: 'web-client/views/common-2.html'
             })
 
             .state('headers.textual-menu', {
                 url: '/textual-menu',
-                templateUrl: 'view/views/textual-menu.html'
+                templateUrl: 'web-client/views/textual-menu.html'
             })
 
             .state('headers.image-logo', {
                 url: '/image-logo',
-                templateUrl: 'view/views/image-logo.html'
+                templateUrl: 'web-client/views/image-logo.html'
             })
 
             .state('headers.mainmenu-on-top', {
                 url: '/mainmenu-on-top',
-                templateUrl: 'view/views/mainmenu-on-top.html'
+                templateUrl: 'web-client/views/mainmenu-on-top.html'
             })
 
 
@@ -155,7 +155,7 @@ legalHub
 
             .state ('new-collection', {
               url: '/new/collection',
-              templateUrl: 'view/views/new-collection.html'
+              templateUrl: 'web-client/views/new-collection.html'
             })
 
             //------------------------------
@@ -164,7 +164,7 @@ legalHub
 
             .state ('typography', {
                 url: '/typography',
-                templateUrl: 'view/views/typography.html'
+                templateUrl: 'web-client/views/typography.html'
             })
 
 
@@ -174,12 +174,12 @@ legalHub
 
             .state ('widgets', {
                 url: '/widgets',
-                templateUrl: 'view/views/common.html'
+                templateUrl: 'web-client/views/common.html'
             })
 
             .state ('widgets.widgets', {
                 url: '/widgets',
-                templateUrl: 'view/views/widgets.html',
+                templateUrl: 'web-client/views/widgets.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -204,7 +204,7 @@ legalHub
 
             .state ('widgets.widget-templates', {
                 url: '/widget-templates',
-                templateUrl: 'view/views/widget-templates.html',
+                templateUrl: 'web-client/views/widget-templates.html',
             })
 
 
@@ -214,17 +214,17 @@ legalHub
 
             .state ('tables', {
                 url: '/tables',
-                templateUrl: 'view/views/common.html'
+                templateUrl: 'web-client/views/common.html'
             })
 
             .state ('tables.tables', {
                 url: '/tables',
-                templateUrl: 'view/views/tables.html'
+                templateUrl: 'web-client/views/tables.html'
             })
 
             .state ('tables.data-table', {
                 url: '/data-table',
-                templateUrl: 'view/views/data-table.html'
+                templateUrl: 'web-client/views/data-table.html'
             })
 
 
@@ -233,27 +233,27 @@ legalHub
             //------------------------------
             .state ('manager', {
                 url: '/manager',
-                templateUrl: 'view/modules/manager/common.html'
+                templateUrl: 'web-client/modules/manager/common.html'
             })
 
             .state ('manager.collection', {
               url: '/collection',
-              templateUrl: 'view/modules/collection/manager-template.html',
+              templateUrl: 'web-client/modules/collection/manager-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad){
                   return $ocLazyLoad.load([
-                    'view/modules/collection/collection-service.js',
-                    'view/modules/collection/manager-controller.js']);
+                    'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/collection/manager-controller.js']);
                 }
               }
             })
 
             .state ('manager.document', {
               url: '/document',
-              templateUrl: 'view/modules/document/manager-template.html',
+              templateUrl: 'web-client/modules/document/manager-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad){
-                  return $ocLazyLoad.load('view/modules/document/manager-controller.js');
+                  return $ocLazyLoad.load('web-client/modules/document/manager-controller.js');
                 }
               }
             })
@@ -263,35 +263,35 @@ legalHub
               params: {
                 collectionId: ''
               },
-              templateUrl: 'view/modules/upload/upload-template.html',
+              templateUrl: 'web-client/modules/upload/upload-template.html',
               resolve: {
                 loadPlugin: function($ocLazyLoad) {
                   return $ocLazyLoad.load ([
-                    'view/modules/collection/collection-service.js',
-                    'view/modules/upload/manager-controller.js',
+                    'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/upload/manager-controller.js',
                     {
                       name: 'css',
                       insertBefore: '#app-level',
                       files: [
-						'view/vendors/bower_components/nouislider/jquery.nouislider.css',
-						'view/vendors/farbtastic/farbtastic.css',
-						'view/vendors/bower_components/summernote/dist/summernote.css',
-						'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-						'view/vendors/bower_components/chosen/chosen.min.css'
+						'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
+						'web-client/vendors/farbtastic/farbtastic.css',
+						'web-client/vendors/bower_components/summernote/dist/summernote.css',
+						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+						'web-client/vendors/bower_components/chosen/chosen.min.css'
                       ]
                     },
                     {
                       name: 'vendors',
                       files: [
-						'view/vendors/input-mask/input-mask.min.js',
-						'view/vendors/bower_components/nouislider/jquery.nouislider.min.js',
-						'view/vendors/bower_components/moment/min/moment.min.js',
-						'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-						'view/vendors/bower_components/summernote/dist/summernote.min.js',
-						'view/vendors/fileinput/fileinput.min.js',
-						'view/vendors/bower_components/chosen/chosen.jquery.js',
-						'view/vendors/bower_components/angular-chosen-localytics/chosen.js',
-						'view/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+						'web-client/vendors/input-mask/input-mask.min.js',
+						'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+						'web-client/vendors/bower_components/moment/min/moment.min.js',
+						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+						'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
+						'web-client/vendors/fileinput/fileinput.min.js',
+						'web-client/vendors/bower_components/chosen/chosen.jquery.js',
+						'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
+						'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
                       ]
                     }
                     ])
@@ -301,7 +301,7 @@ legalHub
 
             .state ('new-document', {
                 url: '/edit',
-                templateUrl: 'view/modules/document/new-document-template.html',
+                templateUrl: 'web-client/modules/document/new-document-template.html',
 				        params: {
 					          collectionId: '',
                     documentId: '',
@@ -311,46 +311,46 @@ legalHub
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load([
-						'view/modules/version/version-service.js',
-						'view/modules/rendition/rendition-service.js',
-						'view/modules/reference/reference-service.js',
-						'view/modules/document/document-service.js',
-						'view/modules/document/new-document-controller.js',
-						'view/modules/editor/schema-bill.js',
-						'view/modules/editor/schema-amendment.js',
-						'view/modules/editor/legalhub-editor.js',
-						'view/modules/editor/start.js',
-						'view/modules/editor/css/legislative.css',
-						'view/modules/editor/css/common.css',
-						'view/modules/editor/css/default.css',
-						/*'view/modules/editor/css/paper.css',
-						'view/modules/editor/css/connecticut.css',*/
-						'view/modules/editor/css/demoa.css',
-						'view/modules/editor/css/demob.css',
-						'view/modules/editor/css/democ.css',
+						'web-client/modules/version/version-service.js',
+						'web-client/modules/rendition/rendition-service.js',
+						'web-client/modules/reference/reference-service.js',
+						'web-client/modules/document/document-service.js',
+						'web-client/modules/document/new-document-controller.js',
+						'web-client/modules/editor/schema-bill.js',
+						'web-client/modules/editor/schema-amendment.js',
+						'web-client/modules/editor/legalhub-editor.js',
+						'web-client/modules/editor/start.js',
+						'web-client/modules/editor/css/legislative.css',
+						'web-client/modules/editor/css/common.css',
+						'web-client/modules/editor/css/default.css',
+						/*'web-client/modules/editor/css/paper.css',
+						'web-client/modules/editor/css/connecticut.css',*/
+						'web-client/modules/editor/css/demoa.css',
+						'web-client/modules/editor/css/demob.css',
+						'web-client/modules/editor/css/democ.css',
             {
               name: 'css',
               insertBefore: '#app-level',
               files: [
-              'view/vendors/bower_components/nouislider/jquery.nouislider.css',
-              'view/vendors/farbtastic/farbtastic.css',
-              'view/vendors/bower_components/summernote/dist/summernote.css',
-              'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-              'view/vendors/bower_components/chosen/chosen.min.css'
+              'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
+              'web-client/vendors/farbtastic/farbtastic.css',
+              'web-client/vendors/bower_components/summernote/dist/summernote.css',
+              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+              'web-client/vendors/bower_components/chosen/chosen.min.css'
               ]
             },
             {
               name: 'vendors',
               files: [
-              'view/vendors/input-mask/input-mask.min.js',
-              'view/vendors/bower_components/nouislider/jquery.nouislider.min.js',
-              'view/vendors/bower_components/moment/min/moment.min.js',
-              'view/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-              'view/vendors/bower_components/summernote/dist/summernote.min.js',
-              'view/vendors/fileinput/fileinput.min.js',
-              'view/vendors/bower_components/chosen/chosen.jquery.js',
-              'view/vendors/bower_components/angular-chosen-localytics/chosen.js',
-              'view/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+              'web-client/vendors/input-mask/input-mask.min.js',
+              'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+              'web-client/vendors/bower_components/moment/min/moment.min.js',
+              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+              'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
+              'web-client/vendors/fileinput/fileinput.min.js',
+              'web-client/vendors/bower_components/chosen/chosen.jquery.js',
+              'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
+              'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
               ]
             }]);
                     }
@@ -359,7 +359,7 @@ legalHub
 
             .state ('form.form-components', {
                 url: '/form-components',
-                templateUrl: 'view/views/form-components.html',
+                templateUrl: 'web-client/views/form-components.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -395,12 +395,12 @@ legalHub
 
             .state ('form.form-examples', {
                 url: '/form-examples',
-                templateUrl: 'view/views/form-examples.html'
+                templateUrl: 'web-client/views/form-examples.html'
             })
 
             .state ('form.form-validations', {
                 url: '/form-validations',
-                templateUrl: 'view/views/form-validations.html'
+                templateUrl: 'web-client/views/form-validations.html'
             })
 
 
@@ -410,57 +410,57 @@ legalHub
 
             .state ('user-interface', {
                 url: '/user-interface',
-                templateUrl: 'view/views/common.html'
+                templateUrl: 'web-client/views/common.html'
             })
 
             .state ('user-interface.ui-bootstrap', {
                 url: '/ui-bootstrap',
-                templateUrl: 'view/views/ui-bootstrap.html'
+                templateUrl: 'web-client/views/ui-bootstrap.html'
             })
 
             .state ('user-interface.colors', {
                 url: '/colors',
-                templateUrl: 'view/views/colors.html'
+                templateUrl: 'web-client/views/colors.html'
             })
 
             .state ('user-interface.animations', {
                 url: '/animations',
-                templateUrl: 'view/views/animations.html'
+                templateUrl: 'web-client/views/animations.html'
             })
 
             .state ('user-interface.box-shadow', {
                 url: '/box-shadow',
-                templateUrl: 'view/views/box-shadow.html'
+                templateUrl: 'web-client/views/box-shadow.html'
             })
 
             .state ('user-interface.buttons', {
                 url: '/buttons',
-                templateUrl: 'view/views/buttons.html'
+                templateUrl: 'web-client/views/buttons.html'
             })
 
             .state ('user-interface.icons', {
                 url: '/icons',
-                templateUrl: 'view/views/icons.html'
+                templateUrl: 'web-client/views/icons.html'
             })
 
             .state ('user-interface.alerts', {
                 url: '/alerts',
-                templateUrl: 'view/views/alerts.html'
+                templateUrl: 'web-client/views/alerts.html'
             })
 
             .state ('user-interface.preloaders', {
                 url: '/preloaders',
-                templateUrl: 'view/views/preloaders.html'
+                templateUrl: 'web-client/views/preloaders.html'
             })
 
             .state ('user-interface.notifications-dialogs', {
                 url: '/notifications-dialogs',
-                templateUrl: 'view/views/notification-dialog.html'
+                templateUrl: 'web-client/views/notification-dialog.html'
             })
 
             .state ('user-interface.media', {
                 url: '/media',
-                templateUrl: 'view/views/media.html',
+                templateUrl: 'web-client/views/media.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -486,7 +486,7 @@ legalHub
 
             .state ('user-interface.other-components', {
                 url: '/other-components',
-                templateUrl: 'view/views/other-components.html'
+                templateUrl: 'web-client/views/other-components.html'
             })
 
 
@@ -496,17 +496,17 @@ legalHub
 
             .state ('charts', {
                 url: '/charts',
-                templateUrl: 'view/views/common.html'
+                templateUrl: 'web-client/views/common.html'
             })
 
             .state ('charts.flot-charts', {
                 url: '/flot-charts',
-                templateUrl: 'view/views/flot-charts.html',
+                templateUrl: 'web-client/views/flot-charts.html',
             })
 
             .state ('charts.other-charts', {
                 url: '/other-charts',
-                templateUrl: 'view/views/other-charts.html',
+                templateUrl: 'web-client/views/other-charts.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -529,7 +529,7 @@ legalHub
 
             .state ('calendar', {
                 url: '/calendar',
-                templateUrl: 'view/views/calendar.html',
+                templateUrl: 'web-client/views/calendar.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -559,7 +559,7 @@ legalHub
 
              .state ('photo-gallery', {
                 url: '/photo-gallery',
-                templateUrl: 'view/views/common.html',
+                templateUrl: 'web-client/views/common.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -585,14 +585,14 @@ legalHub
 
             .state ('photo-gallery.photos', {
                 url: '/photos',
-                templateUrl: 'view/views/photos.html'
+                templateUrl: 'web-client/views/photos.html'
             })
 
             //Timeline
 
             .state ('photo-gallery.timeline', {
                 url: '/timeline',
-                templateUrl: 'view/views/photo-timeline.html'
+                templateUrl: 'web-client/views/photo-timeline.html'
             })
 
 
@@ -602,7 +602,7 @@ legalHub
 
             .state ('generic-classes', {
                 url: '/generic-classes',
-                templateUrl: 'view/views/generic-classes.html'
+                templateUrl: 'web-client/views/generic-classes.html'
             })
 
 
@@ -612,7 +612,7 @@ legalHub
 
             .state ('pages', {
                 url: '/pages',
-                templateUrl: 'view/views/common.html'
+                templateUrl: 'web-client/views/common.html'
             })
 
 
@@ -620,17 +620,17 @@ legalHub
 
             .state ('pages.profile', {
                 url: '/profile',
-                templateUrl: 'view/views/profile.html'
+                templateUrl: 'web-client/views/profile.html'
             })
 
             .state ('pages.profile.profile-about', {
                 url: '/profile-about',
-                templateUrl: 'view/views/profile-about.html'
+                templateUrl: 'web-client/views/profile-about.html'
             })
 
             .state ('pages.profile.profile-timeline', {
                 url: '/profile-timeline',
-                templateUrl: 'view/views/profile-timeline.html',
+                templateUrl: 'web-client/views/profile-timeline.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -654,7 +654,7 @@ legalHub
 
             .state ('pages.profile.profile-photos', {
                 url: '/profile-photos',
-                templateUrl: 'view/views/profile-photos.html',
+                templateUrl: 'web-client/views/profile-photos.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -678,7 +678,7 @@ legalHub
 
             .state ('pages.profile.profile-connections', {
                 url: '/profile-connections',
-                templateUrl: 'view/views/profile-connections.html'
+                templateUrl: 'web-client/views/profile-connections.html'
             })
 
 
@@ -686,32 +686,32 @@ legalHub
 
             .state ('pages.listview', {
                 url: '/listview',
-                templateUrl: 'view/views/list-view.html'
+                templateUrl: 'web-client/views/list-view.html'
             })
 
             .state ('pages.messages', {
                 url: '/messages',
-                templateUrl: 'view/views/messages.html'
+                templateUrl: 'web-client/views/messages.html'
             })
 
             .state ('pages.pricing-table', {
                 url: '/pricing-table',
-                templateUrl: 'view/views/pricing-table.html'
+                templateUrl: 'web-client/views/pricing-table.html'
             })
 
             .state ('pages.contacts', {
                 url: '/contacts',
-                templateUrl: 'view/views/contacts.html'
+                templateUrl: 'web-client/views/contacts.html'
             })
 
             .state ('pages.invoice', {
                 url: '/invoice',
-                templateUrl: 'view/views/invoice.html'
+                templateUrl: 'web-client/views/invoice.html'
             })
 
             .state ('pages.wall', {
                 url: '/wall',
-                templateUrl: 'view/views/wall.html',
+                templateUrl: 'web-client/views/wall.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
                         return $ocLazyLoad.load ([
@@ -740,7 +740,7 @@ legalHub
             //------------------------------
             .state ('breadcrumb-demo', {
                 url: '/breadcrumb-demo',
-                templateUrl: 'view/views/breadcrumb-demo.html'
+                templateUrl: 'web-client/views/breadcrumb-demo.html'
             })
 
         // use the HTML5 History API

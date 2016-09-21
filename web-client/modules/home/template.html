@@ -1,9 +1,9 @@
-<header id="header" data-current-skin="blue" data-ng-include="'view/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+<header id="header" data-current-skin="blue" data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
 
 <section id="main">
-    <aside id="sidebar" data-ng-include="'view/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+    <aside id="sidebar" data-ng-include="'web-client/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
 
-    <aside id="chat" data-ng-include="'view/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+    <aside id="chat" data-ng-include="'web-client/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
 
     <section id="content">
 
@@ -50,7 +50,7 @@
               <div class="col-sm-6 col-md-3" ng-repeat="collection in collections">
                 <div class="mini-charts-item bgm-bluegray" data-ng-click="goTo(collection)">
                   <div class="clearfix">
-                    <div class="chart"><img width="83" height="45" style="display: inline-block; width: 83px; height: 45px; vertical-align: top;" src="view/{{collection.icon}}"/></div>
+                    <div class="chart"><img width="83" height="45" style="display: inline-block; width: 83px; height: 45px; vertical-align: top;" src="{{collection.icon}}"/></div>
                     <div class="count">
                       <small>{{collection.title}}</small>
                       <h2>{{collection.count}}</h2>
@@ -65,4 +65,4 @@
     </section>
 </section>
 
-<footer id="footer" data-ng-include="'view/modules/home/footer.html'"></footer>
+<footer id="footer" data-ng-include="'web-client/modules/home/footer.html'"></footer>

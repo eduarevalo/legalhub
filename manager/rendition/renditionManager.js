@@ -39,9 +39,9 @@ var getDiff = (source, target, cb) => {
       `--type=html`,
       `--output=xml`
       ].join(" ");
-      
+
       var code = execSync(cmd);
-      
+
       jarPath = __base + 'bin/Saxon/saxon9pe.jar';
       var xslPath = __base + 'manager/rendition/xsl/diffResult.xsl';
       cmd = [
@@ -51,9 +51,9 @@ var getDiff = (source, target, cb) => {
       `-xsl:"${xslPath}"`,
       `-warnings:silent`,
       ].join(" ");
-      
+
       var code = execSync(cmd);
-      
+
       cb(null, out2File);
     });
   });
@@ -61,15 +61,15 @@ var getDiff = (source, target, cb) => {
 
 var getRendition = (params, cb) => {
   documentManager.getLastVersion(params.id, function(err, version){
-  if(err){
-		cb(err);
-	}
-	if(version && version.content){
-		params.content = version.content;
-		getRenditionFromContent(params, cb);	
-	}else{
-		cb('No version found.');
-	}
+    if(err){
+  		cb(err);
+  	}
+  	if(version && version.content){
+  		params.content = version.content;
+  		getRenditionFromContent(params, cb);
+  	}else{
+  		cb('No version found.');
+  	}
   });
 }
 
@@ -79,24 +79,24 @@ var getRenditionFromContent = (params, cb) => {
 
 	var tempPath = pathUtils.getTempPath();
 	var tempFilePath = pathUtils.getTempFilePath({ext: 'html'});
-	
-	var inFile = pathUtils.join(tempPath.concat(['in.html'])), 
+
+	var inFile = pathUtils.join(tempPath.concat(['in.html'])),
 		outFile = pathUtils.join(tempPath.concat(['out.' + type]));
-	
+
 	var keepInDB = params.renditionName && params.documentId;
 	if(keepInDB){
 		outFile = pathUtils.join(pathUtils.getUploadPath()) + '/out' + chance.guid() + '.' + type;
 	}
-	
+
 	switch(type){
-	
+
 		case 'pdf':
-			
+
 			var cssStyle = [
-				__base + 'view\\modules\\editor\\css\\'+style+'.css', 
+				__base + 'view\\modules\\editor\\css\\'+style+'.css',
 				__base + 'view\\modules\\editor\\css\\common.css'
 			];
-			fs.writeFile(inFile,wrapHtml(content, cssStyle, params.schema), function(err) {
+			fs.writeFile(inFile, wrapHtml(content, cssStyle, params.schema), function(err) {
 				if(err) {
 					return console.log(err);
 				}
@@ -115,103 +115,50 @@ var getRenditionFromContent = (params, cb) => {
 								'-o', `"${outFile}"`].join(" ");
 						break;
 				}
-				
+
 				var code = execSync(cmd);
-				
+
 				if(params.renditionName && params.documentId){
-				
+
 					if(params.save && params.save === true){
-						
+
 						var fragmentDate = new Date();
-						
+
 						pdfUtils.extractTextWithLines(__base + outFile, function(err, xmlLineNumbersFile){
 							if(err){
 								cb(err);
 							}
-							
-							var newContentFile = os.tmpdir() + '/' + chance.guid();
-							var newContentOutFile = os.tmpdir() + '/' + chance.guid();
-							
-							/*fs.writeFile(newContentFile,content, function(err) {
-								if(err) {
-									return console.log(err);
-								}
-								
-								var jarPath = configuration.providers.saxon;
-								var xslPath = __base + "manager/parser/pdf/xsl/setLineNumbers.xsl";
-								var cmd = [
-								  `java -jar ${jarPath}`,
-								  `-s:"${newContentFile}"`,
-								  `-o:"${newContentOutFile}"`,
-								  `-xsl:"${xslPath}"`,
-								  `-warnings:silent`,
-								  `lineNumbersFile="${xmlLineNumbersFile}"`,
-								  ].join(" ");
-								  console.log(cmd);
-								
-								var code = execSync(cmd);
-								
-								let document = new Document(params.documentId);
-								
-								console.log(" ====================================== " + newContentOutFile);
-								documentManager.setContent(document, newContentOutFile, 'editor', '', function(){
-									cb(null, newContentOutFile);
-								});
-								
-							});*/
-							
-							var prefExp = '(<[^>]+>)?';
-							var suffExp = '(<\/[^\>]+>)?';
-							
-							
-							console.log(xmlLineNumbersFile);
-							//(<[^>]+>)?strike(<\/[^\>]+>)?
-							
-							var fileContent = fs.readFileSync(xmlLineNumbersFile, 'utf8');
-							
-							var doc = new dom().parseFromString(fileContent, "text/xml");
-							var nodes = xpath.select("//line", doc);
-							for(var it3=0; it3<nodes.length; it3++){
-								if(nodes[it3].hasAttribute("number")){
-									var lineNumber = nodes[it3].getAttribute("number");
-									/*console.log(lineNumber);*/
-									if(nodes[it3].firstChild){
-										/*var regexp = new RegExp('(' + prefExp + stringUtils.replaceAll(' ', suffExp+' '+prefExp, nodes[it3].firstChild.data) + suffExp + ')', 'i');
-										console.log(regexp);*/
-										content = content.replace(nodes[it3].firstChild.data, "<a type=\"line-number\" number=\""+lineNumber+"\"></a>" + nodes[it3].firstChild.data);
-										//content = content.replace(regexp, "<a type=\"line-number\" number=\""+lineNumber+"\"></a>$0");
-									}
-								}
-							}
-							
+
+              content = pdfUtils.setLineNumbers(xmlLineNumbersFile, content);
+
 							let document = new Document(params.documentId);
 							content = stringUtils.replaceAll('track="del"', 'itemtype="del"', stringUtils.replaceAll('track="add"', 'itemtype="add"', content));
-							documentManager.setContent(document, {content: content, rendition: 'editor', date: fragmentDate, style: style, schema: params.schema});							
-							
+							documentManager.setContent(document, {content: content, rendition: 'editor', date: fragmentDate, style: style, schema: params.schema});
+
 						});
-						
+
 						let document = new Document(params.documentId);
 						documentManager.setContent(document, {filePath: outFile, rendition: type, renditionName: params.renditionName, date: fragmentDate}, function(){
 							cb(null, __base + outFile);
 						});
-						
-					}else{					
-					
+
+					}else{
+
 						let document = new Document(params.documentId);
 						documentManager.setContent(document, {filePath: outFile, rendition: type, renditionName: params.renditionName}, function(){
 							cb(null, outFile);
 						});
 					}
-					
+
 				}else{
 					cb(null, outFile);
 				}
 			});
-			
+
 			break;
-		
+
 		case 'uslm':
-	
+
 			fs.writeFile(tempFile, content, function(err) {
 				var jarPath = __base + 'bin/Saxon/saxon9pe.jar';
 				var xslPath = __base + 'manager/parser/uslm/xsl/microData2Uslm.xsl';
@@ -222,12 +169,12 @@ var getRenditionFromContent = (params, cb) => {
 				  `-xsl:"${xslPath}"`,
 				  `-warnings:silent`,
 				  ].join(" ");
-				  
+
 				var code = execSync(cmd);
-				  
+
 				cb(null, outFile);
 			});
-			
+
 			break;
 	}
 }

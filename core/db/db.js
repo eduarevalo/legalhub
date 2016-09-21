@@ -1,25 +1,25 @@
 var mongodb = require('mongodb');
-var configuration = require(__base + 'configuration');
 var MongoClient = mongodb.MongoClient;
-var mongoUrl = configuration.db[0].url;
 var db;
 
-exports.connect = function(callback) {
-  MongoClient.connect(mongoUrl, function(err, database) {
-    if(err) throw err;
-    db = database;
-    callback();
+exports.connect = function(url, cb) {
+  MongoClient.connect(url, function(err, database) {
+    if(err){
+      cb(err);
+    }else{
+      db = database;
+      cb(null);
+    }
   });
 }
 
-exports.find = function(collection, query, projection, callback){
+exports.find = function(collection, query, projection, cb){
   if(!db){
     throw Error(`Db connection not established: ${mongoUrl}. Are you connecting before?`);
   }
   var cursor = db.collection(collection).find(query, projection);
   cursor.each(function(err, doc){
-  	if(err)	throw err;
-  	callback(doc);
+  	cb(null, doc);
   });
 }
 
