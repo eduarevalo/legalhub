@@ -155,7 +155,3 @@ span[itemtype=add]{
   left:0px
   z-index: 4;
 }
-.lineNumber{
-  position: absolute;
-  left: -40px;
-}

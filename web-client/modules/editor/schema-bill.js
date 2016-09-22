@@ -114,7 +114,7 @@ var legisSchema = {
 								if(sectionNode){
 									sectionNode.setAttribute('data-type', 'amending');
 								}
-								var scope = angular.element(editor.element).scope();
+								var scope = angular.element(editor.rootElement).scope();
 								if(scope){
 									scope.getProvision({title: documentId, section: sectionId}, function(textToInsert){
 										var newQuote = editor.newElementByType('quote');

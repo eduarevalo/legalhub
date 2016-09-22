@@ -2,6 +2,7 @@ var editor;
 
 angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, growlService, documentService, referenceService, version, rendition, $sce) {
 	$scope.mode = 'new';
+	$scope.view = 'web';
 	$scope.style = 'default';
 	if($state.params.template.length > 0 || $state.params.documentId.length > 0){
 		$scope.mode = 'edit';
@@ -38,7 +39,7 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 		};
 	};
 	$scope.emptyDocument = function(){
-		$scope.document.content = editor.newDocument();
+		editor.setNewDocument();
 	}
 	$scope.getHtml = function(doc){
 		return $sce.trustAsHtml(doc);
@@ -69,8 +70,8 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 	}
 	$scope.openDocument = function(){
 		version.getLastVersion($scope.document.id).then(function(version){
-			$scope.document.content = version.content;
 			$scope.setSchema(version.schema);
+			editor.setContent(version.content);
 			$scope.setStyle(version.style);
 		});
 	};

@@ -260,7 +260,7 @@
 					<div class="waves-effect" data-ng-click="selectToolbar('file')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'file' }">File</div>
 				</li>
 				<li>
-					<div class="waves-effect" data-ng-click="selectToolbar('schema')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'schema' }">Document Type</div>
+					<div class="waves-effect" data-ng-click="selectToolbar('view')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'view' }">View</div>
 				</li>
 				<li>
 					<div class="waves-effect" data-ng-click="selectToolbar('format')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'format' }">Format</div>
@@ -269,7 +269,7 @@
 					<div class="waves-effect" data-ng-click="selectToolbar('insert')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'insert' }">Insert</div>
 				</li>
 				<li>
-					<div class="waves-effect" data-ng-click="selectToolbar('themes')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'themes' }">Themes</div>
+					<div class="waves-effect" data-ng-click="selectToolbar('schema')" data-ng-class="{ 'toolbar-option-selected': selectedToolbar == 'schema' }">Document Type</div>
 				</li>
 			</ul>
 		</nav>
@@ -353,17 +353,6 @@
 			<button class="btn bgm-teal" onclick="editor.setBlockFormat('left');"><i class="zmdi zmdi-format-align-left"></i></button>
 			<button class="btn bgm-teal" onclick="editor.setBlockFormat('right');"><i class="zmdi zmdi-format-align-right"></i></button>
 
-			<span class="menu-spacer"> </span>
-			<div class="dropdown" uib-dropdown style="display: inline-block">
-				<div class="waves-effect btn btn-info" uib-dropdown-toggle title="Line numbers"><i class="zmdi zmdi-format-list-numbered"></i></div>
-				<ul class="dropdown-menu">
-					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('everything')"><i class="zmdi zmdi-format-list-numbered"></i> All</span></li>
-					<li style="padding:5px; padding-left:10px;" ng-if="schema =='bill' "><span onclick="editor.toggleLineNumbers('sections')"><i class="zmdi zmdi-format-list-numbered"></i> Sections</span></li>
-					<li style="padding:5px; padding-left:10px;" ng-if="schema =='amendment' "><span onclick="editor.toggleLineNumbers('body')"><i class="zmdi zmdi-format-list-numbered"></i> Body</span></li>
-					<li style="padding:5px; padding-left:10px;"><span ><i class="zmdi zmdi-format-list-numbered"></i> Page per page</span></li>
-				</ul>
-			</div>
-
 		</nav>
 
 
@@ -440,12 +429,28 @@
 			<button class="btn btn-warning" ng-click="diff()"><i class="zmdi zmdi-check-all"></i></button>
 		</nav>
 
-		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'themes'">
-			<button class="btn" ng-click="setStyle('default')">Desktop</button>
+		<nav class="toolbar-menu" ng-if="mode == 'edit' && selectedToolbar == 'view'">
+			<div class="btn-group">
+				<label class="btn btn-default" ng-model="view" uib-btn-radio="'web'">Web</label>
+				<label class="btn btn-default" ng-model="view" uib-btn-radio="'page'">Page</label>
+			</div>
+			<span class="menu-spacer"> </span>
+			<div class="waves-effect btn btn-info" uib-dropdown-toggle ng-disabled="view != 'page'" title="Rulers"><i class="zmdi zmdi-ruler"></i></div>
+			<div class="dropdown" uib-dropdown style="display: inline-block">
+				<div class="waves-effect btn btn-info" uib-dropdown-toggle ng-disabled="view != 'page'" title="Line numbers"><i class="zmdi zmdi-format-list-numbered"></i></div>
+				<ul class="dropdown-menu">
+					<li style="padding:5px; padding-left:10px;"><span onclick="editor.toggleLineNumbers('everything')"><i class="zmdi zmdi-format-list-numbered"></i> All</span></li>
+					<li style="padding:5px; padding-left:10px;" ng-if="schema =='bill' "><span onclick="editor.toggleLineNumbers('sections')"><i class="zmdi zmdi-format-list-numbered"></i> Sections</span></li>
+					<li style="padding:5px; padding-left:10px;" ng-if="schema =='amendment' "><span onclick="editor.toggleLineNumbers('body')"><i class="zmdi zmdi-format-list-numbered"></i> Body</span></li>
+					<li style="padding:5px; padding-left:10px;"><span ><i class="zmdi zmdi-format-list-numbered"></i> Page per page</span></li>
+				</ul>
+			</div>
+			<span class="menu-spacer"></span>
+			<button class="btn btn-default" ng-click="setStyle('default')">Desktop</button>
 			<!--<button class="btn" onClick="setPageStyle('paper')">Paper</button>-->
-			<button class="btn" ng-click="setStyle('demoa')">State Demo A</button>
-			<button class="btn" ng-click="setStyle('demob')">State Demo B</button>
-			<button class="btn" ng-click="setStyle('democ')">State Demo C</button>
+			<button class="btn btn-default" ng-click="setStyle('demoa')">State A</button>
+			<button class="btn btn-default" ng-click="setStyle('demob')">State B</button>
+			<button class="btn btn-default" ng-click="setStyle('democ')">State C</button>
 		</nav>
 
 		<div class="skin-switch dropdown hidden-xs" uib-dropdown ng-if="mode == 'edit'">
@@ -572,12 +577,14 @@
 		</div>
 		<div ng-if="mode == 'edit'">
 
-			  <div class="card" id="document-card">
+			<div id="editor" class="editor document" ng-init="initEditor()" schema="{{schema}}">
+			</div>
+			  <!--<div class="card">
 					<div style="display:flex;">
-						<div ng-bind-html="getHtml(document.content)" style="flex:1;" id="editor" contenteditable="true" class="document" ng-init="initEditor()" schema="{{schema}}">
+						<div style="flex:1;" id="editor" contenteditable="true" ng-init="initEditor()" schema="{{schema}}">
 						</div>
 					</div>
-			  </div>
+			  </div>-->
 		</div>
 	</div>
 

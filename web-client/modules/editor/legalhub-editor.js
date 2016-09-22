@@ -6,16 +6,73 @@ var legalHubEditor = function(el){
 	var lhe = this;
 	this.ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
 	this.w3 = (typeof window.getSelection != "undefined") && true;
-	this.element = el;
-	this.setElement = function(el){
-		this.element = el;
-		this.init();
-	}
+	this.rootElement;
+	this.contentElement;
+	this.formatElement;
 	this.showLineNumbers = false;
-	this.lineNumbersElement;
 	this.schema = {};
 	this.minNLPScore = 0.8;
 	this.trackingChangesMode = false;
+
+	this.pageConfig = {
+		size: {
+			height: '11in',
+			width: '8.5in'
+		},
+		margin: {
+			top: '3in',
+			right: '1.5in',
+			bottom: '1in',
+			left: '1in'
+		}
+	};
+
+	this.refreshPageFormat = function(){
+		this.formatElement.innerHTML = '';
+		var newPage = document.createElement('div');
+		newPage.className = 'page';
+		newPage.setAttribute('type', 'page');
+		newPage.setAttribute('page-number', 1);
+		this.formatElement.appendChild(newPage);
+		var newPage2 = document.createElement('div');
+		newPage2.className = 'page';
+		newPage2.setAttribute('type', 'page');
+		newPage2.setAttribute('page-number', 2);
+		this.formatElement.appendChild(newPage2);
+	};
+
+	this.init = function(){
+		this.contentElement = document.createElement('div');
+		this.contentElement.setAttribute('type', 'content');
+		this.contentElement.className = 'content';
+		//this.contentElement.setAttribute('schema', this.schema);
+		this.contentElement.contentEditable = true;
+		this.formatElement = document.createElement('div');
+		this.formatElement.setAttribute('type', 'format');
+		this.formatElement.className = 'format';
+		this.rootElement.appendChild(this.contentElement);
+		this.rootElement.appendChild(this.formatElement);
+		this.refreshPageFormat();
+	};
+
+	(this.setElement = function(el){
+		lhe.rootElement = el;
+		lhe.init();
+	})(el);
+
+	this.setContent = function(content){
+		if(typeof content == "string"){
+			this.contentElement.innerHTML = content;
+		}else{
+			this.contentElement.innerHTML = '';
+			this.contentElement.appendChild(content);
+		}
+	};
+
+	this.setNewDocument = function(){
+		this.setContent(this.newDocument());
+	};
+
 	this.setSchema = function(schema){
 		this.schema = schema || {};
 	}
@@ -27,7 +84,7 @@ var legalHubEditor = function(el){
 	*/
 
 	this.split = function(context, editor){
-		console.log(context);
+		//console.log(context);
 		lhe.splitNode(lhe.getSelectionAnchor(), context.start, lhe.getBlock(lhe.currentNode));
 		return false;
 	};
@@ -111,7 +168,7 @@ var legalHubEditor = function(el){
 			contextNode = lhe.currentNode;
 		}
 		var parentNode = contextNode;
-		while(parentNode != lhe.element){
+		while(parentNode != lhe.contentElement){
 			var type = lhe.getType(parentNode);
 			if(type !== null && lhe.schema[type] && lhe.schema[type].trackChanges === true){
 				return true;
@@ -145,7 +202,7 @@ var legalHubEditor = function(el){
 
 	this.isTrackingNode = function(node, type){
 		var parentNode = node.nodeType == 3 ? node.parentNode : node;
-		while(parentNode != lhe.element){
+		while(parentNode != lhe.contentElement){
 			if(parentNode.hasAttribute('track') && (type == undefined || parentNode.getAttribute('track') == type)){
 				return true;
 			}
@@ -277,7 +334,7 @@ var legalHubEditor = function(el){
 
 	this.removeNode = function(node){
 		// Deletes all current references
-		var master = lhe.element.querySelector("[itemref*='" + node.id + "']");
+		var master = lhe.contentElement.querySelector("[itemref*='" + node.id + "']");
 		if(master){
 			lhe.unsetItemRef(master, node.id);
 		}
@@ -328,7 +385,7 @@ var legalHubEditor = function(el){
 		}
 		return document;
 	}
-	
+
 	this.buildTemplate = function(type){
 		var node = lhe.newElementByType(type);
 		if(lhe.schema[type]){
@@ -386,7 +443,7 @@ var legalHubEditor = function(el){
 		}
 		return newElement;
 	};
-	
+
 	this.newBlock = function(emptyOrHtml){
 		return lhe.newElement(lhe.config.block.elements[0], emptyOrHtml);
 	}
@@ -404,9 +461,9 @@ var legalHubEditor = function(el){
 		lhe.setEventListeners(type, element);
 		return element;
 	};
-	
+
 	this.setEventListeners = function(type, element){
-		if(lhe.schema[type].on && 
+		if(lhe.schema[type].on &&
 			lhe.schema[type].on['blur']){
 			element.addEventListener('blur', lhe.schema[type].on['blur']);
 		}
@@ -459,7 +516,7 @@ var legalHubEditor = function(el){
 		}
 		var levels = [];
 		var id = (node.id == undefined || node.id.length == 0) ? node.closest('[id]').id : node.id;
-		var master = lhe.element.querySelector("[itemref*='" + id + "']");
+		var master = lhe.contentElement.querySelector("[itemref*='" + id + "']");
 		if(master){
 			levels.push(master);
 			if(recursive){
@@ -512,7 +569,7 @@ var legalHubEditor = function(el){
 
 						var currentId = lhe.getId(currentNode);
 						// Here we take off the old references
-						var oldParent = lhe.element.querySelector("[itemref*='" + currentId + "']");
+						var oldParent = lhe.contentElement.querySelector("[itemref*='" + currentId + "']");
 						if(oldParent){
 							lhe.unsetItemRef(oldParent, currentId);
 						}
@@ -528,7 +585,7 @@ var legalHubEditor = function(el){
 			// un-nesting
 			case -1:
 
-				var currentParent = lhe.element.querySelector("[itemref*='" + lhe.getId(currentNode) + "']");
+				var currentParent = lhe.contentElement.querySelector("[itemref*='" + lhe.getId(currentNode) + "']");
 
 				if(currentParent){
 
@@ -536,7 +593,7 @@ var legalHubEditor = function(el){
 					// Here we take off the old references
 					lhe.unsetItemRef(currentParent, currentId);
 
-					var newParent = lhe.element.querySelector("[itemref*='" + lhe.getId(currentParent) + "']");
+					var newParent = lhe.contentElement.querySelector("[itemref*='" + lhe.getId(currentParent) + "']");
 					if(newParent){
 						lhe.setItemRef(newParent, currentId);
 					}
@@ -776,7 +833,7 @@ var legalHubEditor = function(el){
 						&& lhe.schema[type].on[context.eventName]
 							&& lhe.schema[type].on[context.eventName][context.keyCode]
 								&& lhe.schema[type].on[context.eventName][context.keyCode]){
-								
+
 				if(typeof lhe.schema[type].on[context.eventName][context.keyCode] === 'function'){
 					lhe.schema[type].on[context.eventName][context.keyCode](context, lhe);
 				}else if(lhe.schema[type].on[context.eventName][context.keyCode][context.position]){
@@ -785,14 +842,14 @@ var legalHubEditor = function(el){
 			}else{
 				continues = lhe.triggerCoreEvent('on', context);
 			}
-			
+
 			if(continues
 				&& type
 					&& lhe.schema[type]
 						&& lhe.schema[type].after
 							&& lhe.schema[type].after[context.eventName]
 								&& lhe.schema[type].after[context.eventName][context.keyCode]){
-								
+
 				if(typeof lhe.schema[type].after[context.eventName][context.keyCode] === 'function'){
 					lhe.schema[type].after[context.eventName][context.keyCode](context, lhe);
 				}else if(lhe.schema[type].after[context.eventName][context.keyCode][context.position]){
@@ -889,7 +946,7 @@ var legalHubEditor = function(el){
 		var supportedCoreEvents = ['keyup', 'keydown'/*, 'mousedown', 'mouseup'/*/, 'click'];
 
 		supportedCoreEvents.forEach(function(eventName){
-			lhe.events[eventName] = lhe.element.addEventListener(eventName, function(event){
+			lhe.events[eventName] = lhe.contentElement.addEventListener(eventName, function(event){
 				lhe.currentNode = lhe.getSelectionNode();
 				//console.log('change scope');
 				var context = lhe.getEventContext(event, eventName);
@@ -908,7 +965,7 @@ var legalHubEditor = function(el){
 				}else{
 					dontPrevent = true;
 					var parentNode = lhe.currentNode.parentNode;
-					while(parentNode != lhe.element && dontPrevent){
+					while(parentNode != lhe.contentElement && dontPrevent){
 						lhe.setContextType(context, parentNode);
 						if(context.type !== null){
 							dontPrevent = lhe.triggerEvent(context);
@@ -921,7 +978,7 @@ var legalHubEditor = function(el){
 				}
 			});
 		});
-		/*lhe.events['core.paste'] = lhe.element.addEventListener('paste', function(event){
+		/*lhe.events['core.paste'] = lhe.contentElement.addEventListener('paste', function(event){
 			alert('paste');
 		});*/
 		/*
@@ -930,7 +987,7 @@ var legalHubEditor = function(el){
 			- Empty nodes corrections.
 			- Nlp methods
 		*/
-		lhe.events['core.keyup'] = lhe.element.addEventListener('keyup', function(event){
+		lhe.events['core.keyup'] = lhe.contentElement.addEventListener('keyup', function(event){
 			var context = lhe.getEventContext(event);
 			// Empty nodes
 			if(context.keyCode == 'a#' || context.keyCode == 8 || context.keyCode == 46){
@@ -1122,7 +1179,7 @@ var legalHubEditor = function(el){
 	*/
 	this.getFirstBlock = function(){
 		for(var it=0; it<lhe.config.block.elements.length; it++){
-			var node = lhe.element.querySelector(lhe.config.block.elements[it]);
+			var node = lhe.contentElement.querySelector(lhe.config.block.elements[it]);
 			if(node){
 				return node;
 			}
@@ -1133,7 +1190,7 @@ var legalHubEditor = function(el){
 	*/
 	this.getLastBlock = function(){
 		for(var it=0; it<lhe.config.block.elements.length; it++){
-			var nodes = lhe.element.querySelectorAll(lhe.config.block.elements[it]);
+			var nodes = lhe.contentElement.querySelectorAll(lhe.config.block.elements[it]);
 			if(nodes.length>0){
 				return nodes[nodes.length-1];
 			}
@@ -1175,7 +1232,7 @@ var legalHubEditor = function(el){
 		Get Previous block
 	*/
 	this.getPreviousBlock = function(element, level){
-		if(element == lhe.element){
+		if(element == lhe.contentElement){
 			return true;
 		}
 		var sibling = element;
@@ -1202,7 +1259,7 @@ var legalHubEditor = function(el){
 
 	/*this.setTagPosition = function(event){
 		console.log("setTagPosition()");
-		if(event && lhe.element != event.srcElement && lhe.element.contains(event.srcElement)){
+		if(event && lhe.contentElement != event.srcElement && lhe.contentElement.contains(event.srcElement)){
 			lhe.currentNode = event.srcElement;
 		}else{
 			lhe.currentNode = lhe.getSelectionNode();
@@ -1284,7 +1341,7 @@ var legalHubEditor = function(el){
 	}
 
 	this.getPreviousByType = function(element, type){
-		if(element == lhe.element){
+		if(element == lhe.contentElement){
 			return null;
 		}
 		if(lhe.getType(element) == type){
@@ -1348,6 +1405,7 @@ var legalHubEditor = function(el){
 		breadcrumb.querySelector(".selected-option").innerHTML = newValue.join(" / ");
 		lhe.updateHeadingMenu();
 	};
+
 	this.updateHeadingMenu = function(){
 		if(lhe.currentBlock && lhe.currentBlock.hasAttribute('itemtype')){
 			document.getElementById('heading-menu').querySelector(".selected-option").innerHTML = this.currentBlock.getAttribute('itemtype');
@@ -1359,6 +1417,7 @@ var legalHubEditor = function(el){
   this.insidetrackingChangesBlock = function(){
 	return this.currentBlock.closest('blockquote');
   };
+
   this.getHeadingBlock = function(element){
     var mainBlock = this.getBlock(element);
     var nodeType = this.getType(mainBlock);
@@ -1378,7 +1437,7 @@ var legalHubEditor = function(el){
   };
 
 	this.getHtml = function(clean){
-		var documentNode = lhe.element;
+		var documentNode = lhe.contentElement;
 		var toDelete = documentNode.querySelectorAll('[float]');
 		var nodes = [];
 		for(var it=0;it<toDelete.length; it++){
@@ -1399,32 +1458,52 @@ var legalHubEditor = function(el){
 		return content;
 	}
 
-	/* Line numbers */
-	this.initLineNumbersContainer = function(){
-		if(lhe.lineNumbersElement == undefined){
-			lhe.lineNumbersElement = lhe.newFloatingElement('lineNumbers');
-			lhe.element.appendChild(lhe.lineNumbersElement);
+	this.wrapWords = function(node){
+		if(node.nodeType == 3 && node.data.trim().length > 0){
+			if(node.parentNode.childNodes.length ==1){
+				node.parentNode.innerHTML = node.data.replace(/([^\s<>]+)(?:(?=\s)|$)/g, "<span type='word'>$1</span>");
+			}else{
+				var temp = document.createElement('div');
+				temp.innerHTML = node.data.replace(/([^\s<>]+)(?:(?=\s)|$)/g, "<span type='word'>$1</span>");
+				while (temp.firstChild) {
+					node.parentNode.insertBefore(temp.firstChild, node);
+				}
+				node.parentNode.removeChild(node);
+			}
+		}else{
+			for(var i=0; i<node.childNodes.length; i++){
+				if(node.childNodes[i].nodeType != 1
+					|| node.childNodes[i].tagName.toLowerCase() != 'span'
+						|| !node.childNodes[i].hasAttribute('type')
+							|| node.childNodes[i].getAttribute('type') != 'word'){
+					this.wrapWords(node.childNodes[i]);
+				}
+			}
 		}
 	}
+
+	/* Line numbers */
 	this.toggleLineNumbers = function(numberingRule){
-		lhe.initLineNumbersContainer();
-		if(lhe.lineNumbersElement.className == numberingRule || !this.showLineNumbers){
+		if(lhe.formatElement.getAttribute('number-rule') == numberingRule || !this.showLineNumbers){
 			this.showLineNumbers = !this.showLineNumbers;
 		}
 		lhe.refreshLineNumbers(numberingRule);
 	}
+
 	this.refreshLineNumbers = function(numberingRule){
 		if(numberingRule != undefined){
-			lhe.lineNumbersElement.className = numberingRule;
+			lhe.formatElement.setAttribute('number-rule', numberingRule);
 		}else if(lhe.lineNumbersElement){
-			numberingRule = lhe.lineNumbersElement.className;
+			numberingRule = lhe.formatElement.getAttribute('number-rule');
 		}
-		lhe.initLineNumbersContainer();
-		lhe.lineNumbersElement.innerHTML = '';
+		lhe.formatElement.firstChild.innerHTML = '';
 		if(lhe.showLineNumbers){
-			var lastPosition = 0;
-			var lastNumber = 1;
-			var elements = editor.element.querySelectorAll("p, th, td");
+			var lastPosition = 0, lastPosition2 = 0;
+			var lastNumber = 0, lastNumber2 = 0;
+			var currentPage = -1;
+			var elements = lhe.contentElement.querySelectorAll("p, th, td");
+			var pages = lhe.formatElement.querySelectorAll("div[type='page']");
+
 			for (var it2 = 0; it2 < elements.length; it2++) {
 
 				var element = elements[it2];
@@ -1445,7 +1524,7 @@ var legalHubEditor = function(el){
 					if(toNumber){
 
 						var divs = "";
-						var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
+						/*var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
 						/*if(Math.floor(lines) == 1){
 							var top = $(element).position().top;
 							if(top > lastPosition){
@@ -1453,24 +1532,45 @@ var legalHubEditor = function(el){
 								divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
 							}
 						}else{*/
-							var blockOffset = $(element).position().top + parseInt($(element).css('margin-top'));
+							/*var blockOffset = $(element).position().top + parseInt($(element).css('margin-top'));
 							for(var it=0; it<Math.floor(lines); it++){
 								var top = blockOffset  + (lineHeight*it);
 								if(top > lastPosition){
 									lastPosition = top;
-									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
+									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + ++lastNumber + '</div>';
 								}
-							}
+							}*/
 						//}
-						lhe.lineNumbersElement.innerHTML += divs;
-						
-						
-						
+
+
+						lhe.wrapWords(element);
+
+						var words = element.querySelectorAll("span[type='word']");
+						for(var it=0; it<words.length; it++){
+							var top = $(words[it]).position().top;
+							if(top > lastPosition2){
+								lastPosition2 = top;
+								words[it].setAttribute("line-number", ++lastNumber2);
+								if(pages[currentPage+1]){
+									var pageTop = $(pages[currentPage+1]).position().top;
+									if(pageTop < top){
+										currentPage++;
+									}
+								}
+								words[it].setAttribute("page-number", currentPage+1);
+								divs += '<div class="lineNumber" style="top:' + top + 'px;">' + (currentPage+1)+ ':' + lastNumber2 + '</div>';
+							}/*else{
+								element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
+							}*/
+						}
+
+						lhe.formatElement.firstChild.innerHTML += divs;
+
 						/*switch(element.tagName.toLowerCase()){
 							case 'p':
 								if(element.childNodes.length == 1){
 									element.innerHTML = element.childNodes[0].textContent.replace(/ /g, "<a type='line-number'>#</a> ");
-									
+
 									for(var it=0; it<element.childNodes.length; it++){
 										if(element.childNodes[it].tagName && element.childNodes[it].tagName.toLowerCase() == 'a' && element.childNodes[it].getAttribute('type') == 'line-number'){
 											var top = $(element.childNodes[it]).position().top;
@@ -1488,10 +1588,10 @@ var legalHubEditor = function(el){
 									}
 								}
 								break;
-								
+
 						}*/
-						
-						
+
+
 					}
 				}
 			}
@@ -1501,7 +1601,7 @@ var legalHubEditor = function(el){
 	/*
 		Initialize actions
 	*/
-	if(lhe.element){
+	if(lhe.contentElement){
 		lhe.initEvents();
 	}
 

@@ -1,8 +1,13 @@
-#document-card{
-  padding: 1.5in;
+.content{
   width: 8.5in;
-  min-height: 11in;
+  height: 11in;
+  padding: 1.5in;
   text-align: justify;
+}
+.page {
+  width: 8.5in;
+  height: 11in;
+  margin-bottom: 25px;
 }
 @page {
   margin: 1.5in;
@@ -14,6 +19,9 @@
   font-family: "Book Antiqua", "Times New Roman";
   text-align: justify;
   line-height: 150%;
+}
+.lineNumber {
+  left: 1.25in;
 }
 .document[schema='bill'] section:first-child::before{
   content: '';
