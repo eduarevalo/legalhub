@@ -11,7 +11,7 @@ angular.module('legalHub').controller('documentCtrl', function($timeout, $scope,
 	}else if($scope.hasRendition('original')){
 		$scope.rendition = 'original';
 	}
-	console.log($scope.rendition);
+	
     $scope.collectionNames = '';
     for(var it=0; it<document.collections.length; it++){
       collection.getCollection(document.collections[it], ['title']).then(function(collection){

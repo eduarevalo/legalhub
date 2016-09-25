@@ -1,7 +1,11 @@
-.document {
+.content {
 	padding: 1in;
 }
-p[itemtype=section]{
+[mode='preview'] .page, [mode='preview'] .content{
+	width: 8.5in;
+	height: 11in;
+}
+[itemtype=number]{
 	font-weight: bold;
 	text-transform: uppercase;
 }
@@ -18,5 +22,8 @@ p[itemtype=text][level=subparagraph], p[itemtype=subparagraph]{
 	text-align: left;
 }
 [itemtype='section'] > [itemtype='number']::before{
-	content: 'Section ';
+	content: '(';
+}
+[itemtype='section'] > [itemtype='number']::after{
+	content: ') ';
 }

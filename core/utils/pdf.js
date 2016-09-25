@@ -81,22 +81,59 @@ var extractTextWithLines = (filePath, cb) => {
 };
 
 var setLineNumbers = (lineNumbersFile, content) => {
-	var fileContent = fs.readFileSync(lineNumbersFile, 'utf8');
+	var fileContent = fs.readFileSync(lineNumbersFile, 'utf8');console.log(fileContent);
 	var lineNumbersDoc = new dom().parseFromString(fileContent, "text/xml");
 	var contentDoc = new dom().parseFromString(content, "text/xml");
-	var lines = {};
+	var lines = [];
 	var nodes = xpath.select("//line", lineNumbersDoc);
-	for(var it3=0; it3<nodes.length; it3++){
-		if(nodes[it3].hasAttribute("number")){
-			var lineNumber = nodes[it3].getAttribute("number");
-			if(nodes[it3].firstChild){
-				lines[lineNumber] = nodes[it3].firstChild.data;
+	for(var i=0; i<nodes.length; i++){
+		if(nodes[i].hasAttribute("number")){
+			var lineNumber = nodes[i].getAttribute("number");
+			if(nodes[i].firstChild){
+				lines.push({ number: lineNumber, text: nodes[i].firstChild.data.replace('"', '').replace('[','').replace(']', '') });
 			}
 		}
 	}
+	var position = 0;
+	setLineNumber(contentDoc, lines, position);
 	console.log(lines);
-	console.log(contentDoc);
+	return content;
 }
+
+var setLineNumber = (node, lines, position) => {
+	if(node.data){
+		// Paragraph contains all the line text
+		console.log("position" + position);
+		console.log(node.data);
+		console.log(lines[position].text);
+		console.log(node.data.indexOf(lines[position].text));
+		if(node.data.indexOf(lines[position].text) > -1){
+			if(lines[position].end == undefined){
+				lines[position].end = node;
+				lines[position].text = lines[position].text.substring(lines[position].text.indexOf(node.data) + node.data.length);
+				position++;
+				position = setLineNumber(node, lines, position);
+			}
+			
+		// If the paragraph contains a part of the line text
+		}else if(lines[position].text.indexOf(node.data) > -1){
+			if(lines[position].start == undefined){
+				lines[position].start = node;
+			}
+			/*console.log(lines[position].text);
+			console.log(node.data);
+			console.log(lines[position].text.indexOf(node.data));*/
+			lines[position].text = lines[position].text.substring(lines[position].text.indexOf(node.data) + node.data.length);
+	
+		}
+		return position;
+	}else{
+		for(var i=0; i<node.childNodes.length; i++){
+			position = setLineNumber(node.childNodes[i], lines, position);
+		}
+	}
+	return position;
+};
 
 exports.extractTextWithLines = extractTextWithLines;
 exports.extractText = extractText;

@@ -4,13 +4,13 @@ angular.module('legalHub').controller('engrossCtrl', function($timeout, $state, 
 	$scope.title = $state.params.title;
 	$scope.totalConflicts = 0;
 	$scope.engrossedContent = '';
-	$scope.awaiting = [{
+	$scope.awaiting = [/*{
 			id: 1, title: 'Amendment 1', amendments: 25, conflicts: 2
 		}, {
 			id: 2, title: 'Amendment 2', amendments: 9, conflicts: 0
 		}, {
 			id: 3, title: 'Amendment 3', amendments: 36, conflicts: 8
-		}];
+		}*/];
 	$scope.adopted = [];
 	$scope.rejected = [];
 	var self = this;
@@ -21,7 +21,7 @@ angular.module('legalHub').controller('engrossCtrl', function($timeout, $state, 
 				data.forEach(function(amendment, index){
 					documentService.getDocument(amendment.documentId, ['title']).then(function(documentData){
 						$scope.awaiting.push({
-							id: documentData.id, title: documentData.title, amendments: 41, conflicts: 0
+							id: documentData.id, title: documentData.title, amendments: amendment.links, conflicts: 0
 						});
 						if(index == data.length - 1){
 							$timeout(function(){
@@ -65,10 +65,7 @@ angular.module('legalHub').controller('engrossCtrl', function($timeout, $state, 
 				self.init();
 				break;
 			case 2:
-				$scope.totalConflicts = 0;
-				for(var i=0; i<$scope.adopted.length; i++){
-					$scope.totalConflicts += $scope.adopted[i].conflicts;
-				}
+				$scope.analyze();
 				break;
 			case 3:
 				var adoptedIDocuments = [];
@@ -83,7 +80,28 @@ angular.module('legalHub').controller('engrossCtrl', function($timeout, $state, 
 				break;
 		}
 	}
-
+	$scope.analyze = function(){
+		$scope.totalConflicts = 0;
+		$scope.adopted.forEach(function(amendment){
+			amendment.conflicts = 0;
+			amendment.amendments.forEach(function(link){
+				if(link.selected == undefined){
+					link.selected = true;
+					link.details = '';
+					link.source = '';
+					link.conflicted = false;
+				}
+				
+				if(link.conflicted){
+					amendment.conflicts++;
+					$scope.totalConflicts++;
+				}
+			});
+			if(amendment.collapsed == undefined){
+				amendment.collapsed = amendment.conflicts == 0;
+			}
+		});
+	};
 	$scope.confirm = function(){
 		alert("Working on...");
 	}

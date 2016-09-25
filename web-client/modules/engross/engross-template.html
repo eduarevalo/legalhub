@@ -1,9 +1,9 @@
-<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'view/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
+<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
 
 <section id="main">
-  <aside id="sidebar" data-ng-include="'view/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
+  <aside id="sidebar" data-ng-include="'web-client/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
 
-  <aside id="chat" data-ng-include="'view/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
+  <aside id="chat" data-ng-include="'web-client/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
 
   <section id="content">
 
@@ -90,21 +90,64 @@
 
                   <div class="lv-body">
                     <div class="p-15">
+					
+					
+					
+					
+					<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+					
                       <div class="lv-item" ng-repeat="amendment in adopted">
                         <div class="media">
-                          <div class="pull-left">{{amendment.title}} <i class="zmdi zmdi-caret-down" style="font-size:18px;"></i> </div>
+						 <a role="button" ng-click="amendment.collapsed = !amendment.collapsed"><i class="zmdi zmdi-caret-down" style="font-size:18px;"></i></a>
+                          <div class="pull-left">{{amendment.title}}  </div>
 
-                          <div class="pull-right">{{(amendment.conflicts > 0 ? amendment.conflicts + ' / ' : '') + amendment.amendments}}</div>
+                          <div class="pull-right">{{(amendment.conflicts > 0 ? amendment.conflicts + ' / ' : '') + amendment.amendments.length}}</div>
 
                           <div class="media-body">
                             <div class="progress">
-                              <div class="progress-bar" ng-class="{'progress-bar-danger' : amendment.conflicts > 0}" role="progressbar" aria-valuenow="{{amendment.conflicts}}" aria-valuemin="0" aria-valuemax="{{amendment.amendments}}" style="width: {{((amendment.amendments - amendment.conflicts) / amendment.amendments)*100}}%">
+                              <div class="progress-bar" ng-class="{'progress-bar-danger' : amendment.conflicts > 0}" role="progressbar" aria-valuenow="{{amendment.conflicts}}" aria-valuemin="0" aria-valuemax="{{amendment.amendments.length}}" style="width: {{((amendment.amendments.length - amendment.conflicts) / amendment.amendments.length)*100}}%">
                               </div>
                             </div>
+							
+							
+							<div uib-collapse="amendment.collapsed">
+							  
+								  <table class="table table-responsive">
+									<thead>
+										<tr>
+											<th></th>
+											<th>Scope</th>
+											<th>Conflicts with</th>
+											<th>Details</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="instruction in amendment.amendments">
+											<td>
+												<div class="checkbox">
+													<label>
+													  <input type="checkbox" ng-model="instruction.selected">
+													  <i class="input-helper"></i>
+													</label>
+												  </div>
+											</td>
+											<td>{{instruction.lines}}</td>
+											<td>{{instruction.source}}</td>
+											<td>{{instruction.details}}</td>
+										</tr>
+									</tbody>
+								</table>
+							  
+							</div>
+							
                           </div>
                         </div>
                       </div>
 
+					    </div>
+                      </div>
+					  
                       <!--<div class="lv-item">
                         <div class="media">
                           <div class="pull-left">
@@ -196,4 +239,4 @@
   </section>
 </section>
 
-<footer id="footer" data-ng-include="'view/template/footer.html'"></footer>
+<footer id="footer" data-ng-include="'web-client/template/footer.html'"></footer>

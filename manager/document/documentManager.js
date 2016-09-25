@@ -137,14 +137,50 @@ var extractLinksFromContent = (fragment) => {
 				}
 				var refLines = xpath.select("//p[child::span[@itemtype='ref']]", doc);
 				for(var it=0; it<refLines.length; it++){
+					console.log(refLines[it].toString());
 					var link = {};
-					link.text = xpathUtils.getText(refLines[it]);
-					link.lines = xpathUtils.getText(xpath.select("./span[@itemtype='ref']", refLines[it]));
+					link.instruction = xpathUtils.getText(refLines[it]);
+					var matches = link.instruction.split(/(strike|insert)\s*\"([^\"]+)\"/gi);
+					var insert = false, strike = false;
+					for(var i=0; i<matches.length; i++){
+						if(matches[i].toLowerCase() == 'strike' && matches[i+1]){
+							strike = true;
+							link.anchor = matches[i+1];
+						}else if(matches[i].toLowerCase() == 'insert' && matches[i+1]){
+							link.text = matches[i+1];
+							insert = true;
+						}
+					}
+					if(insert && strike){
+						link.action = 'replace';
+					}
+					var from = undefined, to = undefined;
+					var matches = xpathUtils.getText(xpath.select("./span[@itemtype='ref']", refLines[it])).match(/([0-9])*/gi);
+					for(var i=0; i<matches.length; i++){
+						var numberValue = parseInt(matches[i]);
+						if(Number.isInteger(numberValue)){
+							if(from == undefined){
+								from = numberValue;
+							}else if(to == undefined){
+								to = numberValue;
+							}
+						}
+					}
+					link.scope = {};
+					if(from && to){
+						link.scope.lines = [];
+						for(var i=from; i<to+1; i++){
+							link.scope.lines.push(i);
+						}	
+					}else if(from){
+						link.scope.lines = [from];
+					}
 					links.push(Object.assign(baseLink, link));
 				}
 				if(links.length > 0){
 					fragment.links = links;
 				}
+				console.log(links);
 				break;
 		}
 	}

@@ -6,6 +6,7 @@ var legalHubEditor = function(el){
 	var lhe = this;
 	this.ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
 	this.w3 = (typeof window.getSelection != "undefined") && true;
+	this.mode = 'edit'; /* edit || preview*/
 	this.rootElement;
 	this.contentElement;
 	this.formatElement;
@@ -14,7 +15,7 @@ var legalHubEditor = function(el){
 	this.minNLPScore = 0.8;
 	this.trackingChangesMode = false;
 
-	this.pageConfig = {
+	/*this.pageConfig = {
 		size: {
 			height: '11in',
 			width: '8.5in'
@@ -25,40 +26,31 @@ var legalHubEditor = function(el){
 			bottom: '1in',
 			left: '1in'
 		}
-	};
-
-	this.refreshPageFormat = function(){
-		this.formatElement.innerHTML = '';
-		var newPage = document.createElement('div');
-		newPage.className = 'page';
-		newPage.setAttribute('type', 'page');
-		newPage.setAttribute('page-number', 1);
-		this.formatElement.appendChild(newPage);
-		var newPage2 = document.createElement('div');
-		newPage2.className = 'page';
-		newPage2.setAttribute('type', 'page');
-		newPage2.setAttribute('page-number', 2);
-		this.formatElement.appendChild(newPage2);
+	};*/
+	
+	this.inEditMode = function(){
+		return this.mode == 'edit';
+	}
+	
+	this.setMode = function(mode){
+		this.mode = mode;
+		this.contentElement.contentEditable = this.inEditMode();
+		this.rootElement.setAttribute('mode', this.mode);
+		this.refreshPageFormat();
 	};
 
 	this.init = function(){
 		this.contentElement = document.createElement('div');
 		this.contentElement.setAttribute('type', 'content');
 		this.contentElement.className = 'content';
-		//this.contentElement.setAttribute('schema', this.schema);
-		this.contentElement.contentEditable = true;
 		this.formatElement = document.createElement('div');
 		this.formatElement.setAttribute('type', 'format');
 		this.formatElement.className = 'format';
 		this.rootElement.appendChild(this.contentElement);
 		this.rootElement.appendChild(this.formatElement);
-		this.refreshPageFormat();
+		this.setMode(this.mode);
+		lhe.initEvents();
 	};
-
-	(this.setElement = function(el){
-		lhe.rootElement = el;
-		lhe.init();
-	})(el);
 
 	this.setContent = function(content){
 		if(typeof content == "string"){
@@ -95,8 +87,17 @@ var legalHubEditor = function(el){
 		}
 		var currentBlock = lhe.getBlock(lhe.currentNode);
 		var type = lhe.getType(currentBlock);
-		if(type != null && lhe.schema[type].suggest !== true){
-			type = null;
+		if(type != null){
+			switch(lhe.schema[type].suggest){
+				case false:
+					type = null;
+					break;
+				case true:
+					break;
+				default:
+					type = lhe.schema[type].suggest;
+					break;
+			}
 		}
 		var newElement = type == null ? lhe.newElement(context.tag, true) : lhe.newElementByType(type, true);
 		if(lhe.trackingChangesMode || lhe.isContextualTrackingChanges()){
@@ -995,6 +996,7 @@ var legalHubEditor = function(el){
 			}
 			// Suggest Markup. Only on space keyCode event.
 			if(event.keyCode == 32){
+				console.log(context);
 				if(context.type == null){
 					var scores = {};
 					var textNode;
@@ -1317,7 +1319,7 @@ var legalHubEditor = function(el){
 		}
 		lhe.setElementType(node, type);
 		if(lhe.schema[type] && lhe.schema[type].transform){
-			return lhe.schema[type].transform(lhe);
+			return lhe.schema[type].transform(lhe, node);
 		}
 		return true;
 	};
@@ -1437,27 +1439,19 @@ var legalHubEditor = function(el){
   };
 
 	this.getHtml = function(clean){
-		var documentNode = lhe.contentElement;
-		var toDelete = documentNode.querySelectorAll('[float]');
-		var nodes = [];
-		for(var it=0;it<toDelete.length; it++){
-			nodes.push({parent: toDelete[it].parentNode, child: toDelete[it], next: toDelete[it].nextSibling});
-			toDelete[it].parentNode.removeChild(toDelete[it]);
-		}
+		var documentNode = lhe.contentElement.cloneNode(true);
+		if(clean){
+			documentNode.querySelectorAll(".page-spacer").forEach(function(ele){
+				ele.parentNode.removeChild(ele);
+			});
+		}	
 		var content = documentNode.innerHTML;
-		for(var it=0; it<nodes.length; it++){
-			if(nodes[it].next){
-				nodes[it].parent.insertBefore(nodes[it].child, nodes[it].next);
-			}else{
-				nodes[it].parent.appendChild(nodes[it].child);
-			}
-		}
 		if(clean){
 			content = content.replace(/\u200C/, '');
 		}
 		return content;
 	}
-
+	
 	this.wrapWords = function(node){
 		if(node.nodeType == 3 && node.data.trim().length > 0){
 			if(node.parentNode.childNodes.length ==1){
@@ -1480,8 +1474,49 @@ var legalHubEditor = function(el){
 				}
 			}
 		}
-	}
-
+	};
+	
+	this.refreshPageFormat = function(){
+		if(!this.inEditMode()){
+			lhe.wrapWords(lhe.contentElement);
+			var content = $(lhe.contentElement);
+			lhe.formatElement.innerHTML = '';
+			var pageNumber = 1, lastPagePosition, maxSpanPosition, spacerHeight;
+			lhe.contentElement.querySelectorAll("span[type='word']").forEach(function(spanEl){
+				var span = $(spanEl);
+				var spanTop = span.position().top;
+				if(maxSpanPosition && spanTop + span.height() > maxSpanPosition){
+					var newSpacer = document.createElement('div');
+					newSpacer.className = 'page-spacer';
+					spanEl.parentNode.insertBefore(newSpacer, spanEl);
+					var newSpacer = $(newSpacer);
+					newSpacer.width(1);
+					newSpacer.height(spacerHeight);
+				}
+				if(lastPagePosition == undefined || span.position().top > lastPagePosition){
+					var newPage = document.createElement('div');
+					newPage.className = 'page';
+					newPage.setAttribute('type', 'page');
+					newPage.setAttribute('page-number', pageNumber++);
+					lhe.formatElement.appendChild(newPage);
+					var page = $(newPage);
+					lastPagePosition = page.position().top + page.outerHeight();
+					maxSpanPosition = lastPagePosition - parseInt(page.css('padding-bottom'));
+					spacerHeight = page.outerHeight(true) - page.innerHeight() + parseInt(page.css('padding-bottom')) + parseInt(page.css('padding-top')) + parseInt(page.css('margin-top')) + parseInt(page.css('margin-bottom')) + parseInt(content.css('padding-top'));
+					$(lhe.rootElement).height(lastPagePosition);
+				}
+			});
+		}else{
+			lhe.contentElement.querySelectorAll("span[type='word']").forEach(function(span){
+				span.parentNode.replaceChild(document.createTextNode(span.textContent), span);
+			});
+			lhe.contentElement.querySelectorAll(".page-spacer").forEach(function(div){
+				div.parentNode.removeChild(div);
+			});
+			lhe.formatElement.innerHTML = '';
+		}
+	};
+	
 	/* Line numbers */
 	this.toggleLineNumbers = function(numberingRule){
 		if(lhe.formatElement.getAttribute('number-rule') == numberingRule || !this.showLineNumbers){
@@ -1491,107 +1526,108 @@ var legalHubEditor = function(el){
 	}
 
 	this.refreshLineNumbers = function(numberingRule){
-		if(numberingRule != undefined){
-			lhe.formatElement.setAttribute('number-rule', numberingRule);
-		}else if(lhe.lineNumbersElement){
-			numberingRule = lhe.formatElement.getAttribute('number-rule');
-		}
-		lhe.formatElement.firstChild.innerHTML = '';
-		if(lhe.showLineNumbers){
-			var lastPosition = 0, lastPosition2 = 0;
-			var lastNumber = 0, lastNumber2 = 0;
-			var currentPage = -1;
-			var elements = lhe.contentElement.querySelectorAll("p, th, td");
-			var pages = lhe.formatElement.querySelectorAll("div[type='page']");
+		if(!lhe.inEditMode()){
+			if(numberingRule != undefined){
+				lhe.formatElement.setAttribute('number-rule', numberingRule);
+			}else if(lhe.lineNumbersElement){
+				numberingRule = lhe.formatElement.getAttribute('number-rule');
+			}
+			if(lhe.showLineNumbers){
+				var lastPosition = 0, lastPosition2 = 0;
+				var lastNumber = 0, lastNumber2 = 0;
+				var currentPage = -1;
+				var elements = lhe.contentElement.querySelectorAll("p, th, td");
+				lhe.formatElement.querySelectorAll("div[type='page'] .lineNumber").forEach(function(el){ el.parentNode.removeChild(el); });
+				var pages = lhe.formatElement.querySelectorAll("div[type='page']");
 
-			for (var it2 = 0; it2 < elements.length; it2++) {
+				for (var it2 = 0; it2 < elements.length; it2++) {
 
-				var element = elements[it2];
+					var element = elements[it2];
 
-				if(!lhe.isEmpty(element)){
+					if(!lhe.isEmpty(element)){
 
-					// 1st chance
-					var toNumber = lhe.schema['@lineNumberRules'] == undefined || (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include == undefined);
-					// 2nd chance
-					if(!toNumber && (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include)){
-						toNumber = lhe.validateAnyCondition(element, lhe.schema['@lineNumberRules'][numberingRule].include, true);
-						// 3rd chance
-						if(!toNumber){
-							toNumber = lhe.validateAnyCondition(lhe.getMasterLevels(element), lhe.schema['@lineNumberRules'][numberingRule].include, true);
-						}
-					}
-
-					if(toNumber){
-
-						var divs = "";
-						/*var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
-						/*if(Math.floor(lines) == 1){
-							var top = $(element).position().top;
-							if(top > lastPosition){
-								lastPosition = top;
-								divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
+						// 1st chance
+						var toNumber = lhe.schema['@lineNumberRules'] == undefined || (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include == undefined);
+						// 2nd chance
+						if(!toNumber && (lhe.schema['@lineNumberRules'][numberingRule] && lhe.schema['@lineNumberRules'][numberingRule].include)){
+							toNumber = lhe.validateAnyCondition(element, lhe.schema['@lineNumberRules'][numberingRule].include, true);
+							// 3rd chance
+							if(!toNumber){
+								toNumber = lhe.validateAnyCondition(lhe.getMasterLevels(element), lhe.schema['@lineNumberRules'][numberingRule].include, true);
 							}
-						}else{*/
-							/*var blockOffset = $(element).position().top + parseInt($(element).css('margin-top'));
-							for(var it=0; it<Math.floor(lines); it++){
-								var top = blockOffset  + (lineHeight*it);
+						}
+
+						if(toNumber){
+
+							var divs = "";
+							/*var lineHeight = parseInt($(element).css('line-height')),  divHeight = element.offsetHeight, lines = divHeight / lineHeight;
+							/*if(Math.floor(lines) == 1){
+								var top = $(element).position().top;
 								if(top > lastPosition){
 									lastPosition = top;
-									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + ++lastNumber + '</div>';
+									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + lastNumber++ + '</div>';
 								}
-							}*/
-						//}
-
-
-						lhe.wrapWords(element);
-
-						var words = element.querySelectorAll("span[type='word']");
-						for(var it=0; it<words.length; it++){
-							var top = $(words[it]).position().top;
-							if(top > lastPosition2){
-								lastPosition2 = top;
-								words[it].setAttribute("line-number", ++lastNumber2);
-								if(pages[currentPage+1]){
-									var pageTop = $(pages[currentPage+1]).position().top;
-									if(pageTop < top){
-										currentPage++;
+							}else{*/
+								/*var blockOffset = $(element).position().top + parseInt($(element).css('margin-top'));
+								for(var it=0; it<Math.floor(lines); it++){
+									var top = blockOffset  + (lineHeight*it);
+									if(top > lastPosition){
+										lastPosition = top;
+										divs += '<div class="lineNumber" style="top:' + top + 'px;">' + ++lastNumber + '</div>';
 									}
-								}
-								words[it].setAttribute("page-number", currentPage+1);
-								divs += '<div class="lineNumber" style="top:' + top + 'px;">' + (currentPage+1)+ ':' + lastNumber2 + '</div>';
-							}/*else{
-								element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
-							}*/
-						}
+								}*/
+							//}
 
-						lhe.formatElement.firstChild.innerHTML += divs;
+							//lhe.wrapWords(element);
 
-						/*switch(element.tagName.toLowerCase()){
-							case 'p':
-								if(element.childNodes.length == 1){
-									element.innerHTML = element.childNodes[0].textContent.replace(/ /g, "<a type='line-number'>#</a> ");
+							var words = element.querySelectorAll("span[type='word']");
+							for(var it=0; it<words.length; it++){
+								var top = $(words[it]).position().top;
+								if(top > lastPosition2){
+									lastPosition2 = top;
+									words[it].setAttribute("line-number", ++lastNumber2);
+									if(pages[currentPage+1]){
+										var pageTop = $(pages[currentPage+1]).position().top;
+										if(pageTop < top){
+											currentPage++;
+										}
+									}
+									words[it].setAttribute("page-number", currentPage+1);
+									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + (currentPage+1)+ ':' + lastNumber2 + '</div>';
+								}/*else{
+									element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
+								}*/
+							}
 
-									for(var it=0; it<element.childNodes.length; it++){
-										if(element.childNodes[it].tagName && element.childNodes[it].tagName.toLowerCase() == 'a' && element.childNodes[it].getAttribute('type') == 'line-number'){
-											var top = $(element.childNodes[it]).position().top;
-											if(top > lastPosition){
-												lastPosition = top;
-												element.childNodes[it].setAttribute("line-number", ++lastNumber);
-												element.childNodes[it].innerHTML = lastNumber;
-												if(numberingRule != undefined){
-													element.childNodes[it].className = numberingRule;
+							lhe.formatElement.firstChild.innerHTML += divs;
+
+							/*switch(element.tagName.toLowerCase()){
+								case 'p':
+									if(element.childNodes.length == 1){
+										element.innerHTML = element.childNodes[0].textContent.replace(/ /g, "<a type='line-number'>#</a> ");
+
+										for(var it=0; it<element.childNodes.length; it++){
+											if(element.childNodes[it].tagName && element.childNodes[it].tagName.toLowerCase() == 'a' && element.childNodes[it].getAttribute('type') == 'line-number'){
+												var top = $(element.childNodes[it]).position().top;
+												if(top > lastPosition){
+													lastPosition = top;
+													element.childNodes[it].setAttribute("line-number", ++lastNumber);
+													element.childNodes[it].innerHTML = lastNumber;
+													if(numberingRule != undefined){
+														element.childNodes[it].className = numberingRule;
+													}
+												}else{
+													element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
 												}
-											}else{
-												element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
 											}
 										}
 									}
-								}
-								break;
+									break;
 
-						}*/
+							}*/
 
 
+						}
 					}
 				}
 			}
@@ -1601,9 +1637,12 @@ var legalHubEditor = function(el){
 	/*
 		Initialize actions
 	*/
-	if(lhe.contentElement){
-		lhe.initEvents();
-	}
+	this.setElement = function(el){
+		lhe.rootElement = el;
+		lhe.init();
+	};
+	
+	this.setElement(el);
 
 };
 var legalHub = { tools: {

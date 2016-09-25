@@ -51,7 +51,7 @@ var schemaAmendment = {
 			'keyup':{
 				'a#' : function(context, lhe){
 				
-					var scope = angular.element(editor.element).scope();
+					var scope = angular.element(editor.rootElement).scope();
 					scope.getProperties({title: lhe.currentNode.textContent.replace(/\u200C/, '')}, function(properties){
 						
 						var longTitleRef = properties.longTitle;
@@ -144,7 +144,6 @@ var schemaAmendment = {
 	},
 	'text': {
 		suggest: true,
-		
 		/*'keydown':{
 			13:{
 				'start': lhe.suggestBefore,
@@ -157,43 +156,12 @@ var schemaAmendment = {
 				{
 					name: 'fetch-lines',
 					triggers: {
-						'expression': new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i')
+						'expression': new RegExp(/line([^0-9]*)?([0-9]+)([^0-9]*[and|to]?[^0-9]*)([0-9]+)?(.*)(substitute|insert|entirety)/, 'i')
 					},
 					fn: function(context, textNode, editor){
-						var match = textNode.match(new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i'));
-						if(match && match.length>2){
-							var fromLine = match[1];
-							var toLine = match[2];
-							var documentRef = editor.element.querySelector("[itemtype='billNumber']");
-							if(documentRef){
-								documentRef = documentRef.innerHTML;
-							}
-							swal({
-								title: "Amendatory instruction",
-								text: "You seem to be referencing lines " + fromLine + " to " + toLine + " of Bill " +documentRef +". Would you like to continue fetching this provision?",
-								html: true,
-								type: "info",
-								showCancelButton: true,
-								closeOnConfirm: true
-							}, function(){
-								var match = textNode.match(new RegExp(/line[^0-9]*([0-9]+)[^0-9]*[and|to][^0-9]*([0-9]+).*(substitute|insert)/, 'i'));
-								if(match && match.length>1){
-									var matchedRef = match[1];
-									var newRef = editor.newElementByType('ref', matchedRef);
-									editor.currentNode.innerHTML = editor.currentNode.innerHTML.replace(matchedRef, newRef.outerHTML);
-								}
-								var currentBlock = editor.getBlock(editor.currentNode);
-								if(currentBlock){
-									currentBlock.setAttribute('data-type', 'amending');
-								}
-								var scope = angular.element(editor.element).scope();
-								scope.getProvision({fromLine: fromLine, toLine: toLine, title: documentRef}, function(provision){
-									var newQuote = editor.newElementByType('quote');
-									newQuote.innerHTML = provision.content.replace(/<a([^\/]*)\/>/g, '<a$1>'+ String.fromCodePoint(0x200C) +'</a>');
-									editor.insertElementAfter(newQuote, 'block');
-									editor.nestBlock(newQuote, 1);
-								});
-							});
+						var currentBlock = editor.getBlock(editor.currentNode);
+						if(currentBlock){
+							editor.setType('amendment', currentBlock);
 						}
 					}
 				}
@@ -203,6 +171,41 @@ var schemaAmendment = {
 	'quote':{
 		tag: 'div',
 		trackChanges: true
+	},
+	'amendment': {
+		suggest: 'text',
+		transform: function(lhe, node){
+			var currentBlock = lhe.getBlock(lhe.currentNode);
+			var documentRef = lhe.contentElement.querySelector("[itemtype='billNumber']");
+			if(documentRef){
+				documentRef = documentRef.innerHTML;
+			}
+			currentBlock.innerHTML = currentBlock.innerHTML.replace(new RegExp(/line([^0-9]*)?([0-9]+)([^0-9]*[and|to]?[^0-9]*)([0-9]+)?(.*)(substitute|insert|entirety)/, 'i'), function(match, $0, $1, $2, $3, $4, $5){
+				var fromLine = $1; toLine = $3; action = $5;
+				swal({
+					title: "Amendatory instruction",
+					text: "You seem to be referencing lines " + fromLine + " to " + toLine + " of Bill " +documentRef +". Would you like to continue fetching this provision?",
+					html: true,
+					type: "info",
+					showCancelButton: true,
+					closeOnConfirm: true
+				}, function(){
+					
+					var scope = angular.element(lhe.rootElement).scope();
+					scope.getProvision({fromLine: fromLine, toLine: toLine, title: documentRef}, function(provision){
+						var newQuote = lhe.newElementByType('quote');
+						newQuote.innerHTML = provision.content.replace(/<a([^\/]*)\/>/g, '<a$1>'+ String.fromCodePoint(0x200C) +'</a>');
+						lhe.insertElementAfter(newQuote, 'block');
+						lhe.nestBlock(newQuote, 1);
+					});
+				});
+				if($3){
+					return "line"+$0+"<span itemtype='ref'>"+$1+$2+($3 ? $3:'')+'</span>'+$4+$5;
+				}else{
+					return "line"+$0+"<span itemtype='ref'>"+$1+'</span>'+$2+($3 ? $3:'')+$4+$5;
+				}
+			});
+		}
 	}
 	//<clause>, <section>, <part>, <paragraph>, <chapter>, <title>, <article>, <book>, <tome>, <division>, <list>, <point>, <indent>, <alinea>, <rule>, <subrule>, <proviso>, <subsection>, <subpart>, <subparagraph>, <subchapter>, <subtitle>, <subdivision>, <subclause>, <sublist>, <transitional>
 };

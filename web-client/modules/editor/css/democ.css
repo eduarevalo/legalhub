@@ -1,14 +1,21 @@
-#document-card{
+.content{
   padding: 2in;
-  width: 8.5in;
-  min-height: 11in;
   text-align: justify;
+}
+[mode='edit'] .content{
   background-image: url(../img/background.gif);
 }
-@page {
+[mode='preview'] .page{
+  background-image: url(../img/background.gif);
+}
+@page{
   margin: 2in;
   size: 8.5in 11in;
   text-align: justify;
+}
+[mode='preview'] .page, [mode='preview'] .content {
+	width: 8.5in;
+	height: 11in;
 }
 .document{
   font-size: 11pt;

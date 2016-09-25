@@ -1,13 +1,15 @@
-#document-card{
+.content{
   padding: 1.5in;
-  width: 8.5in;
-  min-height: 11in;
   text-align: justify;
 }
-@page {
+@page, [mode='preview'] .page {
   margin: 1.5in;
   size: 8.5in 11in;
   text-align: justify;
+}
+[mode='preview'] .page, [mode='preview'] .content {
+	width: 8.5in;
+	height: 11in;
 }
 .document{
   font-size: 13pt;

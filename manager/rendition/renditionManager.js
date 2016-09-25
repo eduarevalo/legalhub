@@ -93,8 +93,8 @@ var getRenditionFromContent = (params, cb) => {
 		case 'pdf':
 
 			var cssStyle = [
-				__base + 'view\\modules\\editor\\css\\'+style+'.css',
-				__base + 'view\\modules\\editor\\css\\common.css'
+				__base + 'web-client\\modules\\editor\\css\\'+style+'.css',
+				__base + 'web-client\\modules\\editor\\css\\common.css'
 			];
 			fs.writeFile(inFile, wrapHtml(content, cssStyle, params.schema), function(err) {
 				if(err) {
@@ -123,22 +123,13 @@ var getRenditionFromContent = (params, cb) => {
 					if(params.save && params.save === true){
 
 						var fragmentDate = new Date();
-
-						pdfUtils.extractTextWithLines(__base + outFile, function(err, xmlLineNumbersFile){
-							if(err){
-								cb(err);
-							}
-
-              content = pdfUtils.setLineNumbers(xmlLineNumbersFile, content);
-
-							let document = new Document(params.documentId);
+						
+						let docRenditionA = new Document(params.documentId);
 							content = stringUtils.replaceAll('track="del"', 'itemtype="del"', stringUtils.replaceAll('track="add"', 'itemtype="add"', content));
-							documentManager.setContent(document, {content: content, rendition: 'editor', date: fragmentDate, style: style, schema: params.schema});
+							documentManager.setContent(docRenditionA, {content: content, rendition: 'editor', date: fragmentDate, style: style, schema: params.schema});
 
-						});
-
-						let document = new Document(params.documentId);
-						documentManager.setContent(document, {filePath: outFile, rendition: type, renditionName: params.renditionName, date: fragmentDate}, function(){
+						let docRenditionB = new Document(params.documentId);
+						documentManager.setContent(docRenditionB, {filePath: outFile, rendition: type, renditionName: params.renditionName, date: fragmentDate}, function(){
 							cb(null, __base + outFile);
 						});
 
