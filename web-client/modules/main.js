@@ -1,39 +1,92 @@
+var collaboration;
+
 legalHub
     // =========================================================================
     // Base controller for common functions
     // =========================================================================
-    .controller('homeCtrl', function($timeout, $state, $scope, growlService, user, auth){
+    .controller('homeCtrl', function($timeout, $state, $scope, growlService, user, auth, SOCKET){
 
         var self = this;
+		
+		$scope.user = {name: '', password: ''};
+		
+		this.userData = {logged: false};
+		this.connected = false;
 
         function handleRequest(res) {
-        var token = res.data ? res.data.token : null;
-        if(token) { console.log('JWT:', token); }
-          self.message = res.data.message;
+			self.userData.logged = false;
+			if(res.data.success){
+				self.userData = res.data.data;
+				self.userData.logged = true;
+				localStorage.setItem( 'user', JSON.stringify(self.userData) );
+				$('#login-window').removeClass('open');	
+				$scope.welcome();
+			}
         }
 
-        self.login = function() {
+        /*self.login = function() {
           user.login(self.username, self.password)
           .then(handleRequest, handleRequest)
+        }*/
+        
+		self.register = function() {
+          user.register(self.username, self.password).then(handleRequest, handleRequest)
         }
-        self.register = function() {
-          user.register(self.username, self.password)
-          .then(handleRequest, handleRequest)
-        }
-        self.getQuote = function() {
+        
+		self.getQuote = function() {
           user.getQuote()
           .then(handleRequest, handleRequest)
         }
-        self.logout = function() {
+        
+		self.logout = function() {
           auth.logout && auth.logout()
         }
+		
         self.isAuthed = function() {
           return auth.isAuthed ? auth.isAuthed() : false
         }
 
+		$scope.logout = function(){
+			$('#login-window').removeClass('open');	
+			growlService.growl('See you soon '+self.userData.firstName+'!', 'inverse');
+			self.users = [];
+			self.connected = false;
+			collaboration.disconnect();
+			$timeout(function(){
+				self.userData = {logged: false};
+				localStorage.removeItem('user');
+			}, 100);
+		}
+		
+		$scope.login = function(){
+			user.login($scope.user.name, $scope.user.password).then(handleRequest, handleRequest);
+		}
+		
+		self.users = [];
+		
+		this.connect = function(){
+			collaboration = new legalHubCollaboration(function(data){
+				self.users = data;
+				$scope.$apply();
+			});
+			collaboration.connect(SOCKET, self.userData.name, function(){
+				self.connected = true;
+				growlService.growl("You're now collaborating with others", 'inverse');
+				$scope.$apply();
+			});
+		}
+		
+		$scope.welcome = function(){
+			growlService.growl('Welcome back '+self.userData.firstName+'!', 'inverse');
+			self.connect();
+		}
+		
         //Welcome Message
-        //growlService.growl('Welcome back Eduardo!', 'inverse')
-
+		var userData = localStorage.getItem( 'user' );
+		if(userData){
+			self.userData = JSON.parse(userData);
+			$scope.welcome();
+		}
 
         // Detact Mobile Browser
         if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {

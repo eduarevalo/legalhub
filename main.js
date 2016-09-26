@@ -38,6 +38,66 @@ db.connect(configuration.db[0].url, function(){
   process.stdout.write(` - Database connected!\n`);
 });
 
-app.listen(configuration.server.port, function () {
+server.listen(configuration.server.port, function () {
   process.stdout.write(` - Management Console started on port ${configuration.server.port}!\n`);
+});
+
+
+var users = [];
+
+var usersData = {
+	'chantal': {
+		name: 'chantal',
+		firstName: 'Chantal',
+		lastName: 'Lamarre'
+	},
+	'eduardo': {
+		name: 'eduardo',
+		firstName: 'Eduardo',
+		lastName: 'Arevalo'
+	},
+	'pierre-samuel': {
+		name: 'pierre-samuel',
+		firstName: 'Pierre-Samuel',
+		lastName: 'Dubé'
+	},
+	'sabrina': {
+		name: 'sabrina',
+		firstName: 'Sabrina',
+		lastName: 'Vigneux'
+	}
+  };
+
+io.on('connection', function (socket) {
+	
+	// Ack & Register
+	socket.emit('ack', { id: socket.id });
+	socket.on('register', function (data) {
+		socket.emit('status', users);
+		var i = users.map(function(u) { return u.id; }).indexOf(socket.id);
+		if(i<0){
+			var data = usersData[data.username];
+			data.id = socket.id;
+			users.push(data);
+		}
+		socket.broadcast.emit('status', users);
+	});	
+	socket.on('subscribe', function(data){
+		socket.join(data.room);
+	});
+	socket.on('unsubscribe', function(data){
+		socket.leave(data.room);
+	});
+	socket.on('update', function(data) {
+		if(data.document){
+			socket.broadcast.to(data.document).emit('update', data);
+		}
+   });
+	// Disconnect
+	socket.on('disconnect', function() {
+		var i = users.map(function(u) { return u.id; }).indexOf(socket.id);
+		users.splice(i, 1);
+		socket.broadcast.emit('status', users);
+   });
+   
 });

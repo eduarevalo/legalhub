@@ -22,6 +22,7 @@ function authInterceptor(API, auth) {
 }
 legalHub
     .constant('API', location.origin +'/api/')
+	.constant('SOCKET', location.origin)
     .factory('authInterceptor', authInterceptor)
     .config(function ($httpProvider, $stateProvider, $urlRouterProvider, $locationProvider){
 

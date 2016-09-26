@@ -10581,6 +10581,7 @@ h6 small,
   z-index: 10;
   margin-bottom: -70px;
   padding: 0 11px;
+  top: 0px;
 }
 
 /*@media (min-width: 768px) {
@@ -11411,14 +11412,15 @@ a.lv-footer:hover {
 }
 
 #chat {
+  z-index: 1 !important;
   position: fixed;
   background: #fff;
-  padding: 20px 0;
+  padding: 35px 0;
   width: 260px;
   box-shadow: 0 0 10px rgba(51, 51, 51, 0.38);
   height: calc(100% - 65px);
   right: -280px;
-  top: 65px;
+  top: 115px;
   -webkit-transition: all;
   -o-transition: all;
   transition: all;

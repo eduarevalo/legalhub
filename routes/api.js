@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+var userRouter = require(__base + 'routes/user');
+router.use('/user', userRouter);
+
 var collectionRouter = require(__base + 'routes/collection');
 router.use('/collection', collectionRouter);
 

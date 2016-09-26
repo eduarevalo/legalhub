@@ -78,6 +78,8 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			$scope.setSchema(version.schema);
 			editor.setContent(version.content);
 			$scope.setStyle(version.style);
+			editor.id = $scope.document.id;
+			collaboration.openDocument($scope.document.id);
 		});
 	};
 	$scope.saveDocument = function(newDocument, cb){

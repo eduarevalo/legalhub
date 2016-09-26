@@ -69,9 +69,9 @@
               {{ document.code }}
             </td>
             <td>
-			  <button class="btn btn-primary btn-icon" title="Edit" ng-if="hasRendition(document, 'editor')" ng-click="goToEditDocument(document.id, document.title)"><i class="zmdi zmdi-edit"></i></button>
+			  <button class="btn btn-primary btn-icon" title="Edit" ng-if="mactrl.userData.logged && hasRendition(document, 'editor')" ng-click="goToEditDocument(document.id, document.title)"><i class="zmdi zmdi-edit"></i></button>
 			  <span class="menu-spacer"/>
-			  <button class="btn btn-warning btn-icon" title="Engross" ng-if="hasRendition(document, 'pdf')" ng-click="goToEngrossDocument(document)"><i class="zmdi zmdi-arrow-split"></i></button>
+			  <button class="btn btn-warning btn-icon" title="Engross" ng-if="mactrl.userData.logged  && hasRendition(document, 'pdf')" ng-click="goToEngrossDocument(document)"><i class="zmdi zmdi-arrow-split"></i></button>
             </td>
           </tr>
         </table>

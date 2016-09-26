@@ -2,17 +2,17 @@ legalHub
 
     .service('user', function($http, API, auth) {
       var self = this;
-      self.getQuote = function() {
-        return $http.get(API + '/auth/quote')
-      }
+      /*self.getQuote = function() {
+        return $http.get(API + 'user/quote')
+      }*/
       self.register = function(username, password) {
-        return $http.post(API + '/auth/register', {
+        return $http.post(API + 'user/register', {
           username: username,
           password: password
         })
       }
       self.login = function(username, password) {
-        return $http.post(API + '/auth/login', {
+        return $http.post(API + 'user/login', {
           username: username,
           password: password
         })

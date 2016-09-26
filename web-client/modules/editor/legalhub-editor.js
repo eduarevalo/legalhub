@@ -4,6 +4,7 @@
 
 var legalHubEditor = function(el){
 	var lhe = this;
+	this.id = '';
 	this.ie = (typeof document.selection != "undefined" && document.selection.type != "Control") && true;
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.mode = 'edit'; /* edit || preview*/
@@ -14,6 +15,8 @@ var legalHubEditor = function(el){
 	this.schema = {};
 	this.minNLPScore = 0.8;
 	this.trackingChangesMode = false;
+	this.currentNode;
+	this.lastNode;
 
 	/*this.pageConfig = {
 		size: {
@@ -59,6 +62,7 @@ var legalHubEditor = function(el){
 			this.contentElement.innerHTML = '';
 			this.contentElement.appendChild(content);
 		}
+		lhe.initBlockEvents();
 	};
 
 	this.setNewDocument = function(){
@@ -446,7 +450,9 @@ var legalHubEditor = function(el){
 	};
 
 	this.newBlock = function(emptyOrHtml){
-		return lhe.newElement(lhe.config.block.elements[0], emptyOrHtml);
+		var element = lhe.newElement(lhe.config.block.elements[0], emptyOrHtml);
+		lhe.addCollaborationEvents(element);
+		return element;
 	}
 
 	this.newFloatingElement = function(type){
@@ -937,6 +943,13 @@ var legalHubEditor = function(el){
 		}
 		return node;
 	}
+	
+	this.initBlockEvents = function(){
+
+		lhe.contentElement.querySelectorAll('p').forEach(function(block){
+			lhe.addCollaborationEvents(block);
+		});
+	};
 	/*
 		Initialize editor element events.
 		Instead of setting many events listeners for each action.
@@ -949,6 +962,12 @@ var legalHubEditor = function(el){
 		supportedCoreEvents.forEach(function(eventName){
 			lhe.events[eventName] = lhe.contentElement.addEventListener(eventName, function(event){
 				lhe.currentNode = lhe.getSelectionNode();
+				var block = lhe.getBlock(lhe.currentNode);
+				if(lhe.lastNode && block != lhe.lastNode){
+					if(collaboration && lhe.lastNode.id){
+						collaboration.updateDocument(lhe.id, {id: lhe.lastNode.id, html: lhe.lastNode.innerHTML});
+					}
+				}
 				//console.log('change scope');
 				var context = lhe.getEventContext(event, eventName);
 				//console.log(context);
@@ -977,6 +996,7 @@ var legalHubEditor = function(el){
 						event.preventDefault();
 					}
 				}
+				lhe.lastNode = block;
 			});
 		});
 		/*lhe.events['core.paste'] = lhe.contentElement.addEventListener('paste', function(event){
@@ -1632,6 +1652,18 @@ var legalHubEditor = function(el){
 		}
 	}
 
+	this.addCollaborationEvents = function(element){
+		/*element.addEventListener("focusin", function( event ) {
+			event.target.style.background = "pink";    
+		}, true);
+		element.addEventListener('blur', function(){
+			if(collaboration){
+			alert('bvlur');
+				collaboration.updateDocument(lhe.id, {id: lhe.getId(element), html: element.innerHTML});
+			}
+		});*/
+	}
+	
 	/*
 		Initialize actions
 	*/

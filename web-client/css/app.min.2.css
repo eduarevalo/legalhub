@@ -359,11 +359,11 @@
 
 .lc-block {
   background: #fff;
-  box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+  /*box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);*/
   border-radius: 2px;
   width: 500px;
   display: inline-block;
-  margin-top: 42px;
+  /*margin-top: 42px;*/
   vertical-align: middle;
   position: relative;
 }
@@ -378,9 +378,9 @@
   right: -25px;
 }
 
-.lc-block:not(.toggled) {
+/*.lc-block:not(.toggled) {
   display: none;
-}
+}*/
 
 @media (max-width: 767px) {
   .lc-block {
