@@ -27,11 +27,11 @@ var legalHubEditor = function(el){
 			left: '1in'
 		}
 	};*/
-	
+
 	this.inEditMode = function(){
 		return this.mode == 'edit';
 	}
-	
+
 	this.setMode = function(mode){
 		this.mode = mode;
 		this.contentElement.contentEditable = this.inEditMode();
@@ -1440,18 +1440,16 @@ var legalHubEditor = function(el){
 
 	this.getHtml = function(clean){
 		var documentNode = lhe.contentElement.cloneNode(true);
-		if(clean){
-			documentNode.querySelectorAll(".page-spacer").forEach(function(ele){
-				ele.parentNode.removeChild(ele);
-			});
-		}	
+		documentNode.querySelectorAll(".page-spacer").forEach(function(ele){
+			ele.parentNode.removeChild(ele);
+		});
 		var content = documentNode.innerHTML;
 		if(clean){
 			content = content.replace(/\u200C/, '');
 		}
 		return content;
 	}
-	
+
 	this.wrapWords = function(node){
 		if(node.nodeType == 3 && node.data.trim().length > 0){
 			if(node.parentNode.childNodes.length ==1){
@@ -1475,7 +1473,7 @@ var legalHubEditor = function(el){
 			}
 		}
 	};
-	
+
 	this.refreshPageFormat = function(){
 		if(!this.inEditMode()){
 			lhe.wrapWords(lhe.contentElement);
@@ -1516,7 +1514,7 @@ var legalHubEditor = function(el){
 			lhe.formatElement.innerHTML = '';
 		}
 	};
-	
+
 	/* Line numbers */
 	this.toggleLineNumbers = function(numberingRule){
 		if(lhe.formatElement.getAttribute('number-rule') == numberingRule || !this.showLineNumbers){
@@ -1641,7 +1639,7 @@ var legalHubEditor = function(el){
 		lhe.rootElement = el;
 		lhe.init();
 	};
-	
+
 	this.setElement(el);
 
 };

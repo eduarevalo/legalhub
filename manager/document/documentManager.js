@@ -60,11 +60,11 @@ var setContent = (document, params, cb) => {
 
 var search = (searchKeys, projectionKeys, cb) => {
   documentDao.search(searchKeys, projectionKeys, function(err, documents){
-  
+
 	  var promises = documents.map(function(document){
-	  
+
         return new Promise(function(resolve, reject) {
-			
+
           getRenditions(document.id, function(err, renditions){
             try{
               document.renditions = renditions;
@@ -78,7 +78,7 @@ var search = (searchKeys, projectionKeys, cb) => {
       Promise.all(promises).then(function(){
         cb(err, documents);
       });
-  
+
   });
 }
 
@@ -128,17 +128,15 @@ var extractLinksFromContent = (fragment) => {
 						documentId = billNumberNodes[0].getAttribute("idref");
 					}
 				}
-				var baseLink = { type: 'amending' };
-				if(billNumber){
-					baseLink.bill = billNumber;
-				}
-				if(documentId){
-					baseLink.idref = documentId;
-				}
 				var refLines = xpath.select("//p[child::span[@itemtype='ref']]", doc);
 				for(var it=0; it<refLines.length; it++){
-					console.log(refLines[it].toString());
-					var link = {};
+					var link = { type: 'amending' };
+          if(billNumber){
+            link.bill = billNumber;
+          }
+          if(documentId){
+            link.idref = documentId;
+          }
 					link.instruction = xpathUtils.getText(refLines[it]);
 					var matches = link.instruction.split(/(strike|insert)\s*\"([^\"]+)\"/gi);
 					var insert = false, strike = false;
@@ -171,16 +169,15 @@ var extractLinksFromContent = (fragment) => {
 						link.scope.lines = [];
 						for(var i=from; i<to+1; i++){
 							link.scope.lines.push(i);
-						}	
+						}
 					}else if(from){
 						link.scope.lines = [from];
 					}
-					links.push(Object.assign(baseLink, link));
+					links.push(link);
 				}
 				if(links.length > 0){
 					fragment.links = links;
 				}
-				console.log(links);
 				break;
 		}
 	}
@@ -197,25 +194,25 @@ var saveRendition = (params, collectionId, cb) => {
   save(document, params, cb);
 }
 
-var upload = (data, cb) => {	
+var upload = (data, cb) => {
 	try{
-	
+
 		var parser = data.parser ? parserFactory.getParser(data.parser) : parserFactory.guessParser(data.fileName, data.file);
 		if(parser){
-			
+
 			parser.marshall(data, function(params){
-			
+
 				// Could be called mutiple times depending on the parser
 				saveRendition(params, data.collectionId, cb);
-				
+
 			});
-			
+
 		}else{
-		
+
 			// Original format upload
 			saveRendition({filePath: uploadFilePath, rendition: 'original'}, data.collectionId, cb);
-		}		
-	
+		}
+
 	}catch(err){
 	  console.log(err);
 	}
