@@ -39,21 +39,22 @@ exports.save = (data, callback) => {
       var saveAgain = false;
       if(results.result.upserted && results.result.upserted.length > 0 && results.result.upserted[0]._id){
         collection.id = results.result.upserted[0]._id;
-        if(collection.qrCode == undefined || !fs.statSync(collection.qrCode)){
-          var type = 'svg';
-          var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
-          imageUtils.createQRCode(configuration.app.qrCodeDomainCollection + collection.id, type, imgPath);
-          collection.qrCode = imgPath;
-          saveAgain = true;
-        }
-        if(collection.icon == undefined || !fs.statSync(collection.icon)){
-          var type = 'svg';
-          var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
-          imageUtils.createIcon(configuration.app.qrCodeDomainCollection + collection.id, 200, imgPath);
-          collection.icon = imgPath;
-          saveAgain = true;
-        }
-      }
+		saveAgain = true;
+	  }
+	  if(collection.qrCode == undefined || !fs.existsSync(__base + collection.qrCode)){
+		var type = 'svg';
+		var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
+		imageUtils.createQRCode(configuration.app.qrCodeDomainCollection + collection.id, type, imgPath);
+		collection.qrCode = imgPath;
+		saveAgain = true;
+	  }
+	  if(collection.icon == undefined || !fs.existsSync(__base + collection.icon)){
+		var type = 'svg';
+		var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
+		imageUtils.createIcon(configuration.app.qrCodeDomainCollection + collection.id, 200, imgPath);
+		collection.icon = imgPath;
+		saveAgain = true;
+	  }
       if(saveAgain){
         collectionDao.save(collection, callback);
       }else{

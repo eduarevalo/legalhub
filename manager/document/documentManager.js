@@ -1,7 +1,7 @@
 "use strict";
 
 // System
-const path = require('path');
+const path = require('path'), fs = require('fs');
 
 // Installed dependencies
 const chance = require('chance').Chance(),
@@ -26,7 +26,7 @@ var parserFactory = require(__base + 'manager/parser/parserFactory');
 
 var save = (document, params, cb) => {
   suggestProperties(document);
-  if(params.rendition == 'editor' && params.content != undefined){
+  if(params && params.rendition == 'editor' && params.content != undefined){
 	extractDocumentPropertiesFromContent(params.content, document);
   }
   if(document.id == undefined || document.id.length == 0){
@@ -39,7 +39,9 @@ var save = (document, params, cb) => {
         document.id = results.result.upserted[0]._id;
       }
     }
-    setContent(document, params, cb);
+	if(params){
+		setContent(document, params, cb);
+	}
   });
 }
 
@@ -97,7 +99,7 @@ var suggestProperties = (document) => {
   if(document.code == undefined){
     document.code = suggestCode(document)
   }
-  if(document.qrCode == undefined){
+  if(document.qrCode == undefined || !fs.existsSync(document.qrCode)){
     document.qrCode = suggestQrCode(document);
   }
 }
@@ -247,3 +249,4 @@ exports.save = save;
 exports.setContent = setContent;
 exports.search = search;
 exports.upload = upload;
+exports.suggestQrCode = suggestQrCode;
