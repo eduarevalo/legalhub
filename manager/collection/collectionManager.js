@@ -1,4 +1,7 @@
 "use strict";
+// System dependencies
+const fs = require('fs');
+
 // Installed dependencies
 const chance = require('chance').Chance();
 
@@ -36,14 +39,14 @@ exports.save = (data, callback) => {
       var saveAgain = false;
       if(results.result.upserted && results.result.upserted.length > 0 && results.result.upserted[0]._id){
         collection.id = results.result.upserted[0]._id;
-        if(collection.qrCode == undefined){
+        if(collection.qrCode == undefined || !fs.statSync(collection.qrCode)){
           var type = 'svg';
           var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
           imageUtils.createQRCode(configuration.app.qrCodeDomainCollection + collection.id, type, imgPath);
           collection.qrCode = imgPath;
           saveAgain = true;
         }
-        if(collection.icon == undefined){
+        if(collection.icon == undefined || !fs.statSync(collection.icon)){
           var type = 'svg';
           var imgPath = pathUtils.join(pathUtils.getMediaFilePath({ext: type}));
           imageUtils.createIcon(configuration.app.qrCodeDomainCollection + collection.id, 200, imgPath);
