@@ -7,9 +7,9 @@ legalHub
     .controller('homeCtrl', function($timeout, $state, $scope, growlService, user, auth, SOCKET){
 
         var self = this;
-		
+
 		$scope.user = {name: '', password: ''};
-		
+
 		this.userData = {logged: false};
 		this.connected = false;
 
@@ -19,7 +19,7 @@ legalHub
 				self.userData = res.data.data;
 				self.userData.logged = true;
 				localStorage.setItem( 'user', JSON.stringify(self.userData) );
-				$('#login-window').removeClass('open');	
+				$('#login-window').removeClass('open');
 				$scope.welcome();
 			}
         }
@@ -28,26 +28,26 @@ legalHub
           user.login(self.username, self.password)
           .then(handleRequest, handleRequest)
         }*/
-        
+
 		self.register = function() {
           user.register(self.username, self.password).then(handleRequest, handleRequest)
         }
-        
+
 		self.getQuote = function() {
           user.getQuote()
           .then(handleRequest, handleRequest)
         }
-        
+
 		self.logout = function() {
           auth.logout && auth.logout()
         }
-		
+
         self.isAuthed = function() {
           return auth.isAuthed ? auth.isAuthed() : false
         }
 
 		$scope.logout = function(){
-			$('#login-window').removeClass('open');	
+			$('#login-window').removeClass('open');
 			growlService.growl('See you soon '+self.userData.firstName+'!', 'inverse');
 			self.users = [];
 			self.connected = false;
@@ -57,13 +57,13 @@ legalHub
 				localStorage.removeItem('user');
 			}, 100);
 		}
-		
+
 		$scope.login = function(){
 			user.login($scope.user.name, $scope.user.password).then(handleRequest, handleRequest);
 		}
-		
+
 		self.users = [];
-		
+
 		this.connect = function(){
 			collaboration = new legalHubCollaboration(function(data){
 				self.users = data;
@@ -71,16 +71,15 @@ legalHub
 			});
 			collaboration.connect(SOCKET, self.userData.name, function(){
 				self.connected = true;
-				growlService.growl("You're now collaborating with others", 'inverse');
 				$scope.$apply();
 			});
 		}
-		
+
 		$scope.welcome = function(){
 			growlService.growl('Welcome back '+self.userData.firstName+'!', 'inverse');
 			self.connect();
 		}
-		
+
         //Welcome Message
 		var userData = localStorage.getItem( 'user' );
 		if(userData){

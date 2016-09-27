@@ -11,6 +11,8 @@ var legalHubEditor = function(el){
 	this.rootElement;
 	this.contentElement;
 	this.formatElement;
+	this.commentElement;
+	this.mousemoveCommentTimeout;
 	this.showLineNumbers = false;
 	this.schema = {};
 	this.minNLPScore = 0.8;
@@ -49,8 +51,23 @@ var legalHubEditor = function(el){
 		this.formatElement = document.createElement('div');
 		this.formatElement.setAttribute('type', 'format');
 		this.formatElement.className = 'format';
+		this.commentElement = document.createElement('button');
+		this.commentElement.setAttribute('type', 'comment');
+		this.commentElement.className = 'btn btn-icon btn-primary waves-circle comment';
+		this.commentElement.addEventListener('click', function(event){
+			var float = document.createElement('div');
+			float.className = 'talk-bubble tri-right left-top comment-bubble';
+			float.innerHTML = '<div class="talktext"><p>This one adds a right triangle on the left, flush at the top by using .tri-right and .left-top to specify the location.</p></div>';
+			lhe.rootElement.appendChild(float);
+			var floatEl = $(float);
+			floatEl.css({'top' : (lhe.currentNode.getClientRects()[0].top) + 'px'});
+			floatEl.css({'left' : (lhe.currentNode.getClientRects()[0].left) + 'px'});
+		});
+		this.commentElement.innerHTML= '<i class="zmdi zmdi-comments"></i>';
+
 		this.rootElement.appendChild(this.contentElement);
 		this.rootElement.appendChild(this.formatElement);
+		this.rootElement.appendChild(this.commentElement);
 		this.setMode(this.mode);
 		lhe.initEvents();
 	};
@@ -943,7 +960,7 @@ var legalHubEditor = function(el){
 		}
 		return node;
 	}
-	
+
 	this.initBlockEvents = function(){
 
 		lhe.contentElement.querySelectorAll('p').forEach(function(block){
@@ -999,6 +1016,42 @@ var legalHubEditor = function(el){
 				lhe.lastNode = block;
 			});
 		});
+
+		lhe.rootElement.addEventListener('mousemove', function(event){
+			if(lhe.mousemoveCommentTimeout){
+				clearTimeout(lhe.mousemoveCommentTimeout);
+				lhe.mousemoveCommentTimeout = null;
+			}
+			lhe.mousemoveCommentTimeout = setTimeout(function(){
+				$('.comment-paragraph').removeClass('comment-paragraph');
+				var range = 20;
+				var commentEl = $(lhe.commentElement);
+				var el = $(lhe.contentElement);
+				var left = el.offset().left;
+				if(false && left + range > event.clientX){
+					commentEl.show();
+					commentEl.css({'top' : (event.clientY-20) + 'px'});
+					commentEl.css({'left' : (left -20) + 'px'});
+				}else{
+					var leftMax = el.outerWidth() + left;
+					if(lhe.currentNode && leftMax - range < event.clientX){
+						var x = leftMax - 20, y = event.clientY - 20;
+						//var nearest = $.nearest({x, y}, 'p', {sort: 'nearest', tolerance: 0});
+						//$(nearest[0]).addClass('comment-paragraph');
+						var currentBlock = lhe.getBlock(lhe.currentNode);
+						if(currentBlock){
+							$(currentBlock).addClass('comment-paragraph');
+							commentEl.show();
+							commentEl.css({'top' : (currentBlock.getClientRects()[0].top - 10) + 'px'});
+							commentEl.css({'left' : x + 'px'});
+						}
+					}else{
+						commentEl.hide();
+					}
+				}
+			}, 1);
+		});
+
 		/*lhe.events['core.paste'] = lhe.contentElement.addEventListener('paste', function(event){
 			alert('paste');
 		});*/
@@ -1495,10 +1548,12 @@ var legalHubEditor = function(el){
 	};
 
 	this.refreshPageFormat = function(){
+		lhe.formatElement.querySelectorAll("div[type='page']").forEach(function(page){
+			page.parentNode.removeChild(page);
+		})
 		if(!this.inEditMode()){
 			lhe.wrapWords(lhe.contentElement);
 			var content = $(lhe.contentElement);
-			lhe.formatElement.innerHTML = '';
 			var pageNumber = 1, lastPagePosition, maxSpanPosition, spacerHeight;
 			lhe.contentElement.querySelectorAll("span[type='word']").forEach(function(spanEl){
 				var span = $(spanEl);
@@ -1531,7 +1586,6 @@ var legalHubEditor = function(el){
 			lhe.contentElement.querySelectorAll(".page-spacer").forEach(function(div){
 				div.parentNode.removeChild(div);
 			});
-			lhe.formatElement.innerHTML = '';
 		}
 	};
 
@@ -1654,7 +1708,7 @@ var legalHubEditor = function(el){
 
 	this.addCollaborationEvents = function(element){
 		/*element.addEventListener("focusin", function( event ) {
-			event.target.style.background = "pink";    
+			event.target.style.background = "pink";
 		}, true);
 		element.addEventListener('blur', function(){
 			if(collaboration){
@@ -1663,7 +1717,7 @@ var legalHubEditor = function(el){
 			}
 		});*/
 	}
-	
+
 	/*
 		Initialize actions
 	*/
