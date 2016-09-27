@@ -1,9 +1,15 @@
 var legisSchema = {
 	'@lineNumberRules': {
 		'sections': {
-			include: ["[itemtype='section']", "[itemtype='quote']"]
+			include: ["[itemtype='section']", "[itemtype='quote']"],
+			format: "${line}"
 		},
 		'everything': {
+			format: "${line}"
+		},
+		'page':{
+			include: ["[itemtype='section']", "[itemtype='quote']"],
+			format: "${page} : ${page-line}"
 		}
 	},
 	"@name" : 'bill',

@@ -1604,10 +1604,11 @@ var legalHubEditor = function(el){
 			}else if(lhe.lineNumbersElement){
 				numberingRule = lhe.formatElement.getAttribute('number-rule');
 			}
+			var format = lhe.schema['@lineNumberRules'][numberingRule].format ? lhe.schema['@lineNumberRules'][numberingRule].format : "${page} : ${page-line-number}";
 			if(lhe.showLineNumbers){
 				var lastPosition = 0, lastPosition2 = 0;
-				var lastNumber = 0, lastNumber2 = 0;
-				var currentPage = -1;
+				var lastNumber = 0, lineNumber = 0;
+				var currentPage = -1, pageLineNumber = 1;
 				var elements = lhe.contentElement.querySelectorAll("p, th, td");
 				lhe.formatElement.querySelectorAll("div[type='page'] .lineNumber").forEach(function(el){ el.parentNode.removeChild(el); });
 				var pages = lhe.formatElement.querySelectorAll("div[type='page']");
@@ -1628,6 +1629,7 @@ var legalHubEditor = function(el){
 								toNumber = lhe.validateAnyCondition(lhe.getMasterLevels(element), lhe.schema['@lineNumberRules'][numberingRule].include, true);
 							}
 						}
+
 
 						if(toNumber){
 
@@ -1657,15 +1659,17 @@ var legalHubEditor = function(el){
 								var top = $(words[it]).position().top;
 								if(top > lastPosition2){
 									lastPosition2 = top;
-									words[it].setAttribute("line-number", ++lastNumber2);
+									words[it].setAttribute("line-number", ++lineNumber);
+									words[it].setAttribute("page-line-number", pageLineNumber++);
 									if(pages[currentPage+1]){
 										var pageTop = $(pages[currentPage+1]).position().top;
 										if(pageTop < top){
 											currentPage++;
+											pageLineNumber = 1;
 										}
 									}
 									words[it].setAttribute("page-number", currentPage+1);
-									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + (currentPage+1)+ ':' + lastNumber2 + '</div>';
+									divs += '<div class="lineNumber" style="top:' + top + 'px;">' + format.replace("${page}", currentPage+1).replace("${line}", lineNumber).replace("${page-line}", pageLineNumber) + '</div>';
 								}/*else{
 									element.childNodes[it].parentNode.removeChild(element.childNodes[it]);
 								}*/

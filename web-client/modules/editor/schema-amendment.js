@@ -1,9 +1,11 @@
 var schemaAmendment = {
 	'@lineNumberRules': {
 		'body': {
-			include: ["[itemtype='body']"]
+			include: ["[itemtype='body']"],
+			format: "${line}"
 		},
 		'everything': {
+			format: "${line}"
 		}
 	},
 	"@properties":{
