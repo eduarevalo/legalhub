@@ -42,6 +42,9 @@
   bottom: auto;
   border: 22px solid;
   border-color: lightyellow transparent transparent transparent;
+  /*box-shadow: -3px 3px 3px 0px rgba(0, 0, 0, 0.4);
+  transform-origin: 0 0;*/
+  /*transform: rotate(-45deg);*/
 }
 
 /* Right triangle, left side slightly down */

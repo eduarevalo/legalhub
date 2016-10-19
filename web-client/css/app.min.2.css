@@ -3069,7 +3069,7 @@ hr.fc-divider {
 .chosen-container .chosen-results {
   margin: 0;
   padding: 0;
-  max-height: 300px;
+  max-height: 120px;
 }
 
 .chosen-container .chosen-results li {

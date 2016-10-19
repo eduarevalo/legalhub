@@ -327,14 +327,10 @@
 		</div>
 		<div ng-if="mode == 'edit'">
 
-			<div id="editor" class="editor document" ng-init="initEditor()" schema="{{schema}}">
-			</div>
-			  <!--<div class="card">
-					<div style="display:flex;">
-						<div style="flex:1;" id="editor" contenteditable="true" ng-init="initEditor()" schema="{{schema}}">
-						</div>
-					</div>
-			  </div>-->
+			<center>
+				<div id="editor" class="editor document" ng-init="initEditor()" schema="{{schema}}"></div>
+			</center>
+
 		</div>
 	</div>
 
@@ -342,5 +338,43 @@
 
 	</section>
 
+	
+	<div class="dropdown dropup stop-propagate comment-bubble" id="comment-bubble" uib-dropdown ><!--on-toggle="onCommentToggle(open)"-->
+			<button class="btn btn-icon btn-primary waves-circle dropdown-toggle" uib-dropdown-toggle><i class="zmdi zmdi-comments"></i></button>
+			<div class="lh-editor-comment-posting dropdown-menu pull-right">
+			
+				<div style="margin:0px 3px;width: 342px;">
+					
+						<select  chosen multiple 
+							ng-model="comment.recipients" 
+							ng-options="k as v for (k,v) in users"
+							placeholder-text-multiple="'To everybody'"
+							no-results-text="'Could not find any users'"
+							class="lh-editor-comment-recipient" style="width: 300px;">
+							<option value=""></option>
+						</select>
+						
+				</div>
+				
+				<div class="card-body lh-comment-text">
+						<textarea class="wp-text" ng-model="comment.text" placeholder="Write Something...">{{comment.text}}</textarea>
+				</div>
+
+                <ul class="list-unstyled clearfix wpb-actions">
+                    <li class="wpba-attrs lh-comment-type">
+                        <ul class="list-unstyled list-inline m-l-0 m-t-5">
+							<li><a ng-class="{selected: comment.type == 'notification'}" ng-click="setCommentType('notification');" data-wpba="link"><i class="zmdi zmdi-notifications-none"></i></a></li>
+							<li><a ng-class="{selected: comment.type == 'question'}" ng-click="setCommentType('question')" data-wpba="image" title="question"><i class="zmdi zmdi-help-outline"></i></a></li>
+							<li><a ng-class="{selected: comment.type == 'warning'}" ng-click="setCommentType('warning')" data-wpba="video" title="warning"><i class="zmdi zmdi-alert-circle-o"></i></a></li>
+							<li><a ng-class="{selected: comment.type == 'error'}" ng-click="setCommentType('error')" style="color: #F44336;"><i class="zmdi zmdi-alert-triangle"></i></a></li>
+							<li><a ng-class="{selected: comment.type == 'information'}" ng-click="setCommentType('information')"><i class="zmdi zmdi-info-outline"></i></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="pull-right"><button class="btn btn-primary btn-sm" ng-click="addComment();">Comment</button></li>
+                </ul>
+            </div>
+	</div>
+	
 	<footer id="footer" data-ng-include src="'web-client/modules/home/footer.html'"></footer>
 </div>

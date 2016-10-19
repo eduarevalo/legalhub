@@ -1,24 +1,14 @@
-<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
-
-<section id="main">
-  <aside id="sidebar" data-ng-include="'web-client/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
-
-  <aside id="chat" data-ng-include="'web-client/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
-
-  <section id="content">
-
-    <div class="container" data-ng-controller="versionCtrl as vCtrl">
+<div class="container" data-ng-controller="versionCtrl as vCtrl">
 
       <div class="card">
-        <div class="card-header">
+        
+		<div class="card-header">
           <h2>Versions <small>Click on the version you want to see</small></h2>
         </div>
 
         <div class="card-body">
 
-
-          <div class="container" >
-
+		  <div class="container" >
             <div class="row">
               <div class="col-md-12">
 
@@ -37,17 +27,16 @@
                         </ul>
                         </small>
                     </div>
+					
               </div>
             </div>
-            <br/><br/>
-          </div>
-
+            
+			<br/><br/>
+          
+		  </div>
 
         </div>
+		
       </div>
 
-    </div>
-  </section>
-</section>
-
-<footer id="footer" data-ng-include="'web-client/template/footer.html'"></footer>
+</div>

@@ -1,19 +1,20 @@
 <header id="header" data-current-skin="blue" data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
 
 <section id="main">
+
     <aside id="sidebar" data-ng-include="'web-client/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
 
     <aside id="chat" data-ng-include="'web-client/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
 
-    <section id="content">
+    <section id="content" data-ui-view>
 
         <div class="container">
 
           <div class="block-header">
             <h2>Current workspaces!</h2>
 
-            <ul class="actions">
-              <li>
+            <ul class="actions" ng-if="mactrl.userData.logged">
+              <!--<li>
                 <a href="">
                   <i class="zmdi zmdi-trending-up"></i>
                 </a>
@@ -22,21 +23,24 @@
                 <a href="">
                   <i class="zmdi zmdi-check-all"></i>
                 </a>
-              </li>
+              </li>-->
               <li class="dropdown" uib-dropdown="" style="">
                 <a href="" uib-dropdown-toggle="" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                  <i class="zmdi zmdi-more-vert"></i>
+                  <i class="zmdi zmdi-settings"></i>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li>
-                    <a data-ui-sref="manager.collection" data-ng-click="mactrl.sidebarStat($event)">Manage workspaces</a>
+                    <a data-ui-sref="home.collection-manager" data-ng-click="mactrl.sidebarStat($event)">Manage workspaces</a>
                   </li>
                   <li>
-                    <a data-ui-sref="manager.document" data-ng-click="mactrl.sidebarStat($event)">Manage documents</a>
+                    <a data-ui-sref="home.document-manager" data-ng-click="mactrl.sidebarStat($event)">Manage documents</a>
+                  </li>
+				  <li>
+                    <a data-ui-sref="home.user-manager" data-ng-click="mactrl.sidebarStat($event)">Manage users</a>
                   </li>
                   <li>
-                    <a data-ui-sref="manager.upload" data-ng-click="mactrl.sidebarStat($event)">Upload documents</a>
+                    <a data-ui-sref="home.upload-manager" data-ng-click="mactrl.sidebarStat($event)">Upload documents</a>
                   </li>
                 </ul>
               </li>
@@ -62,7 +66,9 @@
             </div>
           </div>
         </div>
-    </section>
+    
+	</section>
+
 </section>
 
 <footer id="footer" data-ng-include="'web-client/modules/home/footer.html'"></footer>

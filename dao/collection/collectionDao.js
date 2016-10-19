@@ -19,7 +19,7 @@ exports.getCollectionByCode = (code, cb) => {
 }
 
 exports.search = (searchKeys, projection,  cb) => {
-  projection = projection || {};
+  projection = projection || [];
   var countKeyIndex = projection.indexOf('count');
   if(countKeyIndex>-1){
     projection.splice(countKeyIndex, 1 );

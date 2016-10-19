@@ -150,8 +150,5 @@ span[itemtype=add]{
 }
 [float]{
   position: absolute;
-  background: red;
-  top:0px;
-  left:0px
-  z-index: 4;
+  z-index: 5;
 }

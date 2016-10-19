@@ -74,12 +74,7 @@ io.on('connection', function (socket) {
 	socket.emit('ack', { id: socket.id });
 	socket.on('register', function (data) {
 		socket.emit('status', users);
-		var i = users.map(function(u) { return u.id; }).indexOf(socket.id);
-		if(i<0){
-			var data = usersData[data.username];
-			data.id = socket.id;
-			users.push(data);
-		}
+		users.push({ name: data.username});
 		socket.broadcast.emit('status', users);
 	});	
 	socket.on('subscribe', function(data){
@@ -101,3 +96,7 @@ io.on('connection', function (socket) {
    });
    
 });
+
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 

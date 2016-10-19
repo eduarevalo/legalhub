@@ -5,7 +5,7 @@ angular.module('legalHub').controller('homeCollectionCtrl', function($scope, $st
     }
   );
   $scope.goTo = function(collection){
-    $state.go('collection', {
+    $state.go('home.collection', {
       code: collection.code,
       collectionId: collection.id,
       title: collection.title,

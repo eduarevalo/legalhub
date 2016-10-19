@@ -41,7 +41,7 @@ angular.module('legalHub').controller('documentCtrl', function($timeout, $scope,
     return $sce.trustAsHtml(html);
   };
   $scope.goToVersions = function(document){
-    $state.go('versions', {id: document.id, code: document.code});
+    $state.go('home.versions', {id: document.id, code: document.code});
   }
   $scope.hasRendition = function(type){
 	if($scope.document){

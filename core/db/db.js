@@ -1,4 +1,5 @@
 var mongodb = require('mongodb');
+var ObjectID = mongodb.ObjectID;
 var MongoClient = mongodb.MongoClient;
 var db;
 
@@ -19,7 +20,9 @@ exports.find = function(collection, query, projection, cb){
   }
   var cursor = db.collection(collection).find(query, projection);
   cursor.each(function(err, doc){
-  	cb(null, doc);
+	if(doc){
+		cb(null, doc);
+	}
   });
 }
 
@@ -38,11 +41,8 @@ exports.save = function(collection, document, options, cb){
   db.collection(collection).save(document, options, cb);
 }
 
-exports.insert = function(collection, documents, options, callback){
-  db.collection(collection).insert(documents, options, function(err, result){
-    if(err) throw err;
-    callback(result);
-  });
+exports.insert = function(collection, documents, options, cb){
+  db.collection(collection).insert(documents, options, cb);
 }
 
 exports.count = function(collection, query, options, callback){
@@ -64,4 +64,8 @@ exports.drop = function(collection, callback){
     if(err) throw err;
     callback();
   });
+}
+
+exports.getId = function(id){
+	return id ? new ObjectID(id) : new ObjectID();
 }

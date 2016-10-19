@@ -1,13 +1,4 @@
-<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
-
-<section id="main">
-  <aside id="sidebar" data-ng-include="'web-client/template/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
-
-  <aside id="chat" data-ng-include="'web-client/template/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
-
-  <section id="content">
-
-    <div class="container" data-ng-controller="engrossCtrl as eCtrl">
+<div class="container" data-ng-controller="engrossCtrl as eCtrl">
 
       <div class="card">
         <div class="card-header">
@@ -23,11 +14,11 @@
 
         <div class="card-body">
 
-
           <div class="container" >
 
             <div class="row col-md-12" ng-if="currentStep == 1">
-              <div class="col-md-6">
+            
+				<div class="col-md-6">
 
 
         			  <div class="card">
@@ -38,15 +29,15 @@
 
 
         					<div class="animated bgm-teal amendment-card" ng-repeat="amendment in awaiting" id="amendment{{$index}}" amendment-id="{{amendment.id}}" style="visibility: hidden;">
-                    <p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
-                  </div>
+									<p><center style="vertical-align:middle;"><br/>{{amendment.title}}</center></p>
+							</div>
 
 
         				</div>
         			  </div>
 
-              </div>
-      			  <div class="col-md-3">
+				</div>
+				<div class="col-md-3">
 
         			  <div class="card">
         				<div class="card-header ch-alt">
@@ -225,7 +216,6 @@
             </div>
 
           </div>
-
 		  
 		  <div class="row" ng-if="currentStep == 3">
 			<div style="margin: 50px;" ng-bind-html="getHtml(engrossedContent)">
@@ -233,10 +223,7 @@
 		  </div>
 		  
         </div>
+		
       </div>
 
-    </div>
-  </section>
-</section>
-
-<footer id="footer" data-ng-include="'web-client/template/footer.html'"></footer>
+</div>

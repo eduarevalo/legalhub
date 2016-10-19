@@ -3,6 +3,21 @@ var configuration = {
 		"qrCodeDomain": "http://legishub.irosoft.com/document/",
 		"qrCodeDomainCollection": "http://legishub.irosoft.com/collection/"
 	},
+	"modules": {
+		"authentication": {
+			"provider" :{
+				"type": "ldap",
+				"params": {
+					"url": 'ldap://irosoft.com',
+					"user":'paqadm',
+					"password": 'iro123',
+					"filter": '(objectclass=user)',
+					"scope": 'sub',
+					"userSearchDn": 'OU=Users,OU=Irosoft,DC=irosoft,DC=com'
+				}
+			}
+		}
+	},
 	"server": {
 		"port": 80
 	},

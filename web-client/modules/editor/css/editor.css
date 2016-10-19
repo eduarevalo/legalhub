@@ -1,0 +1,131 @@
+.lh-editor-caret{
+  border-right: 2px solid orange; /* The typwriter cursor */
+  animation: blink-caret .75s step-end infinite;
+  width: 0px;
+  line-height: 100%;
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: orange; }
+}
+
+.lh-editor-comment-posting {
+	width: 350px;
+	padding: 0px;
+}
+.chosen-container
+{
+    width: 100% !important;
+}
+.lh-comment-text textarea{
+	padding: 3px;
+	min-height: 70px;
+}
+.lh-comment-text{
+	padding: 3px;
+}
+.lh-editor-comment-recipient {
+	width: 100%;
+}
+.lh-comment-type li a{
+	opacity: 0.25;
+}
+.lh-comment-type li a.selected, .lh-comment-type li a:hover{
+	opacity: 1;
+}
+.lh-editor-comment-posting input[type='text']{
+	padding-left: 5px !important;
+}
+.lh-editor-comment-bubble {
+	left: 1170px;
+	width: 260px;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+	padding: 10px;
+	background-color: white;
+	transition:all 0.5s linear;
+} 
+[comment-type='error'] {
+	border-top: 10px solid #F44336;
+}
+[comment-type='information'] {
+	border-top: 10px solid #2196F3;
+}
+[comment-type='warning'] {
+	border-top: 10px solid #ff9800;
+}
+[comment-type='question'] {
+	border-top: 10px solid #4caf50;
+}
+[comment-type='question'] {
+	border-top: 10px solid #4caf50;
+}
+[comment-type='notification'] {
+	border-top: 10px solid #00bcd4;
+}
+[type='comment']:nth-child(2){
+	margin-top: 20px;
+}
+[type='comment']:nth-child(3){
+	margin-top: 40px;
+}
+[type='comment']:nth-child(4){
+	margin-top: 60px;
+}
+[type='comment']:nth-child(5){
+	margin-top: 80px;
+}
+/*  Editor components */
+.editor {
+	/*position: relative;
+	padding-bottom: 50px;*/
+}
+/*[mode='preview'] */.content{
+	position: absolute;
+}
+.format, .content, .floatting{
+	/*position: absolute;
+	height: 100%;
+	top: 0px;
+	left:0px;
+	min-height: 2in;*/
+	/*display: table-cell;*/
+	display: flex;   
+    flex-flow:row nowrap;
+	margin: auto;
+}
+.page {
+	margin-bottom: 30px;
+	background: #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+}
+.lineNumber{
+	position: absolute;
+}
+[mode='edit'] .content{
+	background: #fff;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+	min-height: 3in;
+	width: 100%;
+}
+[mode='edit'] .format{
+	/*display: none;*/
+}
+.comment[type='comment'] {
+	position: fixed;
+	width: 40px;
+	height: 40px;
+	z-index: 10;
+}
+.comment-paragraph {
+	background-color: #f6f6f6;
+}
+.comment-bubble{
+	position: fixed;
+	display: none;
+	z-index: 30;
+}
+.recipient::after{
+	content: ': ';
+}

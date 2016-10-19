@@ -29,7 +29,7 @@
                         <a data-ng-click="hctrl.fullScreen()" href=""><i class="zmdi zmdi-fullscreen"></i> Toggle Fullscreen</a>
                     </li>
 					<li ng-if="mactrl.userData.logged">
-                        <a href=""><i class="zmdi zmdi-face"></i> Privacy Settings</a>
+                        <a ui-sref="home.profile"><i class="zmdi zmdi-face"></i> {{mactrl.userData.firstName}}'s Profile</a>
                     </li>
 					<li ng-if="mactrl.userData.logged" class="divider hidden-xs"></li>
 					<li ng-if="mactrl.userData.logged">

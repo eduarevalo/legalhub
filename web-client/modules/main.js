@@ -10,7 +10,6 @@ legalHub
 
 		$scope.user = {name: '', password: ''};
 
-		this.userData = {logged: false};
 		this.connected = false;
 
         function handleRequest(res) {
@@ -81,10 +80,12 @@ legalHub
 		}
 
         //Welcome Message
-		var userData = localStorage.getItem( 'user' );
-		if(userData){
-			self.userData = JSON.parse(userData);
+		this.userData = localStorage.getItem( 'user' );
+		if(this.userData){
+			this.userData = JSON.parse(this.userData);
 			$scope.welcome();
+		}else{
+			this.userData = {logged: false};
 		}
 
         // Detact Mobile Browser

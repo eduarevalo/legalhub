@@ -11,6 +11,7 @@
     "connect-busboy": "0.0.2",
     "express": "^4.14.0",
     "jdenticon": "^1.3.2",
+    "ldapjs": "^1.0.0",
     "mongo": "^0.1.0",
     "promise": "^7.1.1",
     "qr-image": "^3.1.0",

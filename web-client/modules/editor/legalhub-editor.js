@@ -9,6 +9,7 @@ var legalHubEditor = function(el){
 	this.w3 = (typeof window.getSelection != "undefined") && true;
 	this.mode = 'edit'; /* edit || preview*/
 	this.rootElement;
+	//this.caretElement;
 	this.contentElement;
 	this.formatElement;
 	this.commentElement;
@@ -48,13 +49,24 @@ var legalHubEditor = function(el){
 		this.contentElement = document.createElement('div');
 		this.contentElement.setAttribute('type', 'content');
 		this.contentElement.className = 'content';
+		/*this.caretElement = document.createElement('span');
+		this.caretElement.setAttribute('type', 'caret');
+		this.caretElement.className = 'lh-editor-caret';
+		this.caretElement.innerHTML = String.fromCodePoint(0x200C);*/
 		this.formatElement = document.createElement('div');
 		this.formatElement.setAttribute('type', 'format');
 		this.formatElement.className = 'format';
-		this.commentElement = document.createElement('button');
+		this.commentElement = document.getElementById('comment-bubble');
+		
+		this.floattingElement = document.createElement('div');
+		this.floattingElement.setAttribute('type', 'floatting');
+		this.floattingElement.className = 'floatting';
+		
+		/*this.commentElement = document.createElement('div');
 		this.commentElement.setAttribute('type', 'comment');
-		this.commentElement.className = 'btn btn-icon btn-primary waves-circle comment';
-		this.commentElement.addEventListener('click', function(event){
+		//this.commentElement.className = 'btn btn-icon btn-primary waves-circle comment';
+		this.commentElement.className = 'comment';
+		/*this.commentElement.addEventListener('click', function(event){
 			var float = document.createElement('div');
 			float.className = 'talk-bubble tri-right left-top comment-bubble';
 			float.innerHTML = '<div class="talktext"><p>This one adds a right triangle on the left, flush at the top by using .tri-right and .left-top to specify the location.</p></div>';
@@ -62,12 +74,14 @@ var legalHubEditor = function(el){
 			var floatEl = $(float);
 			floatEl.css({'top' : (lhe.currentNode.getClientRects()[0].top) + 'px'});
 			floatEl.css({'left' : (lhe.currentNode.getClientRects()[0].left) + 'px'});
-		});
-		this.commentElement.innerHTML= '<i class="zmdi zmdi-comments"></i>';
+		});*/
+		//this.commentElement.innerHTML= '<button><i class="zmdi zmdi-comments"></i>';
+		 //this.commentElement.innerHTML= '<div style="position:inherit;"><div class="dropdown dropup" uib-dropdown><button class="btn btn-icon btn-primary waves-circle dropdown-toggle" uib-dropdown-toggle><i class="zmdi zmdi-comments"></i></button><div class="dropdown-menu pull-right">hola</div></div></div>';
+		 //this.commentElement.innerHTML= '<div class="btn-group" uib-dropdown>            <button id="btn-append-to-single-button" type="button" class="btn btn-primary" uib-dropdown-toggle>              Inline Dropdown <span class="caret"></span>            </button>            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="btn-append-to-single-button">              <li role="menuitem"><a href="#">Action</a></li>              <li role="menuitem"><a href="#">Another action</a></li>              <li role="menuitem"><a href="#">Something else here</a></li>              <li class="divider"></li>              <li role="menuitem"><a href="#">Separated link</a></li>            </ul>          </div>';
 
-		this.rootElement.appendChild(this.contentElement);
 		this.rootElement.appendChild(this.formatElement);
-		this.rootElement.appendChild(this.commentElement);
+		this.rootElement.appendChild(this.contentElement);
+		this.rootElement.appendChild(this.floattingElement);
 		this.setMode(this.mode);
 		lhe.initEvents();
 	};
@@ -395,6 +409,7 @@ var legalHubEditor = function(el){
 		}else{
 			var node = lhe.newElement(lhe.config.container.elements[0]);
 			var paragraph = lhe.newBlock(true);
+			//paragraph.appendChild(this.caretElement);
 			node.appendChild(paragraph);
 			nodes.push(node);
 		}
@@ -498,10 +513,12 @@ var legalHubEditor = function(el){
 		If collaboration mode is active, validate against the server is required.
 	*/
 	this.getId = function(element){
-		if(!element.hasAttribute('id') || element.id != undefined){
-			element.id = legalHub.tools.guid();
+		if(element){
+			if(!element.hasAttribute('id') || element.id != undefined){
+				element.id = legalHub.tools.guid();
+			}
+			return element.id;
 		}
-		return element.id;
 	};
 
 	this.validateAnyCondition = function(nodes, conditions, includeAncestors){
@@ -1722,6 +1739,51 @@ var legalHubEditor = function(el){
 		});*/
 	}
 
+	this.revealComment = function(event){
+		var comment = event.srcElement;
+		var parent = comment.parentNode;
+		parent.removeChild(comment);
+		parent.appendChild(comment);
+	};
+	
+	this.addComment = function(comment){
+		var block = lhe.getBlock(lhe.currentNode);
+		//var block = $('.comment-paragraph');
+		if(block){
+			//var id = lhe.getId(block);
+			var id = block.id;
+			var container = this.floattingElement.querySelector("[comment-group='" + id + "']");
+			if(!container){
+				container = document.createElement('div');
+				container.setAttribute('comment-group', id);
+				this.floattingElement.appendChild(container);
+			}
+			var commentNode = lhe.newFloatingElement('comment');
+			commentNode.setAttribute('comment-type', comment.type);
+			commentNode.setAttribute('block-ref', id);
+			commentNode.style="top:" + $(block).position().top + 'px;';
+			commentNode.className = 'lh-editor-comment-bubble animated';
+			commentNode.addEventListener('click', lhe.revealComment);
+			commentNode.innerHTML = comment.text;
+			for(var i=0; i<comment.recipients.length;i++){
+				var recipient = document.createElement("span");
+				recipient.className = 'recipient';
+				recipient.contentEditable=false;
+				recipient.readOnly=true;
+				recipient.setAttribute('recipientId', comment.recipients[i].id);
+				recipient.innerHTML = comment.recipients[i].name;
+				commentNode.insertBefore(recipient, commentNode.firstChild);
+			}
+			/*var firstChild = block[0].firstChild;
+			if(firstChild){
+				block[0].insertBefore(commentNode, firstChild);
+			}else{
+				block[0].appendChild(commentNode);
+			}*/
+			container.appendChild(commentNode);
+		}
+	}
+	
 	/*
 		Initialize actions
 	*/
@@ -1792,6 +1854,7 @@ var legalHub = { tools: {
 function setPageStyle(style){
   $('link[href*="editor/css"]').attr('disabled', 'disabled');
   $('link[href*="editor/css/common"]').removeAttr('disabled');
+  $('link[href*="editor/css/editor"]').removeAttr('disabled');
   $('link[href*="editor/css/legislative"]').removeAttr('disabled');
   if(style){
 	$('link[href*="editor/css/'+ style+'"]').removeAttr('disabled');

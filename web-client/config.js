@@ -28,15 +28,15 @@ legalHub
 
         $httpProvider.interceptors.push('authInterceptor');
 
-        $urlRouterProvider.otherwise("/home");
+        $urlRouterProvider.otherwise("/");
 
         $stateProvider
+		
             //------------------------------
-            // HOME
+            // Home & Default Template
             //------------------------------
-
             .state ('home', {
-                url: '/home',
+                url: '/',
                 templateUrl: 'web-client/modules/home/template.html',
                 resolve: {
                     loadPlugin: function($ocLazyLoad) {
@@ -48,8 +48,9 @@ legalHub
                 }
             })
 
-            .state ('collection', {
-              url: '/collection/:code',
+			// Collection
+            .state ('home.collection', {
+              url: 'collection/:code',
               params: {
                 collectionId: '',
                 title: '',
@@ -66,8 +67,9 @@ legalHub
               }
             })
 
-            .state ('document', {
-              url: '/document/:code',
+			// Document
+            .state ('home.document', {
+              url: 'document/:code',
               params: {
                 id: '',
                 title: '',
@@ -88,8 +90,9 @@ legalHub
               }
             })
 
-			.state ('engross', {
-              url: '/engross/:code',
+			// Engross
+			.state ('home.engross', {
+              url: 'engross/:code',
               params: {
                 id: '',
                 title: '',
@@ -110,8 +113,9 @@ legalHub
               }
             })
 
-            .state ('versions', {
-              url: '/versions/:code',
+			// Versions
+            .state ('home.versions', {
+              url: 'versions/:code',
               params: {
                 id: ''
               },
@@ -125,11 +129,145 @@ legalHub
                 }
               }
             })
+			
+			//Profile
+            .state ('home.profile', {
+                url: 'profile',
+				templateUrl: 'web-client/modules/user/profile.html'
+            })
+			/*
+				Management views
+			*/
+			// Upload Manager
+			.state ('home.upload-manager', {
+              url: 'upload',
+              params: {
+                collectionId: ''
+              },
+              templateUrl: 'web-client/modules/upload/upload-template.html',
+              resolve: {
+                loadPlugin: function($ocLazyLoad) {
+                  return $ocLazyLoad.load ([
+                    'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/upload/manager-controller.js',
+                    {
+                      name: 'css',
+                      insertBefore: '#app-level',
+                      files: [
+						'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
+						'web-client/vendors/farbtastic/farbtastic.css',
+						'web-client/vendors/bower_components/summernote/dist/summernote.css',
+						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+						'web-client/vendors/bower_components/chosen/chosen.min.css'
+                      ]
+                    },
+                    {
+                      name: 'vendors',
+                      files: [
+						'web-client/vendors/input-mask/input-mask.min.js',
+						'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+						'web-client/vendors/bower_components/moment/min/moment.min.js',
+						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+						'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
+						'web-client/vendors/fileinput/fileinput.min.js',
+						'web-client/vendors/bower_components/chosen/chosen.jquery.js',
+						'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
+						'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+                      ]
+                    }
+                    ])
+                  }
+                }
+            })
 
+			// Collection Manager
+			.state ('home.collection-manager', {
+              url: 'manager/collection',
+              templateUrl: 'web-client/modules/collection/manager-template.html',
+              resolve: {
+                loadPlugin: function($ocLazyLoad){
+                  return $ocLazyLoad.load([
+                    'web-client/modules/collection/collection-service.js',
+                    'web-client/modules/collection/manager-controller.js']);
+                }
+              }
+            })
+
+			// Document Manager
+            .state ('home.document-manager', {
+              url: 'manager/document',
+              templateUrl: 'web-client/modules/document/manager-template.html',
+              resolve: {
+                loadPlugin: function($ocLazyLoad){
+                  return $ocLazyLoad.load('web-client/modules/document/manager-controller.js');
+                }
+              }
+            })
+
+            .state ('edit', {
+                url: '/edit',
+                templateUrl: 'web-client/modules/document/new-document-template.html',
+				        params: {
+					          collectionId: '',
+                    documentId: '',
+                    documentTitle: '',
+                    template: ''
+				        },
+                resolve: {
+                    loadPlugin: function($ocLazyLoad) {
+                        return $ocLazyLoad.load([
+						'web-client/modules/version/version-service.js',
+						'web-client/modules/rendition/rendition-service.js',
+						'web-client/modules/reference/reference-service.js',
+						'web-client/modules/document/document-service.js',
+						'web-client/modules/user/user-service.js',
+						'web-client/modules/document/new-document-controller.js',
+						'web-client/modules/editor/schema-bill.js',
+						'web-client/modules/editor/schema-amendment.js',
+						'web-client/modules/editor/legalhub-editor.js',
+						'web-client/modules/editor/start.js',
+						'web-client/modules/editor/css/editor.css',
+						'web-client/modules/editor/css/legislative.css',
+						'web-client/modules/editor/css/common.css',
+						'web-client/modules/editor/css/default.css',
+						/*'web-client/modules/editor/css/paper.css',
+						'web-client/modules/editor/css/connecticut.css',*/
+						'web-client/modules/editor/css/demoa.css',
+						'web-client/modules/editor/css/demob.css',
+						'web-client/modules/editor/css/democ.css',
+            {
+              name: 'css',
+              insertBefore: '#app-level',
+              files: [
+              'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
+              'web-client/vendors/farbtastic/farbtastic.css',
+              'web-client/vendors/bower_components/summernote/dist/summernote.css',
+              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
+              'web-client/vendors/bower_components/chosen/chosen.min.css'
+              ]
+            },
+            {
+              name: 'vendors',
+              files: [
+              'web-client/vendors/input-mask/input-mask.min.js',
+              'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
+              'web-client/vendors/bower_components/moment/min/moment.min.js',
+              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
+              'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
+              'web-client/vendors/fileinput/fileinput.min.js',
+              'web-client/vendors/bower_components/chosen/chosen.jquery.js',
+              'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
+              'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
+              ]
+            }]);
+                    }
+                }
+            })
+			
             //------------------------------
             // HEADERS
             //------------------------------
-            .state ('headers', {
+            /*.state ('headers', {
                 url: '/headers',
                 templateUrl: 'web-client/views/common-2.html'
             })
@@ -147,7 +285,7 @@ legalHub
             .state('headers.mainmenu-on-top', {
                 url: '/mainmenu-on-top',
                 templateUrl: 'web-client/views/mainmenu-on-top.html'
-            })
+            })*/
 
 
             //------------------------------
@@ -235,127 +373,6 @@ legalHub
             .state ('manager', {
                 url: '/manager',
                 templateUrl: 'web-client/modules/manager/common.html'
-            })
-
-            .state ('manager.collection', {
-              url: '/collection',
-              templateUrl: 'web-client/modules/collection/manager-template.html',
-              resolve: {
-                loadPlugin: function($ocLazyLoad){
-                  return $ocLazyLoad.load([
-                    'web-client/modules/collection/collection-service.js',
-                    'web-client/modules/collection/manager-controller.js']);
-                }
-              }
-            })
-
-            .state ('manager.document', {
-              url: '/document',
-              templateUrl: 'web-client/modules/document/manager-template.html',
-              resolve: {
-                loadPlugin: function($ocLazyLoad){
-                  return $ocLazyLoad.load('web-client/modules/document/manager-controller.js');
-                }
-              }
-            })
-
-            .state ('manager.upload', {
-              url: '/upload',
-              params: {
-                collectionId: ''
-              },
-              templateUrl: 'web-client/modules/upload/upload-template.html',
-              resolve: {
-                loadPlugin: function($ocLazyLoad) {
-                  return $ocLazyLoad.load ([
-                    'web-client/modules/collection/collection-service.js',
-                    'web-client/modules/upload/manager-controller.js',
-                    {
-                      name: 'css',
-                      insertBefore: '#app-level',
-                      files: [
-						'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
-						'web-client/vendors/farbtastic/farbtastic.css',
-						'web-client/vendors/bower_components/summernote/dist/summernote.css',
-						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-						'web-client/vendors/bower_components/chosen/chosen.min.css'
-                      ]
-                    },
-                    {
-                      name: 'vendors',
-                      files: [
-						'web-client/vendors/input-mask/input-mask.min.js',
-						'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
-						'web-client/vendors/bower_components/moment/min/moment.min.js',
-						'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-						'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
-						'web-client/vendors/fileinput/fileinput.min.js',
-						'web-client/vendors/bower_components/chosen/chosen.jquery.js',
-						'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
-						'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
-                      ]
-                    }
-                    ])
-                  }
-                }
-            })
-
-            .state ('new-document', {
-                url: '/edit',
-                templateUrl: 'web-client/modules/document/new-document-template.html',
-				        params: {
-					          collectionId: '',
-                    documentId: '',
-                    documentTitle: '',
-                    template: ''
-				        },
-                resolve: {
-                    loadPlugin: function($ocLazyLoad) {
-                        return $ocLazyLoad.load([
-						'web-client/modules/version/version-service.js',
-						'web-client/modules/rendition/rendition-service.js',
-						'web-client/modules/reference/reference-service.js',
-						'web-client/modules/document/document-service.js',
-						'web-client/modules/document/new-document-controller.js',
-						'web-client/modules/editor/schema-bill.js',
-						'web-client/modules/editor/schema-amendment.js',
-						'web-client/modules/editor/legalhub-editor.js',
-						'web-client/modules/editor/start.js',
-						'web-client/modules/editor/css/legislative.css',
-						'web-client/modules/editor/css/common.css',
-						'web-client/modules/editor/css/default.css',
-						/*'web-client/modules/editor/css/paper.css',
-						'web-client/modules/editor/css/connecticut.css',*/
-						'web-client/modules/editor/css/demoa.css',
-						'web-client/modules/editor/css/demob.css',
-						'web-client/modules/editor/css/democ.css',
-            {
-              name: 'css',
-              insertBefore: '#app-level',
-              files: [
-              'web-client/vendors/bower_components/nouislider/jquery.nouislider.css',
-              'web-client/vendors/farbtastic/farbtastic.css',
-              'web-client/vendors/bower_components/summernote/dist/summernote.css',
-              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
-              'web-client/vendors/bower_components/chosen/chosen.min.css'
-              ]
-            },
-            {
-              name: 'vendors',
-              files: [
-              'web-client/vendors/input-mask/input-mask.min.js',
-              'web-client/vendors/bower_components/nouislider/jquery.nouislider.min.js',
-              'web-client/vendors/bower_components/moment/min/moment.min.js',
-              'web-client/vendors/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-              'web-client/vendors/bower_components/summernote/dist/summernote.min.js',
-              'web-client/vendors/fileinput/fileinput.min.js',
-              'web-client/vendors/bower_components/chosen/chosen.jquery.js',
-              'web-client/vendors/bower_components/angular-chosen-localytics/chosen.js',
-              'web-client/vendors/bower_components/angular-farbtastic/angular-farbtastic.js'
-              ]
-            }]);
-                    }
-                }
             })
 
             .state ('form.form-components', {
@@ -614,14 +631,6 @@ legalHub
             .state ('pages', {
                 url: '/pages',
                 templateUrl: 'web-client/views/common.html'
-            })
-
-
-            //Profile
-
-            .state ('pages.profile', {
-                url: '/profile',
-                templateUrl: 'web-client/views/profile.html'
             })
 
             .state ('pages.profile.profile-about', {

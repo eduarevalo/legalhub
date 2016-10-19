@@ -1,6 +1,6 @@
 var editor;
 
-angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, growlService, documentService, referenceService, version, rendition, $sce) {
+angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state, $timeout, growlService, documentService, referenceService, version, rendition, $sce, userService) {
 	$scope.mode = 'new';
 	$scope.editorMode = 'edit';
 	$scope.view = 'web';
@@ -137,4 +137,36 @@ angular.module('legalHub').controller('newDocumentCtrl', function($scope, $state
 			$scope.emptyDocument();
 		}
 	}
+	$scope.users = {};
+	userService.search({}, ["id", "firstName"/*, "lastName"*/]).then(function(data){
+		data.forEach(function(element){
+			$scope.users[element.id] = element.firstName;
+		});
+	});
+	$scope.setCommentType = function(type){
+		$scope.comment.type = type;
+	}
+	$scope.newComment = function(){
+		$scope.comment = {
+			recipients: [],
+			text: '',
+			type: 'information'
+		};
+	};
+	$scope.newComment();
+	$scope.addComment = function(){
+		var recipients = [];
+		$scope.comment.recipients.forEach(function(recipient){
+			recipients.push({id: recipient, name: $scope.users[recipient]});
+		});
+		$scope.comment.recipients = recipients;
+		editor.addComment($scope.comment);
+		$('#comment-bubble').removeClass('open');
+		$scope.newComment();
+	}
+	/*$scope.onCommentToggle = function(open){
+		if (open) {
+			console.log('is open');
+		} else console.log('close');
+	};*/
 })

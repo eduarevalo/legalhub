@@ -39,16 +39,16 @@ angular.module('legalHub').controller('collectionCtrl', function($filter, $scope
 	return false;
   }
   $scope.goToNewDocument = function(templateName){
-	   $state.go('new-document', {collectionId: self.collectionId, template: templateName});
+	$state.go('edit', {collectionId: self.collectionId, template: templateName});
   }
   $scope.goToEngrossDocument = function(document){
-	$state.go('engross', {id: document.id, code: document.code, title: document.title, icon: document.icon});
+	$state.go('home.engross', {id: document.id, code: document.code, title: document.title, icon: document.icon});
   }
   $scope.goToEditDocument = function(documentId, title){
-    $state.go('new-document', {collectionId: self.collectionId, documentId: documentId, documentTitle: title});
+    $state.go('edit', {collectionId: self.collectionId, documentId: documentId, documentTitle: title});
   }
   $scope.goToDocument = function(document){
-    $state.go('document', {id: document.id, code: document.code});
+    $state.go('home.document', {id: document.id, code: document.code});
   }
   $scope.goToUpload = function(){
     $state.go('manager.upload', {collectionId: self.collectionId});

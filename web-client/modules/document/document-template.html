@@ -1,16 +1,8 @@
-<header id="header" data-current-skin={{mactrl.currentSkin}} data-ng-include="'web-client/modules/home/header.html'" data-ng-controller="headerCtrl as hctrl"></header>
-
-<section id="main">
-  <aside id="sidebar" data-ng-include="'web-client/modules/home/sidebar-left.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.left === true }" ng-controller="sideLeftCtrl"></aside>
-
-  <aside id="chat" data-ng-include="'web-client/modules/home/chat.html'" data-ng-class="{ 'toggled': mactrl.sidebarToggle.right === true }"></aside>
-
-  <section id="content">
-
-    <div class="container" data-ng-controller="documentCtrl as documentCtrl" ng-init="openDocument()">
+<div class="container" data-ng-controller="documentCtrl as documentCtrl" ng-init="openDocument()">
 
       <div class="card">
-        <div class="card-header">
+        
+		<div class="card-header">
           <h2>{{ document.title }} <small>{{ collectionNames }}</small></h2>
           <br/>
           <button class="btn btn-info btn-icon" data-ng-click="goToVersions(document)" title="History"><i class="zmdi zmdi-time-restore"></i></button>
@@ -19,14 +11,10 @@
           <img src="{{document.qrCode}}" class="pull-right" style="height: 80px;margin-top:-40px;position:relative;"/>
         </div>
 
-        <div class="card-body card-padding" ng-bind-html="getHtml(content)" ng-if="rendition == ''">
-        </div>
+        <div class="card-body card-padding" ng-bind-html="getHtml(content)" ng-if="rendition == ''"></div>
+		
 		<div id="pdf-holder" ng-if="rendition != ''"></div>
 
       </div>
 
-    </div>
-  </section>
-</section>
-
-<footer id="footer" data-ng-include="'web-client/modules/home/footer.html'"></footer>
+</div>
