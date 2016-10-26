@@ -45,7 +45,7 @@
 	padding: 10px;
 	background-color: white;
 	transition:all 0.5s linear;
-} 
+}
 [comment-type='error'] {
 	border-top: 10px solid #F44336;
 }
@@ -81,20 +81,16 @@
 	/*position: relative;
 	padding-bottom: 50px;*/
 }
-/*[mode='preview'] */.content{
+[mode='preview'] .content, [mode='preview'] .format{
 	position: absolute;
 }
-.format, .content, .floatting{
-	/*position: absolute;
+/*.format, .content, .floatting{
+	position: absolute;
 	height: 100%;
 	top: 0px;
 	left:0px;
-	min-height: 2in;*/
-	/*display: table-cell;*/
-	display: flex;   
-    flex-flow:row nowrap;
-	margin: auto;
-}
+	min-height: 2in;
+}*/
 .page {
 	margin-bottom: 30px;
 	background: #fff;
@@ -110,7 +106,7 @@
 	width: 100%;
 }
 [mode='edit'] .format{
-	/*display: none;*/
+	display: none;
 }
 .comment[type='comment'] {
 	position: fixed;
